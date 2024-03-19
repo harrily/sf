@@ -1,0 +1,316 @@
+-、448434 兜底逻辑 
+	1-、兜底任务： 812678 【已冻结】
+	2-、简介：
+		--* 名称:营运维度-特色经济兜底处理（T-1D）
+		--* 任务ID:
+		--* 说明: 
+			执行背景：
+				1、执行条件：448434当天工作流，特经配置表，执行延迟时执行。 
+				2、使用旧版本执行，营运维度-特经兜底处理，仅执行T-1D数据  
+				3、执行完，手动强制448434成功，保证下游正常
+		--* 作者: 01431437
+		--* 时间: 2023/9/11 10:00		
+		
+-、468144/468146 -  兜底任务  
+	1-、兜底任务 【877118-线下】
+	2-、简介：
+		-、手动传参，指定兜底补录-小时打点数据
+			参数示例： 
+				参数1 :  ${yyyy_MM_dd_manual} -- 计算日期 (示例:2023-10-25)
+				参数2 ： ${H_manual}   	      -- 计算时点 (示例:0,1,2,3,4,5 ... 23 (0~23))
+			示例： 需要兜底计算2023-10-25 00:00:01 时点任务， 只需传参 
+				$1=2023-10-25 
+				$2=0
+		-、验证数据无误后，切换写入表为 dm_ordi_predict.dws_dynamic_cityflow_base_hi
+		
+-、448086  - hive版本
+	-、632525任务备份-hive版本  ->[875851【已冻结】] 
+	
+-、663166  - hive版本
+	-、663166任务备份-hive版本  ->[875828【已冻结】] 
+	
+--  2023-10-30 17:30 会议
+	-、收派-流向，兜底代码-- 发到共享群
+	-、周末提单，提前提。
+	
+-- 2023-11-01 
+	1、468144/468148 
+		-、切换上游表逻辑
+		-、去掉依赖 （鄂枢）
+	后续回退版本需要注意：
+		1、参数
+		2、依赖
+		3、调度时间
+
+因oe集群问题，实时任务冻结，涉及流向-动态收件底盘，逻辑调整，具体调整如下：
+1、涉及任务id：468144/468146（动态收件）
+2、逻辑更新：上游表切换为运单小表。
+任务已发布，18点任务正常。
+
+
+----  质量问题  20231101  23:00 -----
+
+
+dm_ordi_predict.dwd_inc_pis_all_mor_hf	最新检测时间：2023-11-01 23:10:57	李欢(80006694)	是否配置有问题，近几天持续异常？
+dm_ordi_predict.dws_extreme_pre_waybill_detail_di	最新检测时间：2023-11-01 01:49:40	(01424444)	是否配置有问题，近几天持续异常？
+dm_ordi_predict.dm_rmdp_waybill_dtl_df_new	最新检测时间：2023-11-01 18:22:12	李欢(80006694)	可能是高峰波动？
+dm_ordi_predict.ods_pass_waybill_dtl_hi	最新检测时间：2023-11-01 22:40:44	张长发(01424444)	忽略告警
+dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di	最新检测时间：2023-11-01 08:32:09	01431437	高峰波动。
+dm_freight.dm_ky_2022_area_paroduct_sum_di（受疫情影响关停后的货量数据）	最新检测时间：2023-11-01 03:30:42	张长发(01424444)	是否配置有问题，近几天持续异常？
+dm_freight.dm_ky_2022_all_area_paroduct_sum_di（2022全量地区产品维度货量汇总）最新检测时间：2023-11-01 03:30:42	张长发(01424444)	是否配置有问题，近几天持续异常？
+dm_predict.dws_fc_sp_predict_collecting_di（业务预测收派预测归集）	最新检测时间：2023-11-01 20:08:26	申海艳(01379968)	高峰波动？
+dm_predict.dynamic_airflow_match_result	最新检测时间：2023-11-01 22:35:45	(01376027)	-- 高峰波动？
+dm_predict.dws_airflow_hour_pred_qty_hi	最新检测时间：2023-11-01 23:22:17	何龙(01417664)	-- 高峰波动？
+dm_ordi_predict.ods_pass_waybill_dtl_hi（pass实时运单打点数据）	最新检测时间：2023-11-01 22:40:44	张长发(01424444)	高峰波动-行数波动（表行数的合理范围为【15000000~100000000】条，当前检测值为【137426652】条）
+dm_predict.sede_aoi_batch_spark_total	最新检测时间：2023-11-01 23:23:02	廖智鹏(01415843)	-- 配置有问题，连续失败
+oewm_pickup_dept_sum	最新检测时间：2023-11-01 15:07:34	施航程(01397386)	-- 高峰波动？
+dws_static_his_zone	最新检测时间：2023-11-01 01:49:08	张长发(01424444)	-- 高峰波动？
+dm_predict.dws_fc_sp_predict_collecting_di	最新检测时间：2023-11-01 20:08:26	申海艳(01379968)/周聪		-- 高峰波动？
+dws_static_zone_deliver_batch_base	最新检测时间：2023-11-01 01:24:41	张长发(01424444)	-- 高峰波动？
+
+1、更新质量文档
+2、更新任务耗时文档
+3、8点播报
+	@所有人 资源&调度任务08点播报
+	【时间范围】: 2023/11/02 00:00-08:00
+	【资源】
+	1.predict队列CPU、内存资源整点时刻使用较高，其中05:00~05:30,内存资源使用占比超过95%,其余时段CPU、内存资源使用较均衡;
+	2.predict_as队列资源在05:20~05:50,06:30~07:15使用占比95%以上,其余时段CPU、内存资源使用较均衡;
+	3.predict_model队列资源在1:30、3:30、5:30、7:50使用占比95%以上，最长持续15min,其余时段CPU、内存资源使用均衡;
+	4.ordi_predict队列资源使用正常，整点资源使用率占比95%以上，最长持续10min左右;
+	【调度任务/看板】
+	1.S/A/B级看板任务：
+	收派/流向无异常延迟任务、无影响看板时效任务。
+	中转存在个别超时任务，不影响任务整体进度。
+4、492216  任务耗时近10个时点耗时明显，需要跟进处理。
+	
+	
+待处理： 
+	1、468144/468146  2023-11-02 21:00  回退oe上游表，关注数据。  √
+		-、发哥已回退 2023-11-02 21:00:58
+	2、468144/468146  优化过滤，放在内部 （spark解析时，不论内外都会优先过滤，改进后，预防回退hive时，不生效）	√
+	3、保哥，pass报表航空件和底盘有差异 ：  √   -- pass口径和oe不一致。
+		pass: dm_ops.wj59_lcb_city_flow_consi_d
+		底盘：dm_ordi_predict.dws_static_cityflow_base
+		oe: dwd_o.dwd_tp_air_waybillno_info_di
+	4、cf_air_list 表变化  √
+		-、是否回刷底盘数据？
+		-、刷新表数据，通知下游使用方。
+	5、沙沙业务提供航空表（t_collect_disperse_city(集散城市配置表））   √
+		和 dm_ordi_predict.dim_city_level_mapping_df 对比fbq,area_code是否一致。
+		-- 添加监控 
+	6、448434 -- 452264  ，过滤聚合-推测执行优化
+	7、663166 
+		-、偶尔出现 1000+Task，数据条数平均，任务中位数1min以内，但个别任务偶尔卡顿，耗时 10min以上  。 
+			可设置如下参数，调优：（高峰后测试）
+				set spark.speculation=true;               -- 开启推测执行
+				set spark.speculation.interval=100;       -- 每100毫秒检查一次是否开始推测执行
+				set spark.speculation.quantile=0.75;      -- 75%的任务完成时,开启推测执行
+				set spark.speculation.multiplier=1.5;     -- 运行耗时是平均耗时的1.5倍,开始推测执行
+
+language：	
+	exactly-once semantics  -- 精确一次执行语义[sɪˈmæntɪks]
+	It can also be crucial[ˈkruːʃl] to pay attention to the order in which events occurred  --  同样重要的是要注意事件发生的顺序
+	be able to reason about   -- 推断出
+	Goals and Scope of this Training -- 训练的目标和范围
+	while leaving out a lot of （ultimatly import）details -- 同时省略了许多细节
+	ultimatly ： [ˈʌltɪmətli] 最终; 最后; 根本上; 终归; 最基本地;
+	condensed view -- 简略视图
+	parallelized view  -- 并行(度)视图
+	parallelism -- 并行;平行;相似
+	Programs in Flink are inherently parallel and distributed  -- Flink 程序本质上是分布式并行程序
+	inherently -- 固有的
+	parallel -- 并行的，平行的
+	preserve the partitioning  -- 保留分区 
+	ordering among the elements -- 元素之间的顺序
+	there requirements for timely steam processing can be met by using event time timestamp that are recorded in the data stream ,rather than using 
+		the clocks of the machines processing the data.
+	Fault Tolerance via State Snapshots  -- 通过状态快照容错
+	fraud detection model. -- 作弊检测模型
+	given operator -- 给定算子
+	sharded key-value store -- 碎片化按照key存储
+	a parallelism of two across the first three operators  -- 其前三个算子的并行度为 2
+	broadly cover -- 广泛覆盖 （充分覆盖）
+	composite types -- 复合类型 [kəmˈpɑːzət]
+	efficiently  [ɪˈfɪʃntly ]  有效地
+	if you are curious to see how Flink works.  -- 如果好奇[ˈkjʊriəs] Flink 的工作原理
+	having a solid understanding  -- 有扎实的理解
+	luxury [ˈlʌkʃəri] of being able to have complete knowledge of the input   -- 完全了解输入是奢侈的
+	eventually stop  -- 最终停止
+	[take advantage[vt] of] having more complete knowledge of the input stream -- [利用]对输入流有更完整的了解
+	You can either configure your watermarking aggressively  -- 你可以任意积极地（侵略性地）配置watermarking
+	it is also prossible to implement hybrid [ˈhaɪbrɪd] solutions that produce initial [ɪˈnɪʃl] results quickly . --  也可以实施混合解决方案，先快速产生初步结果
+	this is a good approach -- 这是个好方法
+	lateness is defined relative to the watermarks  . -- 延迟是相对水印定义的
+	a watermarks[t] asserts(断言，表示) that the stream is complete up through time t .  -- Watermark(t) 表示事件流的时间已经到达了t 
+	any event following this watermark whose timestamp is ≤ t is late. --  watermark 之后的时间戳 ≤ t 的任何事件都被称之为延迟事件。
+	time associated[əˈsoʊsieɪtɪd] with each event -- 事件相关的时间
+	you will have to take care of this yourself -- 自己处理(照顾)
+	generates watermarks on demand -- 需要生成watermarks
+	The easiest way to do this is -- 最简单的方式是...
+	Flink features very expressive window semantics. -- Flink 在窗口的场景处理上非常有表现力。
+	principal[ˈprɪnsəpl] abstractions -- 主要的抽象
+	Triggers/Evictors  -- 触发器/驱逐器
+	notions of Triggers -- Triggers的概念
+	not be done in parallel -- 不能并行处理
+	flink has several built-in types of  window assigners  -- Flink 有一些内置的窗口分配器
+	Tumbling [ˈtʌmblɪŋ] time windows -- 滚动时间窗口
+	thumb[θʌm] 
+	come in both  a and b flavors [ˈfleɪvərz]  -- 有a和b两种风味/特色
+	but with the advantage[优势 n.] of lower latency. -- 但是有自己的优势，较低的延迟。
+	keep in mind  -- 牢记
+	that these windows will not fire until a batch is complete  -- 不会触发直到批次完成？
+	A couple of things to note -- 需要注意的几点
+	all of events assigns windows have to buffered in flink keyed state until window have trggiled . it is paently quite expensive 
+	All of the events assigned to the window have to be buffered in keyed Flink state until the window is triggered.
+	This is potentially quite expensive -- 这个可能(潜在)相当昂贵
+	is being passed a Context object   -- ..被传递一个context对象
+	if you want recording current window content ans use that when processing subsequent windows .				 -- 在处理后续窗口的时候，可能会用到当前窗口的信息。
+	if you want to record something about the current window and use that when processing a subsequent windows.  -- 在处理当前窗口的时候，可能会用到上一个窗口的信息。
+	Incremental Aggregation Example # incremental aggregation example -- 增量聚合示例 #
+	you can arrange for the events that would be dropped to be collected to an alternate[候补] output steam instead  - 安排将要删除的事件收集到侧输出流中
+	You can also specify an interval of allowed lateness during which the late events will continue to be assigned to the appropriate window(s) (whose state will have been retained).
+	you can also specify[指定] an interval of allowed lateness during which the late events will continue to be assigned to the appropriate[合适] windows whose state will have been retained  --
+			-- 可以指定允许的延迟(allowed lateness) 的间隔，在这个间隔时间内，延迟的事件将会继续分配给窗口（同时状态会被保留）
+	Based on frequently asked questions  -- 基于频繁被问起的问题
+	copy each event into every relevant[ˈreləvənt - 相关的] window -- 复制每个事件到每个相关的窗口中
+	epoch  [ˈepək]  -- 时代,时期
+	Aligned[使一致] to the Epoch -- 时期一致
+	provided with a context object that can be used to interact with a TimerService  -- 提供了一个上下文对象，可用于与 TimerService 交互
+	Collector that can be used to emit[iˈmɪt -- 发出/射出] results. -- 发出结果的 Collector
+	fare events can arrive out of order  -- 票价事件（fare-event）可能会乱序到达
+	previous hour -- 上个小时
+	open simultaneously[ˌsaɪməlˈteɪniəsli]  -- 同时打开
+	it makes it easy and efficient to lookup relevant information when timer fires . --  它使得在 Timer 触发时查找相关信息变得简单高效
+	related entry  -- 相关条目
+	accommodate[əˈkɑːmədeɪt] late events -- 通纳延迟事件
+	This is the equivalent[ɪˈkwɪvələnt] of setting the allowedLateness to zero  -- 这相当于..
+	optimized for RocksDB  -- RocksDB 优化
+	correspond to the type  -- 一致的类型
+	generic type  -- 通用的类型
+	can be referenced -- 可以引用（参考）
+	Alternatively -- 或者/要不
+	contorted [kənˈtɔːrtɪd] -- 扭曲;使弯曲   
+	Brenner was breathing hard, his face contorted with pain.
+	expire -- 过期
+	stale -- 不新鲜的；污浊，..
+	expiring stale state -- 清理过期状态
+	detect and clear any stale state. -- 检测和清理过期状态
+	will be held in state forever.   -- 状态永远保持
+	a sort of sharded, key/value store  -- 一种分片的键/值存储
+	taskmanager responsible for that key -- 负责key的任务管理器
+	transactional (or idempotent/aɪˈdempətənt/) -- 事务/幂等
+	accesses and updates involve reading and writing objects on the heap -- 访问和更新涉及在堆上的读写
+	is a  significant benefit for applications with large amounts of slowly changing state.  -- 这对于具有大量变化缓慢状态的应用程序来说是大有裨益的。
+	significant/sɪɡˈnɪfɪkənt/  -- 重要的, 有重大意义的;显著的,
+	without impeding[ɪmˈpiːdɪŋ] the ongoing stream processing.  -- 不妨碍正在进行的流处理
+	impeding[ɪmˈpiːdɪŋ] -- 阻碍 
+	periodically  -- 定期地
+	somewhere more durable -- 更持久的地方
+	
+	whatermarks:
+	1、水印 = 进入Flink的当前最大事件时间（比如上面例子中的9:05分到达的货物） ‒ 允许最大延迟时间（比如上面例子中的司机多等待的5分钟）。
+	   当水印 >= 窗口结束时间时，立即触发窗口计算，计算完毕后发射出计算结果并销毁窗口，否则窗口将一直等待。
+		例子：假设有一个[9:00~9:10)的窗口，设置的允许最大延迟时间为3分钟，当事件时间戳为9:11的事件到达时（说明有些数据可能已经延迟了，我在多等一会儿），
+			由于该事件时间是进入Flink的当前最大事件时间，因此Watermark = 9:11‒3（分钟）= 9:08。此时水印在窗口内部不会触发窗口计算，窗口继续等待延迟数据。如下图：
+		接下来当事件时间戳为9:15的事件到达时，由于该事件时间是进入Flink的当前最大事件时间，因此Watermark = 9:15‒3（分钟）= 9:12。
+			此时水印在窗口外部，满足窗口触发计算的规则：Watermark >= 窗口结束时间，因此窗口会立即触发计算，计算完毕后发射出计算结果并销毁窗口。
+	2-、允许延迟和侧道输出
+		允许延迟机制与水印不同，允许延迟并不会延迟触发窗口计算，而是触发窗口计算之后不会立马销毁窗口，会在一段时间内继续保留计算状态。
+		超过允许延迟时间的数据，Flink会将其放入侧道输出。侧道输出可以将数据收集起来，根据系统自身业务单独处理或存放于指定位置。
+		allowedLateness(lateness: Time)：设置允许的延迟时间。
+		sideOutputLateData(outputTag: OutputTag[T])：将延迟到达的数据保存到outputTag对象中。
+		参考资料： https://zhuanlan.zhihu.com/p/648706119
+				   https://zhuanlan.zhihu.com/p/364013202
+				   
+				   
+
+
+@所有人 资源&调度任务14点播报
+ 【时间范围】: 2023/11/12 8:00-14:00
+ 【资源】
+ 1.predict队列资源，整点时刻资源使用率较高，其余时段CPU、内存资源使用均衡；
+ 2.predict_as队列资源，整点及8:00~9:00资源使用率超过95%，最长持续20min,其余时段CPU、内存资源使用均衡;
+ 3.predict_model队列资源，09:30、10:30、11:30 ，13:30整点时刻，资源使用率超过95%。最长持续10分钟。其余时段CPU、内存资源使用均衡;
+ 4.ordi_predict队列资源使用正常，整点CPU和内存使用率占比都在95%，以上其余时段CPU、内存资源使用均衡;
+ 【调度任务/看板】
+ 1.S/A/B级看板任务：
+ 收派/中转/流向无异常延迟无失败任务。
+
+
+@所有人 资源&调度任务18点播报
+ 【时间范围】: 2023/11/12 14:00-18:00
+ 【资源】
+ 1.predict队列资源，整点时刻资源使用率较高，最长持续时间10min,其余时段CPU、内存资源使用均衡；
+ 2.predict_as队列资源，整点时刻资源使用率较高,其余时段CPU、内存资源使用均衡;
+ 3.predict_model队列资源，15:30、17:30整点时刻，资源使用率超过95%。最长持续5分钟,其余时段CPU、内存资源使用均衡;
+ 4.ordi_predict队列资源使用正常，整点CPU和内存使用率占比都在95%，以上其余时段CPU、内存资源使用均衡;
+ 【调度任务/看板】
+ 1.S/A/B级看板任务：
+ 收派/中转/流向无异常延迟无失败任务。
+
+
+
+@所有人 资源&调度任务8点播报
+ 【时间范围】: 2023/11/13 00:00-08:00
+ 【资源】
+ 1.predict队列资源，整点时刻资源使用率较高，其中05:00~05:30持续时间较长，最长持续时间10min,其余时段CPU、内存资源使用均衡；
+ 2.predict_as队列资源，05:00~05:30,06:30~07:00资源使用率较高,最长持续时间15min，其余时段CPU、内存资源使用均衡;
+ 3.predict_model队列资源，01:30、03:30、05:30时间点，资源使用率超过95%。最长持续15分钟,其余时段CPU、内存资源使用均衡;
+ 4.ordi_predict队列资源使用正常，整点时刻CPU和内存使用率占比在95%左右，其余时段CPU、内存资源使用均衡;
+ 【调度任务/看板】
+ 1.S/A/B级看板任务：
+ 中转个别任务存在执行超时，不影响任务整体进度。
+ 收派/流向无异常延迟无失败任务。
+
+
+
+----------------------开发说明----------------------------
+--* 名称:流向-极效前置
+--* 任务ID:896952
+--* 说明:流向-极效前置
+--* 作者: 01431437
+--* 时间: 2023/11/12 09:45
+----------------------修改记录----------------------------
+--* 修改人   修改时间      修改内容
+----------------------脚本逻辑----------------------------
+--输入表： dwd.dwd_waybill_info_dtl_di，dm_ordi_predict.dws_extreme_pre_waybill_detail_di
+--输出表： tmp_dm_predict.dws_extreme_pre_waybill_hk_cityflow_di
+--1、从运单宽表，筛选极效前置运单 
+--2、判断航空件，写入结果表
+-- 备注： 
+    --1、一次性任务，后续需要计算时，在更新数据。
+----------------------------------------------------------
+1、极效前置的需求，今天我就可以开发好,已经刷新历史数据（线下执行一次就可以）。  任务ID:896952
+	'20221001' and '20221031'		'20221001' and '20221231'
+	'20221101' and '20221130'		'20230101' and '20230331'
+	'20221201' and '20221231'		'20230401' and '20230630'
+	'20230101' and '20230131'		'20230701' and '20231130'
+	'20230201' and '20230228'
+	'20230301' and '20230331'
+	'20230401' and '20230430'
+	'20230501' and '20230531'
+	'20230601' and '20230630'
+	'20230701' and '20230731'
+	'20230801' and '20230831'
+	'20230901' and '20230930'
+	'20231001' and '20231031'
+	'20231101' and '20231130'
+	
+2、cf_air_list相关。  流向表，和业务表对比（业务区表少了17个流向），目前是没有替换新的数据，因为这少的航空流向都是小流向，差不多1天也就多个100件左右。（目前是有做质量监控，检测这几个小流向的件量）。  	高峰期和何龙，沙沙沟通的是，高峰后，
+	1-、替换cf_air_list的数据 
+			（通过：
+				select
+				  city_flow as cityflow
+				from
+				  dm_pass_atp.tm_air_flow_config_wide
+				where
+				  inc_day = '$[time(yyyyMMdd)]'
+				  and is_air_flow = 1
+				  and expiry_dt >= '$[time(yyyy-MM-dd)]'  替换 最新的数据
+			  ）
+	2-、通知使用cf_air_list表的下游
+	3-、历史数据暂不用回刷（因为量级比较小）  
+
+VOA:
+	

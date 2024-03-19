@@ -1,0 +1,3750 @@
+2023-04-24 
+入职简会：
+	-、培训计划：
+		长发：新人计划表（下周）[熟悉业务，工作对接，工作开始，项目安排。]
+		汇报：按月汇报（工作理解，任务理解） ，根据leader日程空闲情况。
+	-、业务方向：
+		业务预测数据底盘 - 业务流向 
+		中转，流向 - 大方向。 
+	-、长发-导师,海艳 - 虚拟数据组长
+	-、公司培训：业务培训。
+	-、加班：高峰节假日忙  --  轮值 ，（白-晚班） 双11/618等 。 
+		2023-06-03 21:00 ~ 2023-06-04 08:30
+		2023-06-06 21:00 ~ 2023-06-07 08:30
+		2023-06-15 21:00 ~ 2023-06-16 08:30
+		2023-06-18 21:00 ~ 2023-06-19 08:30
+	-、晋升：按年晋升 ，评审（1年内以后），8 - 9 。hQ2yG7fF5f
+		MAC:C4-75-AB-42-BB-3E
+	<repositories>
+        <repository>
+            <id>central</id>
+            <name>maven-releases-virtual</name>
+            <url>https://artifactory.sf-express.com/artifactory/maven-releases-virtual</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>maven-snapshots-virtual</name>
+            <url>https://artifactory.sf-express.com/artifactory/maven-snapshots-virtual</url>
+        </repository>
+        <repository>
+            <id>aliyun-repos</id>
+            <name>aliyun Releases</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+    </repository>
+</repositories>
+代办:
+	1、外网访问   【√
+	2、丰景台  添加到ordi用户下。  √
+	3、VDI是否要现在申请？  √
+	4、BDP权限，租户还是权限不够？√
+	9、社保交一档咨询HR。√
+	5、餐补次日到账，刷工卡？怎么报销？  √  服务-> 点餐  每月到账才能用。
+	6、环境相关:
+		6.0、平常办公提交代码用SVN/Git ,或者BDP？ -- BDP上提交任务。   √ 
+		6.1、本地电脑需要JDK环境安装，如果安装目前使用那个版本?  --   
+		6.2、日常办公需要自己安装IDE工具，还是直接用BDP平台？  -- BDP , jar用idea    √ 
+		6.3、具体数据模型有示例没？ -- 数据血缘关系 - 数据地图 -表名 -- 图谱    √ 
+		6.4、术语都有那些？比如AOI相当于网点下的一个概念。  √
+		6.5、确定VDI怎么使用  --  私人电脑安装即可，连接，关闭自动切换外内网络。   √ 
+	7、常用表权限申请，具体是那些表？[dwd数仓公共表（如运单/订单、班次等）]     √ 
+		： 协作 -- 业务预测-数据地盘 -- 地盘上游数据整理。
+	8、熟悉学习计划？  √
+	9、VDI私人电脑安装   √
+	10、ECP : http://sfecp.sf-express.com/ecp  提交各种申请(请假，外网访问权限，邮箱外发权限等)  √ 
+		SF知识库：http://kms.sf-expree.com
+		后勤：http://asps.sf-express.com/frame.pvt
+	11、电脑屏幕申请填写表单？
+	12、新入职员工历练？ OKR
+		http://ican.sf-express.com
+	
+2023-04-25 
+1、熟悉常用表 https://doc.sf-express.com/view/l/twnygd9
+2、熟悉-BDP上调度平台、IDE、数据地图、实时平台- 工具使用 http://data.sf-express.com/portal/ 
+3、一票快件流转流程
+	最少步骤：收件-打包-运输-拆包-派件	
+-、收件：| 收件准备->确认订单->上门收件->资料检查 ->货物检查->快件打包 ->称重计费->收取费用 | ->巴枪扫描->入仓（网点）->分拣建包->| 支线装车 
+-、中转运输环节： 分点部 -> 【_支线运输_】  ->  中转场 -> 【_干线运输_】  ->（陆运/空运） ->【 _干线运输_ 】中转场 -> 【_支线运输_ 】  ->分点部
+		类型分类：  集货（分点部->中转场）  -> 散货 (中转场 -> 分点部/单元区域)
+		流向分类： 始发地 -> 目的地
+-、中转分拣环节：  【片区中转场】										【转运中心：HUB/陆运】
+			 -> (单发件) -> 矩阵分拣    -> 
+							  ^
+							  |										 ->(单发件&小件)  -> 矩阵分拣
+		卸车 -> (小件)  -> 小件分拣     ->      装车 <干线任务> 卸车 -> (重货/NC件)   -> NC区分拣    -> 装车 
+			 -> (重货/NC件) -> NC区分拣 -> 
+			 
+-、派件： 货物到件 -> 网点卸车 -> 分拣 -> 出仓 -> 快件交接 -> 上门派件 -> 确认身份 -> 客户查验 -> 签收 -> 收费 -> 巴枪扫描 -> 交款落单 
+
+2023-04-26 
+1、私人电脑配置填写  √
+	终端名称：rcd
+	云服务器地址：100.110.129.150
+	安全访问网关：开
+	安全访问网关地址：SF-VDI.SF-EXPRESS.COM
+	安全访问网关端口：5910
+	内外网免切换：关
+	
+	BDP平台地址：http://data.sf-express.com/portal/ 
+	丰景台地址：http://cdbi.sf-express.com/v2/#/
+	治水平台：http://sfyun-sit.sf-express.com/portal/controlPanel
+	丰测平台：http://bfms.sf-express.com/forecast/static 
+	大数据队列资源监控：http://data-ops.sf-express.com/#/host/yarnQueue
+
+	1.1、BDP指引学习  -- 临时查询 ，离线，实时  大概熟悉流程 √
+	1.2、申请表权限。[协作 -- 业务预测-数据地盘 -- 地盘上游数据整理。]
+		-、按个人/应用  -- 个人    √
+		-、表需要每个单独申请还是可以批量？  -- 单独申请， 批量提交审核   √
+		-、申请权限（只读/读写），申请范围（字段，安全等级(c1-c4)）   -- 只读 ，C2  √ 
+		-、申请表方向： 流向，中转 ，线路规划-相关    √
+2、业务预测场景 
+	-- 城市/航空-流向  动态/静态班次-中转场
+	-- 发哥拉会，大解下 。   √  5.4 下午16:00-17:00
+3、数据地盘表字段含义及基础数据血缘关系
+4、其他
+	1- 周会什么时候开（是否需要周报）？  -- 需要拉人，看时间安排 
+	2- 本周工作什么形式汇报？   -- PPT , excel 形式汇报
+5、压测步骤?  -- 根据情况， 运单来汇总。
+6、question:
+	1、pis/eta是什么意思？
+	
+
+2023-05-04
+1、time
+2、Qestion:
+	1- 治水平台如何更新任务状态，填写规范？
+	2- 代码开发，测试，上线流程确认下
+	3- 任务选择要求，Fspark/hive/tez
+3、新需求
+城市省份流向底表开发、航空省份流向任务交接，0504开始，0508结束 - 王英楠
+dm_predict.dws_airflow_province_qty_d
+数据需求： 
+背景：城市流向增加省层级预测，故需将现有城市流向-城市维度的底表数据汇总到省维度。 
+参考资料：可参考航空省流向汇总任务ID：485757，进行城市流向-省维度的底表开发。 表名：不限 
+字段名： ds：日期 provinceflow：流向  ：件量（每日城市流向-省维度件量） update_time：更新时间 inc_day：分区日期yyyyMMdd 备注：provinceflow 包括约913+条省流向，以及一条城市总量数据，provinceflow=all。
+
+任务交接代办
+	1、任务负责人  √
+	2、告警监控   √
+	3、质量监控  -- 自己加       √  √        
+	4、表管理员转给我。    √ 
+	5、队列切换  -- 资源配置-队列  √   -- predict
+	6、交接需求--> 修改逻辑刷新最近45天，参数设置，代码修改。
+
+新需求代办:
+	
+	1、数据更新周期 - 按天？ √
+	2、定时任务需要指定特定时间吗？-- 依赖即可√
+	3、历史数据是否需要重刷?只刷一次还是每天都刷新历史？ √  
+			-、2020-01-01 开始  √ 
+			-、45天  -- yyyyMMdd45	$[time(yyyyMMdd,-45d)]   	yyyyMMdd1	$[time(yyyyMMdd,-1d)]  √ 
+			-、之前航空省份流向-也修改为  45天刷新，  √  
+			-、发布 √
+	4、和发哥过逻辑  √
+		-、省维度包含（始发/目的省份 ，按照哪个分组汇总 ？还是按照cityflow分组？还是说全部省份合并汇总？）
+	5、怎么添加离线任务  √
+	6、质量管理 - dm_predict.dws_city_province_qty_di √
+	7、数据验证 -- 省流对验证。 √
+	8、数据交付模板 - 数据抽样验证?  --- 交付报告 √
+	
+
+	
+需求开发步骤：
+	1、需求开发 
+	2、治水平台
+	3、质量监控
+	4、交付报告
+			-- 邮件发给《流向预测》所有人
+			-- 说明数据生效开始时间
+ 
+SLA 业务预测 - 压测  
+	1、流向/收派/中转/
+
+question:
+	1、应用选择，任务级别，运维人员    √
+		-、预测系统 ， B  , 江莹清 -- 运维相关、
+	2、依赖流程 ，  √
+	3、测试，发布流程
+		-、测试执行，直接更新正式库  √
+	4、历史数据重刷需要每天都执行，还是历史刷新一次即可  √
+		-、根据具体业务， 
+	
+
+2023-05-05
+1、周任务回顾
+	1、月度汇报- PPT  下下周
+		-、流向任务流解读-简介（输入，输出，设计那些表，任务流是做什么的？）
+		-、业务系统了解，收，派，线路规划， 等 （数据来源自那些系统） [业务知识图谱]
+		-、图表展示。-- 丰景台
+	2、startrocks,hudi了解学习
+2、需求确认事宜：  √
+	1、航空省份流向任务交接  
+		-、任务负责人交接
+		-、告警监控交接
+		-、表管理员交接
+		-、逻辑修改，每天刷新最近45天的分区数据。
+	2、新需求-城市流向增加省层级预测  
+		-、历史数据刷新（1次），自2020-01-01开始
+		-、每天刷新最近45天的分区数据
+		-、数据更新周期按天
+		-、数据执行依赖730590，每天凌晨2点执行。	
+3、SET hive.exec.max.dynamic.partitions=1500;   没生效？ -- 平台限制最多1000  √
+		'20230101' and '20230320' --
+		'20220101' and '20221231' --
+		'20210101' and '20211231'  --
+		'20200101' and '20201231'  --	
+		
+		
+				'20230101' and '20230325'  
+				'20220101' and '20221231'   --
+				'20210101' and '20211231'   --
+				'20200101' and '20201231'  	--
+	dm_predict.dws_city_province_qty_di
+		quantity_num 最大值= 7200W+ 	  20221101     
+		quantity_num 最小值= 1 			20230215...   
+			[1,99990000]
+		最小行数 = 1047	20230122
+		最大行数 = 1215 20210629
+			[1000-1300]
+	
+4、流向小组算法会议纪要  √
+	-、算法优化 -- 映射优化 ， 春节，十一 等。
+
+2023-05-06
+1、airflow_province_qty_d ，历史数据是否需要重刷 √
+2、airflow_province_qty_d 质量检测，quantity_num 数量波动  -- 设置为0 ~9990000 √
+3、dm_predict.dws_city_province_qty_di 检测字段是否为null  √
+4、airflow_province_qty_d 历史数据写入  √
+
+		'20230101' and '20230321' 
+		'20220101' and '20221231'  --
+		'20210101' and '20211231'  --
+
+2023-05-08	
+5、SLA看板 
+6、 -、全局函数 l1d_yyyymmdd   
+	-、[inc_day>='${yyyyMMdd7}' and inc_day<='${yyyyMMdd1} 和between区别。
+	-、 航空： hk摸底，hk短期模型（0-2D），hk长期模型（0-74D），hk动态模型(0D)
+		城市： 城市流向静态模型输出result ， 摸底输出，
+		归集的上游表都是来自于哪里，有谁来维护?
+	-、历史任务怎么查看任务UI界面
+7、数据来源系统详解。 SF1513597038030   √
+	FROM dwd.dwd_waybill_info_dtl_di 
+	where 
+	-- inc_day = '20230507' 
+	-- limit 100 
+	-- source_waybill_no 原单号
+	-- tb_order_no	淘宝订单号
+	inc_day between '20230425' and  '20230505'
+	and (waybill_no  like  '%1513597038030%'  or order_no like  '%1513597038030%' or  signed_back_waybill_no like  '%1513597038030%'   or source_waybill_no like '%1513597038030%' or tb_order_no like  '%1513597038030%') 
+	
+	sisp地址 http://shiva-sisp-wqs-shunt.sf-express.com/index.html
+	查看运单信息。
+	
+	
+8、m-n位的数字：^\d{m,n}$ √
+and cityflow  regexp '^(\\d{3,4})-(\\d{3,4})' 
+
+9、测试示例，可以一次跑多个？   √
+	-、另起一个页面可以跑多个
+10、年度目标  
+11、
+	-、月度汇报-- 2023-05-19 
+	-、流向交接 -- 本周拉会过
+	-、流向代码优化  
+		-、484058 ，484083  参数优化正式没修改？
+			set hive.exec.max.dynamic.partitions.pernode = 500    -> 1000
+		-、470197 优化
+			 -- 托寄物去重
+				set spark.sql.shuffle.partitions=600;
+				set spark.sql.adaptive.enabled=false;  -- 是否开启调整partition功能。
+			 指定下游分区增大， 下游任务相应的速度增加。
+			 
+		-、484086 - 航空动态打点，复制工作流（第一步改成hive任务）并冻结，
+		-、448434 - 航空五维度
+			-、448419 -- 待优化 
+					- 10min	2023-05-16
+					- 12min	2023-05-15
+					- 6min	2023-05-14
+					- 6min	2023-05-13
+					- 16min	2023-05-12
+					- 6min	2023-05-11											 step1 (2:52 -> 2:56 = 4min)	 step2(2:56-> 2:58  = 2m)
+					- 40min	2023-05-10			10(-75)  + 40(+22)   + 31(-20)    step1 （3:06 ->3:41 = 35m）  step2( 3:41-> 3:46  = 5m)
+					- 55min	2023-05-09 											  step1 （3:05 ->3:55 = 50m ） step2( 3:55-> 4:00 = 5m)
+					- 18min	2023-05-08 			85  	 + 18  		 + 52		  step1 （4:12 ->4:27 = 15m ） step2( 4:27-> 4:30 = 3m)
+					- 12min	2023-05-07 周日
+					- 17min	2023-05-06 周六
+					- 12min	2023-05-05 
+					- 21min	2023-05-04											 step1 （3:34 ->3:49= 15m ） step2( 3:49-> 3:54 = 5m)	
+					- 22min	2023-05-03											 step1 （4:19 ->4:31= 12m ） step2( 4:31-> 4:41 = 10m)	
+					- 13min	2023-05-02
+					- 12min	2023-05-01
+					- 13min	2023-04-30
+					- 11min	2023-04-29
+					- 18min	2023-04-28
+					- 8min	2023-04-27
+					- 11min	2023-04-26
+					- 15min	2023-04-25
+					- 8min	2023-04-24
+				-、step1 : dm_ordi_predict.cf_air_list (9万+条)  & tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1 (13.6亿)
+			
+				452264 -- 待优化					452259 02:55  03:12  03:24      =  17  + 12 = 30   
+					  30
+					  31
+					  27
+					  28
+					  34
+					  44
+					  45
+					  49
+					  35min
+					- 37min	2023-05-12
+					- 27min	2023-05-11
+					- 31min	2023-05-10
+					- 25min	2023-05-09 
+					- 52min	2023-05-08
+					- 43min	2023-05-07 	周日
+					- 50min	2023-05-06 	周六
+					- 26min	2023-05-05 
+					- 57min	2023-05-04
+					- 36min	2023-05-03
+					- 74min	2023-05-02
+					- 25min	2023-05-01
+					- 30min	2023-04-30
+					- 50min	2023-04-29
+					- 35min	2023-04-28
+					- 42min	2023-04-27
+					- 56min	2023-04-26
+					- 48min	2023-04-25
+					- 39min	2023-04-24
+					
+		-总结：
+			1、452259 优化	30min 
+				1-、仅仅切换引擎为spark  25min
+				2-、未切换hive,取消临时落表操作   20min 
+			    3-、切换为spark，取消落标  9min
+			 
+					
+2023-05-11
+1、新需求：  √
+	-、617182 【预测归集-流向】非空网航空件归集  
+		1-、dm_ordi_predict.cityflows_fast_resultz_online[城市特快]
+			-、关联dm_ordi_predict.cf_air_list， 剔除航空流向数据
+			-、过滤取昨天数据。
+		2-、关联辅表，获取省份对，起始/目的-area_code,fbq,hq
+		3-、分组聚合 - 预测数量(predict_value)/predict_Waybill('')/predict_Weight('')/predict_Volume('')
+			union all 原表。
+		4-、输出：dm_predict.dws_fc_nohk_tekuai_predict_collecting_di	 partition (inc_day)
+					origin_code -  起始城市代码  甘肃    	-- 有中文有英文？
+					dest_code - 目的城市代码	陕西		-- 中文 
+					src_province - 起始省份 	福建		-- 中文 
+					dest_province - 目的省份 	广东		-- 中文 
+		参考逻辑：
+		 -、添加 重量预测数据
+		 -、参考 663516 【归集-流向】月度流向特快件
+			1-、dm_ops.dm_zz_air_waybill_avg_weight[空网件均重量表]  ，
+				-、过滤近45天，打标签 - 快-慢产品  ， 补全 send_province, dist_code起始城市
+				-、按 plan_send_dt ，起始/目的省份，operation_type(快-慢产品)，dist_code(起始城市) --，
+					计算 avg_weight = sum(real_weight) / sum(waybill_cnt)
+				-、去掉plan_send_dt  分组，求均值= avg(avg_weight).
+				-、输出t2
+ 			2-、dm_predict.hk_cityflow_predict_month_period[月度航空城市流向-预测数据]    
+					operation_type -- 鞋服大客户，新空配，特快，特色经济，快产品 ，慢产品，陆生航
+				-、过滤当天业务数据
+				-、关联获取起始/目的省份
+				-、输出t1 
+			3-、 t1(主)和t2 进行不同字段的 左连接， 根据关联情况 ，判断生成 predict_weight
+					（split(t1.object_code,'-')[0]=t2.dist_code）   object_code = 网点/AOI/流向/地区编号[示例：021-711]
+				-、输出 dm_predict.hk_cityflow_predict_month_collecting	partition (inc_day,predict_period)
+  
+		问题： 
+			1、617182日度，统计的avg日期范围是否也是近45天？   -- 一致   √
+			2、663516是按照 起始城市dist_code 匹配， 日度是否也一样？  -- 一致   √
+			3、617182现有计算逻辑不变，再新增重量计算？  -- 一致   √ 
+			4、617182dm_predict.dws_fc_nohk_tekuai_predict_collecting_di   有中文有英文（是海外）？（origin_code）   √  
+				-、确认 dm_predict.dws_fc_nohk_tekuai_predict_collecting_di  近一年数据origin_code是否有中文
+			5、617182新的逻辑，需要关联 operation_type 吗，    √
+				-、确认下  dm_ops.dm_zz_air_waybill_avg_weight 的 非空网标识   
+						 ---  465353  operation_type = ''
+					-- 不需要关联， 
+			6、两个流向是否可以依赖。 如果 空网件均重量表 - 可以共用  -- 不能 任务周期不一致  √
+			7、为什么dist_code 起始城市，而不是目的城市？    √
+					-- 因为均重表只有起始城市  
+			8、617182 dm_ops.dm_zz_air_waybill_avg_weight 的 非空网标识     √
+				-  = nvl(operation_type,'') 
+				不筛选
+			9、617182	dm_ordi_predict.cityflows_fast_resultz_online[城市特快]  确认为什么origin_code有中文   √
+				origin_code 存在   √
+					1-- DFW 
+					2-- 福建 ， 香港，山东  （此时src_province = ''）
+					3-- ''
+				-、上游修改  --  筛选类型
+				-、下游再匹配name  -- 关联dim_department表。
+			10、-、城市流向，非空网均重 ， 是否根据 dist_code(origin_Code),dest_code  , src_province,dest_province 
+					-、
+				-、省份的，是根据城市的计算 avg ,  原代码却是SUM（avg）= 省份   √
+						-、sum的是predict_weight
+				
+		需求确认：
+			1、[空网件均重量表]    √
+				-、过滤近45天数据
+				-、筛选非空网数据
+				-、按  	plan_send_dt,      计算 avg_weight = sum(real_weight) / sum(waybill_cnt)
+						send_province,
+						arrive_province,
+							operation_type,-- 
+						dist_cod
+				-、再去掉plan_send_dt ， 分组 计算 avg(avg_weight)
+			2、主表 关联  1中结果（ dist_code，arrive_provinc / send_province ,arrive_province  / 总数据  计算avg） 
+					计算predict_weight
+			3、历史数据是否需要补全  √
+					- 不需要
+			4、精度。 -- 不影响 √
+			5、1=1 是否可以用   √	
+				-、查看每个case when 比例
+				-、按照省份汇总， 不能取整个
+			6、历史任务怎么看执行UI， hive参数再spark中生效吗？√
+				-、联系BDP小客服询问
+				http://spark3hs.sf-express.com:18080/
+			7、NVl() 空值关联处理√
+			8、原表  ，需要添加根据dim_department√
+			9、匹配不上的数据，根据省份均重匹配。√
+			10、筛选 object_type = '航空城市流向' ， 之前没晒？
+			代码优化；
+				1、663516,[空网件均重量表]是否可以直接筛选 快慢产品？ （因为主表dm_predict.hk_cityflow_predict_month_period  只有1条为''operate_type）
+					      CASE WHEN operation_type IN ('经济快件') THEN '慢产品'
+						   WHEN operation_type IN ('特快系列','陆升航','特色经济','鞋服大客户') THEN '快产品'
+						   ELSE null 
+					   END AS operation_type,
+						-、主表为''的数据，没有inc_day,且和附表null也关联不上。
+							-、验证： 输出归集表 dm_predict.hk_cityflow_predict_month_collecting ， 没有 operation_type = '' 或者null的
+						-、后续代码有过滤null
+					优化方式：
+						-、case when --> if(operation_type = '经济快件','慢产品','快产品') as operation_type 
+							提前过滤 --> where operation_type in ('经济快件','特快系列','陆升航','特色经济','鞋服大客户')
+						-、去掉 where operation_type is not null
+						
+				2、大小表join优化。（663516&617182 ）
+				
+	-、开通权限表： √
+		dm_ops.dim_city_area_distribution（城市业务区分拨区省份板块映射）
+		dim.dim_department 
+		dm_ops.dm_zz_air_waybill_avg_weight √ C2
+		
+	-、雷超转权限  √
+		-、表质量管理 --  dm_predict.dws_fc_nohk_tekuai_predict_collecting_di 表管理员是海艳
+	-、数据修改
+		
+2023-05-12
+1、省流向预测/城市航空预测  - SLA看板
+	-、手机端使用
+2、下周交接流向事宜 
+	-、优先 528211 
+	-、表权限申请
+3、新的需求-维度需求-沙沙   
+4、 -、499690[航空营运归集]任务-重复数据重跑    √
+		528771   重跑实例
+		511463	 重跑实例
+	-、检查下所有的关联省份的任务保持统一逻辑，参考脚本730590
+	   ,case when t2.province is not null and split(t1.cityflow,'-')[0] rlike '^\\d+$' then t2.province
+			  when t2.province is null and b.provinct_name is not null then replace(replace(b.provinct_name,'省',''),'自治区','')
+			  else '海外' end as src_province
+		,t2.distribution_name as src_distribution_name
+		,case when t3.province is not null and split(t1.cityflow,'-')[1] rlike '^\\d+$' then t3.province
+			  when t3.province is null and c.provinct_name is not null then replace(replace(c.provinct_name,'省',''),'自治区','')
+			  else '海外' end as dest_province
+	-------------------------------------------------------------
+		 left join
+		(select dept_code,provinct_name from dim.dim_department where delete_flg='0'AND country_code ='CN') b
+		on nvl(split(t1.cityflow,'-')[0],'a')=b.dept_code
+		left join
+		(select dept_code,provinct_name from dim.dim_department where delete_flg='0' AND country_code ='CN') c
+		on nvl(split(t1.cityflow,'-')[1],'a')=c.dept_code;
+
+2023-05-15
+1、会议
+航空流向的冻结使用城市流向正式表的数据加到   √
+我的相关：	
+	- 、18号， 3点前，   √
+	取消归集https://confluence.sf-express.com/pages/viewpage.action?pageId=324348270  
+	预测归集	528211	【预测归集-流向】城市&航空0至75D归集new	王英楠	, 5月18日当天任务跑完后，15:00前 。 END-2023-05-18_15:00
+	1、任务流-只归集航空流向，取消城市流向相关依赖 
+		-、表权限  √
+		-、删除城市流向节点[流向归集-城市流向-528034],[流向归集-城市流向-摸底-660602],[流向归集-城市流向-拼接-660604] √
+		-、代码备份-城市流向相关。  √
+		-、汇总代码修改   √
+		-、删除依赖 √
+				403134	城市流向模型预测结果数据更新 	[dm_predict.city_cityflow_predict_result] 
+				438930	城市流向模型B版预测				[dm_predict.city_cityflow_predict_result] 
+				646771	城市流向动态7点静态填			[dm_ordi_predict.cityflow_dynamic_resultz_online]
+				678710	【滚动刷新】城市流向滚			[dm_predict.cityflow_qty_predict_gaofeng]
+				685724	城市流向B版和总量模型			[dm_predict.city_cityflow_predict_result]
+		-、是否需要测试，是否发布，历史数据处理？
+			-、测试汇总代码是否正常   √
+				-- 5839105  去掉城市流向后
+				-- 32811058  去掉城市流向前
+				-- 26971953  城市流向
+			-、发布 √
+			-、历史数据是否需要重刷？ -- 不需要 √
+	2、下游依赖去掉（大群中@所有人）  √
+	3、18号下午3点前，修改完大群里发布说明  √
+		-、更新任务已完成
+	
+2、城市省流向-数据刷新    √
+	城市预测的是票量，航空预测的是件量，目前城市统计的字段是件量，所以得要重刷下，取票数的字段
+			'20230331' and '20230514'
+		'20230101' and '20230330'   -- 
+		'20220101' and '20221231'   -- 
+		'20210101' and '20211231'   -- 
+		'20200101' and '20201231'  --
+		
+3、超哥流向讲解  √
+4、关联省份的任务统一处理 
+5、质量监控  dm_predict.dws_fc_nohk_tekuai_predict_collecting_di      √
+	partition_key	_count(1)
+	20230802	30407
+	20230801	30407
+	-- 2023-08-02
+	-- 2023-08-01
+	select * from 
+	(select predicted_datetime from dm_ordi_predict.cityflows_fast_resultz_online 
+	where inc_day='$[time(yyyyMMdd,-1d)]'
+	group by predicted_datetime) al 
+	order by al.predicted_datetime desc limit 100 
+			-- 数据周期
+6、更新 https://doc.sf-express.com/view/l/to57aeh  √
+	 航空城市流向日度重量预测	T+0D~75D	件均重乘	王英楠	10点		617182
+	 
+2023-05-16
+之前任务复盘
+1、SLA看板/全局函数/年度目标
+	
+2、月度汇报（业务+PPT） - 2023-05-19    ☆☆☆☆
+3、交接
+	-、【收派切换的checklist】 528211   
+		-、城市流向包含丰网，航空不包含?  √
+		-、第一个事项文档：https://doc.sf-express.com/view/l/t9xvtlm    END-2023-05-18    √ 
+			[顺丰速运]数据隔离方案.xlsx，对应看sheet页名字是‘回切xxx’的
+		-、SLA看板更新，涉及到有切换到丰测的任务，需要添加到SLA看板中，各环节对接何浪这边自行检查，本周更新完@所有人  何浪那边会发文档出来，大家对应更新
+		
+	-、【底盘去掉丰网】各环节大家整理下，如果底盘去掉丰网的数据，涉及到哪些数据表，影响哪些模型，处理方式，这两天整理下， 
+			补充到共享文档 https://doc.sf-express.com/view/l/tq0kwz3 [顺丰速运] 去丰网涉及调整.xls
+		-、关于丰网业务取消后各底盘低表是否重刷的问题     
+			-、正常涉及到运单级别的，都会受影响   
+					-- 场地是否是丰网
+				select  dept_code,area_code,area_name,hq_code from  dim.dim_department a where hq_code='CN39'
+				dm_ordi_predict.dm_fact_air_waybill_no这个表有重复数据，你们刷新底表得注意下
+		
+			网点，收入板块，
+			运单，订单
+			
+			丰网的收件网点设计到非空网的受众， 不用踢
+			流向 -- 剔除丰网板块
+					网点，
+					收入板块  
+						有产品板块的用产品板块，	
+						fq=丰网 
+										
+	-、SLA看板 -- 
+			-、添加SLA-流向上下游对接
+	-、表权限申请   √
+		-、其他流向表权限
+			-、dm_fin_itp.itp_vs_rel_city_bg_area_mpp(管报城市对比BU配置表VS)  -- 730590 待打电话提示通过   END-2023-05-18  √
+		-、全局参数/流程图怎么修改 -- 直接可以修改。
+	-、表质量管理
+	-、更新协作文档-交接任务
+4、省份统一   ☆☆
+	663516 -、均重省份 -、航空月度预测表，身份
+	617182 -、均重省份 
+	490824 
+5、沙沙新需求--流向场景经常用到的字段  如果需要做全一些的话也可以添加些其他的字段哈    ☆☆
+	流向城市维度表
+		城市代码
+		城市名称
+		省份名称
+		业务区代码
+		业务区名称
+		分拨区代码
+		分拨区名称
+		
+	1、添加其他字段
+	2、每天刷新 
+	
+		1、非空网-- 匹配dest_name，错位
+			方案1-、下游自己关联获取
+			方案2-、加标识，统一
+		2、海外（比如：origin_code = 'RYG'） ,城市名称怎么命名？
+		3、匹配不全的， 统一处理 
+		4、cityflow regexp '(\\\d{3})-(\\\d{3})' 非空网 是否需要  ， 非空网的预测数据月度归集。
+7、 448434任务，表切换-替换表         √
+	-、470206   ☆☆☆☆[后续处理]
+		dm_bie.special_eco_pro   -- 禁止申请 01397472/黄宇  -- 项目优先级  【已申请】
+		--  dm_bie.special_eco_pro_2022new（特色经济手工导入配置表） 新表没有 priori 字段  ,通过去重  【已申请】
+	-、448419[判断航空和特色经济] 和 452259[特色经济判断]   √   END-2023-05-18   
+		dm_bie.bie_fact_special_econ_dely_dtl -- 禁止申请 166045/吴群英   【驳回】
+		-- dm_bie.bie_fact_special_econ_dely_dtl_2022new（特色经济寄件明细报表新）  【已申请】
+		
+			差异：
+				other_fee 新表C2,之前是C3
+				fetch_data 新表注释修改-统计字段(作废字段）
+				broad_heading 新表注释修改-托寄物品类（三级品类）
+			
+		496536 [A2]   -- 拖寄物 - 关联配置表new   √
+		dm_bie.tm_consign_info  -- 托寄物 优先级  （特色经济关联配置表）  【已申请】
+
+		不需要加依赖
+		1-、确认字段  
+		2-、确认新表逻辑是否和老表一致
+		3-、确定新表在当前业务逻辑中是否有影响。
+	
+8、取消任务create正式库表 -- 城市/航空省到省流向日汇总数据 √
+9、流向环节周会-excel   √
+10、731274
+			-、最近55天修改为最近45天
+			
+11、大件交接和全面预算交接，本周四下班前输出交接排期  -- END-2023-05-18 √
+	-、晓雯 --  大件业务熟悉
+	-、表权限， 上游读， 下游写的权限。
+	-、质量监控， 输出表
+	-、SLA看板
+	
+12、流向交接 -- END-2023-05-19   √
+13、END-2023-05-18  √
+	3、航空流向省到省日度真实值汇总，需重刷
+		任务ID：485757
+		任务负责人：英楠
+		重刷可操作时间：2023.05.18 10:00~24:00
+		重点刷新时间：202206~202305
+		-、
+	4、城市省流向日度真实数据汇总，需重刷
+		任务ID：738841
+		任务负责人：英楠
+		重刷可操作时间：2023.05.18 10:00~22:00
+		
+		-、	
+		'20230101' and '20230517'  --
+		'20220101' and '20221231'  --   √
+		'20210101' and '20211231'  -- 	√
+		'20200101' and '20201231'  --   √
+14、END-2023-05-19_12  √
+	18周~21周
+	截至填报时间：明天5/19中午12点[灯泡]
+	
+	20周：
+		1-、【城市&航空0至75D归集new】底表修改(去掉城市流向依赖)
+		2-、 流向交接-已完成
+	21周：
+		1-、大件交接
+		2-、流向底表剔除丰网模块
+	
+15、流向-tomorrow
+	-、528211  - 代码修改 查看效果  -- 20230519跑完后。    √ 
+		-   partition_key=20230520	89998
+		- 	partition_key=20230519	89998
+		-   partition_key=20230518	774078
+	-、448434  - 添加新表 查看效果   -- 修改开窗函数仅根据waybill	√
+		-、448419 waybill开窗去重
+				-- 90814864  rank前
+				-- 91139884  rank后
+				select count(1) from tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp3
+		-、452259 waybill开窗去重
+				-- 1386877447  rank辅表前， 主表数据量
+				-- 1386877452  rank辅表后， 总数量
+				select count(1) from  tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp3
+
+	-、流向底表添加监控/SLA确定
+	
+16、丰网剔除时间安排，-- END-2023-05-23    
+	-- end 2023-05-24 刷新完     ☆☆☆☆
+	-、OMS & 城市流向动态打点 历史数据是否需要刷，和模型确认
+	-、剩余的两个，历史需要刷
+	-、城市动态打点这个如果要刷的话，需要流向英楠这边确认下影响哈，因为动态数据从明细回刷趋势会变、
+		-、城市动态打点（468144，468146）， 没有income_code，product_code，根据hq中去掉丰网的数据
+		-、刷新范围 & 剔除规则确认
+		-- 尽量下周周三前。
+		
+		剔除规则：
+			1.丰网的场地数据都剔除。
+			2.其他网点收/派丰网快件也要根据产品板块剔除。
+			丰网场地的确定逻辑 hq_code='CN39'，产品板块的确定逻辑，income_code='丰网'
+			中间表或者结果表有网点，product_code 和 income_code 中的一个，就可以直接剔除，不然就要从源头开始剔除
+			
+			1、hq,income,product_code 都有按照那个？还是三个都要？ 
+			2、场地=大区/业务区/网点
+			3、hq_code 有  pickup_hq_code = 寄件大区名称
+			
+	-、SLA-  新增流向确认  --  接口不需要加  √
+		678297 -归集
+		719677 -归集回传
+		727135 - 城市流向
+		497377 - 城市流向
+		497358 -- 航空流向-总量/航空流向-省份/航空流向-城市
+	
+17、
+	1、月度归集 dm_predict.hk_cityflow_predict_month_collecting √
+		-、是的
+	2、去掉带有国际的流向数据  cityflow regexp '(\\\d{3})-(\\\d{3})'  √
+		-、新逻辑加上,非空网，以及月度归集？  -- 是的
+			-、非空网（当天）
+				before --  2295783
+			    now    --  1456299 
+			-、月度：（历史）
+				before  -- 18149346
+			    now 	-- 18149346  
+		-、历史数据不需要处理？ -- 历史不管。  √
+		-、非空网的今天重跑一遍，加上过滤 -- 仅测试，第二天试跑正常   √
+			
+	3、历史数据已刷新至tmp表，  √
+			dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_tmp2023
+		alter table dm_predict.dws_fc_nohk_tekuai_predict_collecting_di rename to dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_old;	
+		alter table dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_tmp2023 rename to dm_predict.dws_fc_nohk_tekuai_predict_collecting_di;
+		--备份表  √
+			dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_20230519backup
+			-- 5622608
+			select count(1) from dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_20230519backup
+	4、非空网的城市名称错位处理。 √
+		-- 暂时关联 tmp_dm_predict.zhaojinyang_dim_department_city 处理
+		
+		
+2023-05-22
+代办
+	1、去丰网 - 城市流向 	468144,468146
+			  - 其他流向
+		dm_ordi_predict.dws_static_his_cityflow
+		dm_ordi_predict.dws_static_cityflow_base
+		his:
+			'20180101' and '20181231'  -- 无丰网
+			'20190101' and '20191231'  -- 无丰网
+			'20200101' and '20201231' √
+			'20210101' and '20211231' √
+			'20220101' and '20221231' √
+			'20230101' and '20230522' √ 
+			
+		-、历史数据2021-04前后的航空判断逻辑不一样。  【流向静态-历史回刷写入back表】   -- 代办 ★★★★★★★
+				-、先备份 20210601 ~ 20230522 月之后的数据
+						20230301 - 20230331
+						20230401 - 20230522  √
+						20220101 - 20221231  √
+				-、20200101 ~ 20210531  后续在重跑备份
+		-、历史2018~2019 已备份    √
+				dm_ordi_predict.dws_static_his_cityflow_backup2018_2019
+				dm_ordi_predict.dws_static_cityflow_base_backup2018_2019
+		-、雄伟相关： 历史回刷   -- 只刷城市的，  √
+		   dm_predict.dws_airflow_province_qty_d  -- 1775517
+		   dm_predict.dws_city_province_qty_di    -- 1385749
+					'20230101' and '20230522'  --   √
+					'20220101' and '20221231'  --   √
+					'20210101' and '20211231'  -- 	√
+					'20200101' and '20201231'  --   √
+				-、备份
+					select count(1) from dm_predict.dws_city_province_qty_di_backup20230523  -- 之前备份
+				!-	select count(1) from dm_predict.dws_city_province_qty_di  -- 1385749 --old  恢复    	-- 晚上20：32
+				!-	select count(1) from dm_predict.dws_city_province_qty_di_remove_fs; -- 1385254 去丰网   -- 晚上20：32
+				
+				alter table dm_predict.dws_city_province_qty_di rename to dm_predict.dws_city_province_qty_di_remove_fs;	
+				alter table dm_predict.dws_city_province_qty_di_backup20230523 rename to dm_predict.dws_city_province_qty_di;	
+				
+
+		-、730590/731274，线上代码修改。  √
+				-- 20230523 去除丰网
+			!-、数据通过回收站已恢复 -- 晚上20：32
+				-- 恢复城市流向base表
+				alter table dm_ordi_predict.dws_static_his_cityflow_old0523 rename to dm_ordi_predict.dws_static_his_cityflow;
+				-- 恢复城市流向his表
+				alter table dm_ordi_predict.dws_static_cityflow_base_old0523 rename to dm_ordi_predict.dws_static_cityflow_base;
+							
+				msck repair table dm_ordi_predict.dws_static_cityflow_base_old0523 ;
+				msck repair table dm_ordi_predict.dws_static_his_cityflow_old0523 ;
+				
+					-- '20210101' and '20211231'
+					-- '20220101' and '20230522'
+					-、2023-05-23 晚上处理 （城市流向）
+			-、恢复回收站数据  √   -- 2021年之后写入之前的表。
+				dm_ordi_predict.dws_static_his_cityflow_old0523
+				dm_ordi_predict.dws_static_cityflow_base_old0523
+			-、2020年手动写入  √
+					
+					
+	2、城市维度底表开发  √
+		1-、表名：dm_ordi_predict.dim_city_level_mapping_df 
+			中文：城市映射表
+		    更新方式：按天
+		2-、海外城市名称/分拨区没有值怎么处理？   -- 不做处理，置为''
+		3-、三个城市公共用同一个city_code，怎么处理？  -- 以dim_department为主
+		4-、dim_department 表取简称，   replace(city_name,'市','') ， replace(replace(provinct_name,'省',''),'自治区','')
+		5-、dim_department 只取3位且为数字的？ dept_code regexp  '(^\\\d{3}$)'
+			-、自关联
+		6-、历史涉及城市，省份的代码和历史数据都需要回刷？
+		7-、尽量覆盖所有底表，不遗漏city_code
+			-、dm_ordi_predict.dws_static_cityflow_base 表查看
+		8、依赖 5845
+		
+		
+	3、月度汇报  -- 
+		-、周2，周4拉个会
+	4、大件任务交接
+	5、营运维度重复waybill数据，后续环节加重复监控
+	6、所有的sla的看板以及监控哪些内容，这些都整理下哈，环节周会大家会统一看  √
+	7、dm_predict.dws_fc_nohk_tekuai_predict_collecting_di  ，rename后， 表管理员变了   √
+		-- 在控制台可以该 
+	
+	8、数据监控规范
+	   -、切丰网 
+	   -、备份 
+	   -、生产数据写入步骤优化。-- 规范操作。
+	9、
+		-、维护底表更新进展更新到https://doc.sf-express.com/view/l/tq0kwz3 中【切换进展】 页面，并及时发到各环节群，让大家来评估哪些需要模型或分析补录的，
+		-、在临时表需要让分析验证下，流向这边你也发到群里让分析校验吧
+	10、
+		 主数据、预测对象、质量监控持续完善，确保异常在项目组内首先发现，而不是由下游业务报上来
+	11、治理后处理逻辑。
+	12、大家注意修改一下任务的开发和运维任务，把大家都加上，618运维的时候更好处理
+		499690 √
+		528211 √
+		617182 √
+		761064 √
+		489425 - 冻结  √
+		731274 √
+		730590 √
+		663516 √
+		448434 √
+		742776 - 高峰hive √
+		490824 √
+		663166 √
+		485757 - 应用内所有
+		738841 √
+	13、去丰网备份表维护
+		dm_ordi_predict.dws_static_his_cityflow	城市流向底表	dm_ordi_predict.dws_static_his_cityflow_backup20230524
+		dm_ordi_predict.dws_static_cityflow_base	城市流向底表	dm_ordi_predict.dws_static_cityflow_base_backup20230524
+		dm_ordi_predict.dws_cityflow_dynamic_order_hi	oms订单流向打点	dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230524
+			'20180101' and '20181231'  √
+			'20190101' and '20191231'   √
+			'20200101' and '20201231'   √  
+			'20210101' and '20211231' √
+			'20220101' and '20221231'  √
+			'20230101' and '20230528' √
+		
+		城市流向底表，2018~至今去丰网的数据已刷新至临时表。  【去丰网-写入临时表】
+			dm_ordi_predict.dws_static_his_cityflow_backup20230524
+			dm_ordi_predict.dws_static_cityflow_base_backup20230524
+		
+		1、-- 2023-06-08   更新数据 0529 - 0607的数据
+			'20230529' and '20230607'  -- 
+		2、修改线上代码，去丰网。
+		
+		3、dm_predict.dws_city_province_qty_di   去丰网  -- 重跑即可
+		4、oms去丰网 
+			dm_ordi_predict.dws_cityflow_dynamic_order_hi
+	14、
+		-、非空网修改关联新逻辑，取城市
+		-、维度表质量监控  √
+	15、维度表时使用方式 。
+			inc_day = '$[time(yyyyMMdd)]'
+			
+2023-05-26
+1、月度汇报	
+	-、流程规范，数据开发规范
+	-、底表：票量&件量等指标的含义
+	   下游：
+			-、学习理解 摸底，长期，短期，动态的含义，比如：输出那些范围，那些指标
+			-、学习理解城市维度，航空分析的异同点。·比如：分析指标差异，数据差异。
+	-、项目会议，记录学习其他业务板块
+	-、提前学习实时/业务， 整体问题统一沟通，节省时间
+	
+2、大件交接
+	-、set tez.queue.name=freight;  队列是否切换？
+	-、申请权限都为C2?
+	------------------------------------------------------------- 大件涉及底表-------------------------------------------------------------
+		/**
+			顺丰相关
+		**/
+		451091-工作流（每天08:30执行）  √ 
+			数据源：tidb_dmpdsp（tidb_fop_dmp_dmpdsp~dmpdsp）  vt_has_arrive_cars  和雷超再确认MySQL  √ 
+			目标库：大数据平台-快运集群 ky.dm_heavy_cargo.ky_has_arrive_cargo   -- 读写   --> 范浩(01388729)   ky  √ 
+			ky.dm_heavy_cargo.ky_has_arrive_cargo （读写）--  已有读，需要申请写权限。 --> 范浩(01388729)   ky   √ 
+		247099√ - 每天0点0分到23点59分间隔30min执行
+			"tidb.cloud2.jdbc.url"   dim_heavy_transit_info
+			dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4   √ 
+			dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail -- √（已注释，表不存在）
+			"tidb.jdbc.url" t_monitor_detail_data_process  -- mysql
+			"tidb.jdbc.url"  t_monitor_in_road_cargo_new   -- mysql
+			rt_container_waybill_relation  --Hbase
+			"mysql.kg.jdbc.url"  t_transportct_info -- mysql
+			"tidb.jdbc.url"  t_monitor_in_road_cargo_new -- mysql
+			"tidb.jdbc.url"	vt_has_arrive_cars  -- mysql
+			"tidb.jdbc.url" t_monitor_in_road_cargo_new   -- mysql
+			"tidb.jdbc.url"  t_monitor_detail_data_process -- mysql
+			"tidb.jdbc.url"	t_monitor_detail_data_row -- mysql
+		449074  √
+			"tidb.jdbc.url"	vt_has_arrive_cars -- mysql
+			rt_container_waybill_relation --Hbase
+			"tidb.cloud.jdbc.url" vt_has_arrive_cars -- mysql
+			dm_heavy_cargo.dm_has_arrive_cargo_yz_dtl_df -- 读写 禁止申请  -->01419728/  （代码已注销，无需申请） √
+		248838    √   -- 每天06:15执行
+			"tidb.cloud2.jdbc.url" dim_heavy_transit_info -- mysql
+			dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4 √
+			wb_info_data_sf -- hbase
+			bdp.dm_heavy_cargo.ky_has_send_cargo  -- 读写 --> 范浩(01388729)   √ 
+		470818  √- 每天0点0分到23点59分间隔1h执行
+					【 File does not exist: /hive/warehouse/dm/dm_heavy_cargo/rt_vehicle_task_monitor_for_not_send_detail4/20230531/part-0-1025】
+			"tidb.jdbc.url"	t_monitor_in_road_cargo_new  -- mysql
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di（读写） √
+			ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt（读写）  √  inc_day = '$[time(yyyyMMdd,-0d)]' and  inc_hour = '$[time(HH00)]' 
+		469910  √
+			ky.dm_heavy_cargo.ky_has_arrive_cargo  ~~  √
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di !!   √
+			ky.dim_freight.dim_heavy_transi_info	-- √
+			ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di  --读写   √     0.8的差异 06-01 ，06-02
+		473276 √
+			bdp.dm_heavy_cargo.ky_has_send_cargo  √
+			ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di -- 可读写 √
+			ky.dim_freight.dim_heavy_transi_info --  √
+			ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di --读写  √
+		553293 √  - 每天0点0分到23点59分间隔1h执行
+			"tidb.cloud2.jdbc.url" dim_heavy_transit_info -- mysql
+			dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4   √  
+					【 File does not exist: /hive/warehouse/dm/dm_heavy_cargo/rt_vehicle_task_monitor_for_not_send_detail4/20230601/part-1-160】
+			rt_container_waybill_relation  wb_info_data_sf wb_info_data_sx --Hbase
+			bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb -- 读写  √
+			tmp_dm_heavy_cargo.ky_has_arrive_cargo_huishua_tmp_20221025
+			
+				tmp_dm_predict.ky_has_arrive_cargo_huishua_tmp_20221025 stored
+		405031   √
+			数据源 Mysql: (tidb_fop_dmp_dmpdsp~dmpdsp) dim_heavy_transit_info   √
+			目标库：ky.dim_freight.dim_heavy_transi_info  -- 可读，雷超开通写权限   √
+
+		/**
+			接驳相关
+		**/
+		460984 √  -- 失败了，日志没看到，可能是文件找不到 202306061700-00000460984  laNCH process failed
+			bdp.dm_freight.op_tp_wl_handover_detail_info  √ 全表
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di  √ 可读写
+			ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt  -- overwrtie √ 读写   inc_day = '$[time(yyyyMMdd,-0d)]' and  inc_hour = '$[time(HH00)]' 
+			op_tp_wl_handover_batch_count_rt -- replace into  已注释 
+		473852 √      
+			ky.dm_freight.dm_wl_handover_forecast_dtl_df			√
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di  !! √
+			ky.dim_freight.dim_heavy_transi_info	 --   √
+			ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di （读写） √
+
+		459747 √
+			bdp.dm_pass_rss.sbsa_tm_transfer_batch_pro  √ - 全表
+			bdp.dm_freight.dim_calendar √
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di（读写） √
+			ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di（读写） √
+
+		/**
+			顺心相关
+		**/
+		416809  √
+			ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_sum_di  √
+			ky.dim_freight.dim_heavy_transi_info   --   √
+			ky.dm_heavy_cargo.ky_has_arrive_cargo    ~~  √
+			ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di（个人全表权限） √  
+
+		430625-工作流(zip+etl)  √
+			ky.dm_freight.dwd_sx_vehicle_dtl_di  √  全表 
+			dws_sx_vehicle_sum  -- √ mysql直接可以使用 
+			dws_sf_dept_sx_vehicle_sum -- √mysql直接可以使用
+			dim_heavy_transit_info -- 场地过滤
+			dmpdsp.pub_table_sync_version -- 版本控制表 √ mysql直接可以使用
+			ky.dm_freight.dm_sx_vehicle_his_sum_di √  全表 
+			tidb_fop_dmp_dmpdsp~dmpdsp & 大数据平台-快运集（ky.dm_freight.dm_sx_vehicle_his_sum_di）
+
+		472969-工作量-hive √  flow
+			ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di   √
+			ky.dm_heavy_cargo.sx_rt_jd_sink √ （C2）
+			ky.dm_heavy_cargo.dm_dwd_sx_vehicle_mid   √ -- 全表
+			bdp.dm_freight.tbl_car_info_data_new   √  （C2）  
+			ky.dm_heavy_cargo.dm_sx_vehicle_rt_jd_mid  √ -- 表管理员
+			ky.dm_freight.dwd_sx_vehicle_dtl_di（个人全表权限） √
+			
+		472976 √ 和雷超再确认MySQL   
+	【File does not exist: hdfs://ky/user/hive/warehouse/dm_freight.db/dwd_sx_vehicle_dtl_di/inc_day=20230606/part-00000-13bc2b17-8759-4ec6-a9b0-87a9c22da38d.c000
+			ky.dm_freight.dwd_sx_vehicle_dtl_di  √  全表 
+			fmsrms.dim_heavy_transit_info -- 场地过滤  √ mysql直接可以使用
+			dmpdsp.vt_has_arrive_cars_batch  -- 顺丰车辆过滤  √ mysql直接可以使用
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di √ 可读写 全表
+			pub_table_sync_version -- 版本控制表  √ mysql直接可以使用
+			dmpdsp.tablename ?  √ mysql直接可以使用
+			ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt（读写） √  inc_day = '$[time(yyyyMMdd,-0d)]' and  inc_hour = '$[time(HH00)]' 
+			TidbUtil.write（读写） √
+
+		473836  √
+			ky.dm_freight.dm_sx_vehicle_his_sum_di    	√ -- 已有无需申请
+			ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di !!  √
+			ky.dim_freight.dim_heavy_transi_info   --  √
+			ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di （读写） √
+			
+	
+	添加小文件合并依赖：376302   -- 每天16:04执行，
+		470818  √  
+		472976
+		460984
+		553293  √  
+	
+大件idea问题：
+1、setting.xml ， maven地址，仓库地址
+2、雷超给的项目，缺少HasSendCargoTask.scala类。
+3、install问题
+	-、缺失jar添加（注意jar是否损坏，看大小）
+	-、cannot access maven if offine mode  -- > maven  -- work offline  √去掉
+4、common install ， hbase install ，spark package
+	-、  hbase failed --> parent realtime 找不到的话 --> install realtime
+
+	------------------------------------------------------------- 大件涉及底表end-------------------------------------------------------------
+
+1、ETL目标库，是需要读写权限的（表）？   -- 需要  √
+2、代码中涉及到的mysql是不是不需要申请权限？  -- 不需要 √
+	"tidb.cloud.jdbc.url" 
+	"tidb.jdbc.url"
+	"mysql.kg.jdbc.url"
+3、代码中涉及的Hbase的链接，需要权限吗？  -- 不需要  √
+4、ETL源数据库也需要申请  √
+		
+
+		
+
+代办：
+	1、代码copy到目录  √
+	2、idea环境  √
+	3、关注SLA看板  √
+	3.1、+质量监控  
+		1.1、流向相关：
+		归集加非空监控。
+			dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi
+			dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi  -- [发哥+告警人]
+			
+			dm_ordi_predict.dws_cityflow_dynamic_order_hi
+			
+			dm_ordi_predict.dws_static_cityflow_tekuai_base
+			
+			dm_ordi_predict.dws_spec_consign_waybill_day   -- 刷新最近11天数据  900w+
+			dm_ordi_predict.dws_spec_eco_pro_waybill_day   -- 刷新最近11天数据  250W+
+			dm_ordi_predict.dws_air_flow_six_dims_day     -- 刷新最近45天  10W+
+			dm_ordi_predict.dws_air_flow_six_dims_day_newhb  -- 刷新最近45天  10W+  -- [海艳+告警人]
+			dm_ordi_predict.dws_static_cityflow_special_econ_day -- 刷新最近45天  41W+  
+			dm_ordi_predict.dws_air_flow_five_dims_day_sub  -- 刷新最近45天  10W+  
+			  
+			dm_ordi_predict.dws_static_his_cityflow[城市流向底表-多维度]  -- 刷新最近45天 100W+  -- [发哥+告警人]
+			dm_ordi_predict.dws_static_cityflow_base[城市流向底表-少维度]  -- 刷新最近45天 
+			
+			dm_ordi_predict.dm_fact_air_waybill_no[近2天fvp航空件运单号]
+			tmp_dm_predict.dm_fact_air_waybill_no[近45天fvp真实航空运单号]
+			
+			dm_ordi_predict.dim_ka_company_warehouse_df   !!   -- 2000+   -1D
+			dm_predict.ka_warehouse_inventory_sku_detail  !!   -- 300-800W  -1D
+
+			dm_predict.dws_fc_hk_six_dims_predict_collecting_di  -- 航空流向五维度预测结果表    15~20W+   未来75D 
+			dm_predict.hk_cityflow_qty_predict_day_short_period  -- 航空流向短期预测结果表 [沙沙]   45w+ 当天，task_type=pickup/object_type_code=4/inc_day=20230531 
+			 
+			dm_predict.dws_fc_flow_predict_collecting_di  !!  --  9w~ 77W+   未来75D    -- 检测出来出现异常数据，  因为写入任务不同！！！
+			
+			dm_predict.hk_cityflow_predict_month_collecting  !!   -- 12w+  按月 inc_day=20230501/predict_period=9M
+			
+			dm_predict.dws_fc_nohk_tekuai_predict_collecting_di
+
+		1.2、大件相关：√
+		1.2、月度添加关联新的维度表。  √
+	4、小文件  -- 452259下面两个任务，主要是tmp落表太多。 √
+	5、代码优化，特色经济-452259
+		tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp3_tmp20230530  -- 1379970239
+		tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp3 -- 1379970239
+		tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4_tmp20230530  -- 1379970239
+		tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4 -- 1379970239
+	
+		452264
+			output partitions 1300+   --2023-05-30
+			output partitions 1300+   --2023-05-29
+			output partitions 1300+   --2023-05-28
+			output partitions 1300+   --2023-05-27
+			
+	6、高峰值班问题：  <->  
+		1、发布模板,白晚班输出节点，看板监控处理方式疑问（队列，晚班播报时间/发送群，延迟,pass/OE,导数, 电脑内存，屏幕），
+			-、dws_sp_dynamic_zone_summary_hi oe异常
+			-、晚班 ， 08:00
+			   早班  14:00 ，18:00
+		2、数据底表 - 缺失添加
+		3、数据底表，模型输出表取数。
+		4、数据底盘-负责人/数仓
+			模型 - 环节负责人
+	
+	7、流向小组会议 - 618后计划（20230531）  <->
+		-、绩效，个人+环节 
+		-、环节内人员多节流
+			-、项目会前拉会
+			-、代码评审
+		-、数据开发： 全部流程切丰测 ， -- 前处理在BDP，质量瑕疵
+		-、重量预测 ， 数据开发/分析
+		'
+		-618前
+			-、predict_model任务优化建议
+			-、zip测试 & 大件小文件丢失添加依赖？ -- 关注即可  √
+			-、cityname月度+非空网上游其他写入任务+底表改维度表
+				-、月度：1、历史数据回刷省份为null的  √
+						 2、验证是否存在现有省份和之前的省份不一致  √
+						 3、月度代码更新 ，  √
+				-、fbq,hq,area来源：467998-tmp_dm_predict.tmp_dm_fc_city_2_hq_df_1  
+						area_code取  dm_fin_itp.itp_vs_rel_city_bg_area_mpp  
+						fbq使用来自于：dm_oewm.dim_area_fbq
+						hq来自于deparment
+			-、mapping表hq_code,fbq_code,area_code    -- dm_ordi_predict.dim_city_level_mapping_df_tmp  √
+				-、缺失distribution_code,name 补全 
+				-、历史删除，追加上去，添加标识 
+				-、fbq_code ='852Y'  fbq_code ='886Y' ，使用distribution表为主。
+					alter table dm_ordi_predict.dim_city_level_mapping_df rename to dm_ordi_predict.dim_city_level_mapping_df_backup20230606;	
+					alter table dm_ordi_predict.dim_city_level_mapping_df_tmp rename to dm_ordi_predict.dim_city_level_mapping_df;
+			-、452259 & 452264 优化
+				-、452264 优化  -- application_1684325517623_7820988
+					-- platform default
+						set conf.spark.sql.shuffle.partitions=400; 
+						spark.executor.memoryOverhead = 1G   
+							-- 是否开启调整partition功能，如果开启，spark.sql.shuffle.partitions设置的partition可能会被合并到一个reducer里运行 
+						spark.sql.adaptive.enabled = true    -- 是否开启调整partition功能
+						spark.driver.maxResultSize = 2G   -- 发送给驱动程序的结果的最大大小
+						spark.shuffle.service.enabled = false  -- 使用yarn开启
+						spark.sql.adaptive.autoBroadcastJoinThreshold = 32MB
+						spark.sql.adaptive.advisoryPartitionSizeInBytes = 128M  -- 合并分区的推荐目标大小
+						spark.hadoop.hive.exec.dynamic.partition.mode = nonstrict
+						spark.dynamicAllocation.maxExecutors = 400  -- 动态的时候最多executor数
+						spark.master = yarn
+						spark.executor.memory = 8g  -- 每个Executor的内存大小
+						spark.executor.cores = 2 -- 每个Executor的核的数量
+						spark.driver.memory = 2g  -- driver堆内存
+						
+						
+						spark.sql.adaptive.shuffle.targetPostShuffleInputSize  -- 
+							该参数是用于开启spark的自适应执行，后面的targetPostShuffleInputSize是用于控制之后的shuffle 阶段的平均输入数据大小，防止产生过多的task
+					-- 手动调参
+						spark.default.parallelism=600  -- 每个stage的默认task数量 （设置rdd默认的并行度）
+						num-executors 
+						
+						cnsz26plytns ， cnsz26plgtfm，	cnsz26pl1hkl
+						cnsz26pln60p , cnsz26plh89g
+				-、452259   --> 762589
+					1、
+		-618后
+			1-、流向静态-底表全部去掉丰网,通知上下游	 √   
+				城市流向底表，2018~至今去丰网的数据已刷新至临时表。
+				dm_ordi_predict.dws_static_his_cityflow_backup20230524
+				dm_ordi_predict.dws_static_cityflow_base_backup20230524
+				-、代码：old规则-从his写入【去丰网-写入临时表】    新规则：从运单写入  【流向静态-历史回刷写入backup-去丰网版本】
+				-、流向静态底表  -- 修改线上代码 730590/731274    √
+						-、	新规则 ：  运单表加规则前后数据量 2020年对比
+									-- 7592570203  -- 加规则后  -- 7646871324  -- 加规则前
+								where (hq_code<>'CN39' or hq_code is null)  and income_code<>'丰网'
+								and zone_code not in (select distinct dept_code from tmp_ordi_predict.dim_department where dept_code is not null)
+							-- 线上：and (hq_code<>'CN39' or hq_code is null)  
+									and ( nvl(source_zone_code,'') in (select dept_code from dim.dim_department where hq_code<>'CN39' and dept_code is not null group by dept_code ) or source_zone_code is null )  -- 去丰网	
+								-、tmp->his   -- where !(nvl(income_code,'')='丰网' or nvl(hq_code,'')='CN39')  -- 去丰网（剔除income_code） 20230608修改
+				-、修改表名： √
+					alter table dm_ordi_predict.dws_static_his_cityflow rename to dm_ordi_predict.dws_static_his_cityflow_backup20230608;	
+					alter table dm_ordi_predict.dws_static_his_cityflow_backup20230524 rename to dm_ordi_predict.dws_static_his_cityflow;
+					-- dm_ordi_predict.dws_static_cityflow_base_backup20230608  -- 去丰网前数据
+					alter table dm_ordi_predict.dws_static_cityflow_base rename to dm_ordi_predict.dws_static_cityflow_base_backup20230608;	
+					alter table dm_ordi_predict.dws_static_cityflow_base_backup20230524 rename to dm_ordi_predict.dws_static_cityflow_base;
+			2-、城市省维度表 重刷  √
+				'20230101' and '20230607'  √
+				'20220101' and '20221231'  √
+				'20210101' and '20211231'  √
+				'20200101' and '20201231'  √
+					alter table dm_predict.dws_city_province_qty_di rename to dm_predict.dws_city_province_qty_di_backup20230608;	
+					alter table dm_predict.dws_city_province_qty_di_remove_fs rename to dm_predict.dws_city_province_qty_di;
+			3-、归集修改： 航空流向归集表更改：1D改为取短期模型1D；【负责人：王英楠】  √、	
+				-、499690 下游依赖： 同时修改 594221 沙沙 621917 歆悦 627037 廖志鹏	594236 沙沙  
+			4-、dm_predict.dws_fc_hk_six_dims_predict_collecting_di 重复数据重刷  √
+				-、499690 - 528771
+				-、city_flow ，partition_key,相同营运维度只有 ， 只有一条。	
+					重新写入原表，rename未使用。
+					alter table dm_predict.dws_fc_hk_six_dims_predict_collecting_di rename to dm_predict.dws_fc_hk_six_dims_predict_collecting_di_backup202306091;	
+					alter table dm_predict.dws_fc_hk_six_dims_predict_collecting_di_backup20230609 rename to dm_predict.dws_fc_hk_six_dims_predict_collecting_di;
+			5-、动态城市打点
+				-、去丰网临时表-dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230609 
+				-、历史写入任务-766395  √
+					-、冻结任务
+				-、线上代码修改 √
+					 468144 ，468146
+				-、修改表
+					alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612;	
+					alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230609 rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi;
+					
+					实际执行顺序：
+						alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612; 
+						alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230609 rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi;
+						--历史数据
+						alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612 rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612_1;
+						alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612;  
+					历史备份表： dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20230612
+					
+			6-、去丰网，oms 的数据  <->  
+				dm_kafka_rdmp.dm_full_order_dtl_df
+				-、	incomecode
+					srchqcode	寄件大区
+					desthqcode	目的地大区
+					srcdeptcode	寄件网点
+					destdeptcode	目的地网点
+					
+					and (srchqcode<>'CN39' or srchqcode is null)         
+					and (desthqcode<>'CN39' or desthqcode is null)
+					and (incomecode<>'丰网' or incomecode is null )               
+					and (nvl(srcdeptcode,'') in (select dept_code from dim.dim_department where hq_code<>'CN39' and dept_code is not null group by dept_code ) or srcdeptcode is null )  
+					and (nvl(destdeptcode,'') in (select dept_code from dim.dim_department where hq_code<>'CN39' and dept_code is not null group by dept_code ) or destdeptcode is null )  
+		
+		
+				-、一次计算一天的量
+				 dm_ordi_predict.dws_cityflow_dynamic_order_hi -- inc_day=20210520/inc_dayhour=2021052001
+				 dm_ordi_predict.dws_cityflow_dynamic_order_hi -- 1283357832
+				-、确认incomecode 是否=9   √
+				-、修改脚本，添加去丰网验证
+				-、刷去丰网 以及 不去丰网版本
+					-、去丰网版本
+						dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230615 --  去丰网 
+							-、刷新范围 ： 20210520 ~ 20230619  ， 参数范围 20210521~20230620 （T-1）
+							-、脚本：	767374（oms_去丰网历史回写临时表）、  【已冻结 20230817】
+							-、后续的任务每天都会跑昨天。
+					-、历史回刷版本
+						dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230621
+							-、刷新范围 ： 20210520 ~ 20230620 ， 参数范围 20210521~20230621（T-1）
+							-、脚本：	771396（oms_历史回写临时表） -- 脚本少个;   【已冻结 20230817】
+							-、后续的任务每天都会跑昨天。
+				 
+			7-、城市动态打点， 质量监控 -欢哥  √
+			8-、清洗流向底表-city_code前后不一致	  √
+				-、新数据是否存在old城市code？
+					-- '长沙市' 731 7311	：731 存在20230530 ，20230606,20230415
+					-- '株洲市' 733 7313
+					-- '三亚市' 899 8981
+					-- '湘潭市' 732 7312
+					-- '丽江市' 888 088
+					-- '铁岭市' 410 024
+					-- '抚顺市' 413 024
+					-- '咸阳市' 910 029
+						-、对比map,找到已删除的code数据，查询在历史数据中的city_flow，
+							'001','565','731','733','888','910','#',
+							'CAN','FIN','HGH','HKG','HOU','KSA','LON','PEK','PVG','SDA','STT','SZX','VIJ','WAS','仁川','延边朝鲜族自治州'
+				-、老数据重刷
+					-、city_code,city_name  -- 没有cityname ，只需要修改srcprovince --  √
+					-、数据是否需要聚合， 比如 731-> 7311  , -- 需要 √
+					-、'565'=巢湖市，先不用刷
+					-、001 ， -- 20200828 ，20190926，20190505
+				-、新逻辑，
+					-、需要加上731，替换为7311  √
+					-、省份，分拨区使用mapping替换。  √
+					-、730590 ，731274  √
+					-、城市省维度汇总是否需要切换？
+				
+				-、数据写入 脚本 《流向静态-citycode历史数据回刷》
+					dm_ordi_predict.dws_static_his_cityflow_backup20230612
+					dm_ordi_predict.dws_static_cityflow_base_backup20230612,
+						between '20180101' and '20181231'  -- √
+						between '20190101' and '20191231'  -- √
+						between '20200101' and '20201231'  -- √
+						between '20210101' and '20211231'  -- √
+						between '20220101' and '20221231'  -- √
+						between '20230101' and '20230612'  -- √
+					
+						-- 重刷 '20230430' and '20230626'
+							(因为流向是刷新近45天数据， 2023-06-13号，跑的数据， 后续的任务又把base  04-30后的更新了 
+							，所以备份表需要重刷 20230430 之后的数据)
+					切换表:
+						alter table dm_ordi_predict.dws_static_his_cityflow rename to dm_ordi_predict.dws_static_his_cityflow_backup20230627;	
+						alter table dm_ordi_predict.dws_static_his_cityflow_backup20230612 rename to dm_ordi_predict.dws_static_his_cityflow;
+						
+						alter table dm_ordi_predict.dws_static_cityflow_base rename to dm_ordi_predict.dws_static_cityflow_base_backup20230627;	
+						alter table dm_ordi_predict.dws_static_cityflow_base_backup20230612 rename to dm_ordi_predict.dws_static_cityflow_base;
+					
+			9-、流向归集加重复质量检测。√ 
+				-、466690：√ 
+				-、528211  √
+			9.2-、528211 origin_name  其他上游表修改。
+			10-、本周工时 20230609  √
+				1、618值班
+				2、切丰网-流向静态底表
+				3、流向营运维度归集-底表数据去重
+			11-、460984  - lauch process failed  -- 已联系离线小客服，未反馈  -- sh脚本文件编码不是linux
+				 470818  -  添加小文件合并依赖，依赖生效，不过没啥用 -- √
+			12-、流向主数据表 - 去丰网    <->  
+			13-、列事项
+					1、流向底表过期city_code重刷
+					2、流向主数据/OMS动态订单打点数据，去丰网脚本整理（后续如果使用跟进切换）
+				
+			14-、大件zip切换应用：
+				460984,247099,449074,248838,470818,472976,555314,431213
+			15-、航空收件口径调整
+					现在有些航空件不上航空了 所以得改一下  好像oe也是618之前更改到测试环境  我一会儿确认下 不着急的话我们也618之后再改 
+					指调这边准备在航空件里面剔除路由代码为T6、ZT6的快件，你们的历史数据是不是也需要回刷呢？预测数据是不是根据历史数据来预测的呀？
+					-、 dwd.dwd_waybill_info_dtl_di   
+					-、剔除路由数据：(nvl(route_code,'') not in ('T6','ZT6') or route_code is null)
+					-、二级产品L2代码 : 表格新增'SE0153','SE0005' 2个产品
+					-、重量段 = 'all'
+					-、识别码：
+							product_code = 'SE0008' and (limit_tag ='T4' or limit_tag ='T801') 
+							product_code = 'SE0004' and limit_tag = 'SP6' then '1'					
+					-、是否有效：是
+				
+			历史数据重刷逻辑：
+				2021-04之前，在原逻辑上基础上
+					1-、新增剔除路由代码规则
+					2-、航空流向配置表，以dm_op.hk_lcb_peizhibiao_001为主
+						（dm_ordi_predict.cf_air_list 替换为dm_op.hk_lcb_peizhibiao_001）
+				2021-04之后，在原逻辑上基础上
+					1-、新增剔除路由代码规则
+					2-、航空流向配置表，以dm_op.hk_lcb_peizhibiao_001为主
+						（dm_ordi_predict.cf_air_list 替换为dm_op.hk_lcb_peizhibiao_001）
+			之后新逻辑：
+				1、新增产品'SE0153','SE0005'，判断航空运单，以及关联航空流行判断航空件。
+				2、新增剔除路由代码规则
+				3、航空流向配置表，以dm_op.hk_lcb_peizhibiao_001
+					
+				-、动态打点， 只保存40天、
+				
+				产品表：dm_op.HK_LCB_peizhibiao_006
+				流向表：dm_op.HK_LCB_peizhibiao_001
+				
+				会议纪要：
+					1、确定数据生效日期是否是产品有效日期， -- 是 √
+					2、确认2021-04之前逻辑是否和现有有差异。 -- 使用当时逻辑，仅添加去掉路由代码  √
+					3、route_code null 统计     √
+						-、dm_kafka_rdmp.rmdp_waybill_basedata  [生命周期180天]  -- 确定数据范围  0603~0620
+							-、历史数据只有20天，原表只有7天 
+						-、dwd.dwd_waybill_info_dtl_di  -- 33672599450 [20200101开始]
+					4、路由代码是否可以通过产品代码关联， 从中间表刷。 -- 不可以，路由和产品代码不是1对1关系 √
+					5、优先刷新1个月，对比数据件量，票量。
+					6、 √
+						产品表：dm_op.HK_LCB_peizhibiao_006    -- 16
+						流向表：dm_op.HK_LCB_peizhibiao_001    -- 110224
+						  是否可以直接使用 
+					7、城市省流向 & 航空流向底表回刷。
+					8、航空主数据  -- 不需要切换    √
+					9、dwd.dwd_waybill_info_dtl_di
+							gdl.tt_waybill_info  -- 20200101之前数据
+						1、2021年04逻辑，是产品的生效日期，还是规则的生效日期？  -- 生效日期没啥实际意义，以有效为主  √
+						2、产品+识别码+剔除路由代码，都是在生效日期后开始生效是吧？-- 生效日期没啥实际意义，以有效为主  √
+						3、产品实际出现日期 ， 大于生效日期？  -- 正常，只分2104前后两种规则 √
+						4、新加的SE0005,SE0153,后续逻辑都需要加上   √
+							新增的产品，属于国际件，需要加上城市流向才能定义为航空件。
+						5、配置+产品表是不是可以用了？ -- 用备份表，添加监控√
+					10、流向表切换涉及到归集修改。   <->
+					
+				小组会议：	
+					11、-、航空流向底表001 + 航空产品 表006 监控  √
+							-、通过和备份表全字段对比
+						-、air_list备份      √
+							-- dm_ordi_predict.cf_air_list_backup(备份分区表，inc_day区分不同版本)
+								-、20230627 历史版本
+								-、20230628 当前在用
+							-- dm_ordi_predict.cf_air_list_backup20230627(备份表)，最新的业务提供数据
+						   航空产品表006备份  -- dm_ordi_predict.hk_lcb_peizhibiao_006_backup
+						   航空流向底表001表备份 -- dm_ordi_predict.hk_lcb_peizhibiao_001_backup
+						-、航空流向底表-使用原表dm_ordi_predict.cf_air_list，重刷数据，添加监控。 
+						-、路由代码根据运单id关联获取/运单ID为null的数据，查询下列表
+							【ods_shiva_oms.tt_waybill_no_to_order_no】
+						-、dwd.dwd_waybill_info_dtl_di 路由代码来源查询
+							-确定是否可以从中间表刷
+						-、验数    <->
+							-、先刷新1个月的数据，航空每天件量新旧对比。
+						-、通知对应下游切换航空流向底表  <->
+						   -、拉会
+						   -、切换周期确定
+						   -、切换使用备份表
+						   -、写入airlist表，备份之前数据，切换
+								-、回刷使用 dm_ordi_predict.cf_air_list_backup20230627 ， 后续切换为dm_ordi_predict.cf_air_list
+								1、dm_ordi_predict.cf_air_list 新增 dm_ordi_predict.cf_air_list_backup 分区表保存历史版本信息
+								2、dm_ordi_predict.cf_air_list 替换数据（从dm_ordi_predict.hk_lcb_peizhibiao_001）
+								3、质量监控 dm_ordi_predict.cf_air_list表与dm_ordi_predict.hk_lcb_peizhibiao_001的cityflow差异。
+								4、质量监控 dm_ordi_predict.hk_lcb_peizhibiao_001,006全表差异
+					20230705 
+						12、新条件：
+							1、流向表：dm_pass_atp.tm_air_flow_config_wide
+								寄件城市-派件城市=city_flow 且 is_air_flow=是 且 expiry_dt>=T    【774586 每天5点10分】
+								
+							/**
+							select city_flow as cityflow,expiry_dt from dm_pass_atp.tm_air_flow_config_wide
+								where inc_day =  '$[time(yyyyMMdd)]'
+								and is_air_flow = 1
+								and expiry_dt >= '$[time(yyyy-MM-dd)]'
+							**/
+							2、产品表：dm_pass_atp.tm_air_product_config
+								type=1 且 产品代码+路由代码=product_code+sop_label 且 路由代码！=exclude_route_code 且 expiry_dt>=T  。  【774581 每天5点】
+								/*
+									select  product_code, sop_label as limit_tag , exclude_route_code,expiry_dt from dm_pass_atp.tm_air_product_config
+									where inc_day = '20230717'
+									and type = 1
+									and expiry_dt >= '$[time(yyyy-MM-dd)]'
+								*/
+							-、质量监控：
+								1、dm_ordi_predict.cf_air_list_backup20230627  与 流向表(dm_pass_atp.tm_air_flow_config_wide)对比（后续切换为dm_ordi_predict.cf_air_list）  
+								2、流向表： dm_ordi_predict.tm_air_flow_config_wide 表 与 dm_pass_atp.tm_air_flow_config_wide  ， 指定字段监控  √
+								3、产品表 ：dm_ordi_predict.tm_air_product_config 表 与 dm_pass_atp.tm_air_product_config ， 指定字段监控  √
+					--------------------------------------------------------------------------- 航空件调整 -------------------------------------------------------------------------
+							1、air_lsit切换
+								-、大群通知 dm_ordi_predict.cf_air_list 数据更新 。
+									alter table dm_ordi_predict.cf_air_list rename to dm_ordi_predict.cf_air_list_backup20230724;
+									alter table dm_ordi_predict.cf_air_list_backup20230627 rename to dm_ordi_predict.cf_air_list;
+								-、dm_ordi_predict.cf_air_list 质量监控（参考 dm_ordi_predict.cf_air_list_backup）
+								
+								-、cf_air_list_backup20230627 需要新增一个、？  历史任务用到？
+								
+							2、数据最新数据更新
+							3、切换表名
+							4、更新线上代码
+							
+					--------------------------------------------------------------------------- 航空件调整 -----------------------------------------------------------
+							
+					流向底表：
+						1-、2021-04之前版本
+							-、产品变化
+							-、fact值表切换  -- dm_ordi_predict.dm_fact_air_waybill_no
+						3-、城市流向的数据，不需要变动
+							776303 -- 2021-04 之前    【已冻结】
+							776302 -- 2021-04 之后	  【已冻结】
+						4、income表切换。重刷数据 (线上修改时间：	2023-06-30 19:12:43) 
+							2023-05-16 ~ 2023-06-28 
+						
+						--------- 复制历史数据至备份表 ---------------
+							dm_ordi_predict.dws_static_his_cityflow_backup20230620
+							dm_ordi_predict.dws_static_cityflow_base_backup20230620
+						1、补数 20180101~ 20191231    【779685 离线任务】
+							  inc_day between '20180101' and '20181231' 
+							  inc_day between '20190101' and '20191231' 
+						2、最新数据  -- 20230717   手动执行后续数据
+						2.1、切换表名
+							alter table dm_ordi_predict.dws_static_his_cityflow rename to dm_ordi_predict.dws_static_his_cityflow_backup20230724;
+							alter table dm_ordi_predict.dws_static_his_cityflow_backup20230620 rename to dm_ordi_predict.dws_static_his_cityflow;
+							
+							alter table dm_ordi_predict.dws_static_cityflow_base rename to dm_ordi_predict.dws_static_cityflow_base_backup20230724;
+							alter table dm_ordi_predict.dws_static_cityflow_base_backup20230620 rename to dm_ordi_predict.dws_static_cityflow_base;
+						3、修改线上代码 
+							-、730590  -- 已更新版本草稿 v7
+							-、731274  -- 已更新版本草稿 v6
+						--------------------- end ------------------------	
+					航空动态打点:
+						1-、2021-04之前，is_air_waybill  -- √  上游表只有近20天数据
+						1-、20210415放开只取母单条件   --  √  上游表只有近20天数据
+						2-、dim.dim_prod_base_info_df 切换   -- 回刷使用之前的表
+						3-、城市流向的数据，不需要变动
+						4-、income表切换  【777543】  √
+						
+						之前版本：773391 【已冻结】（未区分income前后）
+						会后-新的逻辑：
+								20230616  ~ 2023-06-30  19:00    历史产品板块     -- 失败  补录【777469 已冻结】
+								2023-06-30  20:00  ~ 至今  新的产品板块  【777543】 ，
+									-、问题： 20230720 06:00 任务失败，income 0622表数据写入失败，因为临时表多任务使用 
+										（因 更新临时表 问题，20230719 15:00 ~ 20230721 10:00 重跑  ， （20230731 10:30））、
+						发现bug修补：
+							-、未控制pickup,导致出现异常inc_day,inc_dayhour对应数据。
+								-、 修改日期限制为consignedtm
+							-、修改版本写入新表   【20230719-12点之后数据】
+								dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230622	
+								dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230622
+									-、新的逻辑 777543  ， 写入新表0622表   【20230719-12点之后数据】
+										-、0620数据，根据inc_dayhour写入新表0622表 【20230719-12点之前 脏数据】  【779468 已冻结】
+											  2023061201~ 2023071911
+									-、历史数据重新跑，写入0625表。     【20230719-12点之前】 
+											补录income之前：20230627 01:00 ~ 2023-06-30  19:59    【779648 已冻结】   -- 更新临时表 【2023-07-19 14:42:34 开始执行】 -无需重，因为同临时表的任务，此时间段没执行
+											补录income之后：2023-06-30  20:00  ~ 20230719 11:59   【779653 已冻结】   -- 更新临时表 【2023-07-19 14:46:50 开始执行】 - 重跑
+										1-、后续0625的数据【20230719-12点之前新数据】覆盖0622数据
+											-、20230726晚上操作
+												-、复制 20230627 ~ 20230718 
+												-、单独复制 2023071901~ 2023071911
+										2-、因此20230612 ~ 20230626的数据是异常的inc_day
+							--------- 复制历史数据至备份表 ---------------
+							-、历史数据写入 0622表
+								dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230622	
+								dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230622
+									20221001~ 20230611
+										-、月初-月末  【779952 已冻结】    √
+										20221001~ 20230531
+										-、手动写入 '20230601' and '20230611'    √  
+							-、最新数据更新 
+								-、【777543】 与线上代码同步执行，数据不需要更新。  -- 需要保证小时内切换
+							-、切换表名
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230724;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230622 rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi;
+							
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230724;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230622 rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi;
+							-、修改线上代码  -- 已更新版本草稿 V18
+							-、777543  任务冻结
+						--------------------- end ------------------------	
+							
+						龙哥发现bug:  
+							1、数据从20221001开始  air_order_num = 0
+							2、oms的航空订单量 > 航空动态的量 ，远大于
+								-、打印明细
+					营运维度：
+						1、运单宽表>= 2021-04?  直接使用运单宽表
+						2、 dm_bie.special_eco_pro   where pro_year='2022'    √
+							-、2021 2589 
+							-、2022 2789 
+							-、2023 2789
+							生成 dm_ordi_predict.dws_spec_eco_pro_waybill_day，不用刷。
+						3、dm_ordi_predict.dws_spec_eco_pro_waybill_day 2020年没数据， 使用业务提供的 dm_bie.bie_fact_special_econ_dely_dtl_2022new  √
+						4、dm_ops.dm_zz_air_waybill_avg_weight   2021-04-01 之后有数据 ， 下游newhb表也是20210401后有重量数据。 √
+						5、 (select cityflow from dm_ordi_predict.xss_special_air_rate a where inc_day='20220808' group by cityflow) t3 
+							-- 20220808添加，大闸蟹只预测这些流向 
+							-- 和沙沙确认
+							 不影响  √
+						6、448431 修改mapping
+						7、2021-04之前的逻辑和流向静态的不一致？ 
+							-、以静态为主  √
+							
+						两个版本   后续记得关闭
+						1-、202104之后   -- 【775834 已冻结】
+								-、按月跑 ，   每月1号 ， 
+								-、修改日期范围。  月初执行， 到月底 ， '$[time(yyyyMMdd,-0d)]' and '$[month_last_day(yyyyMMdd,-0M)]'
+								-、修复最近一个月数据
+								-、2021-04 ~ 2023-06 
+								-、  手动执行最新数据 
+								
+						2-、202104之前 --   【775923 已冻结】
+								-、按月跑 ，   每月1号 ， 
+								-、修改日期范围。 月初  '$[time(yyyyMMdd,-0d)]' and '$[month_last_day(yyyyMMdd,-0M)]'
+								-、临时表换表名 ，_backup20230629  --> _backup20230629_1
+								-、2020-01 ~ 2021-03
+								
+							--------- 复制历史数据至备份表 --------------- 
+							 -- 20200101 ~ 20230706
+									show partitions dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230620    -- 20191229 - 20191231
+									show partitions dm_ordi_predict.dws_air_flow_six_dims_day_backup20230620    -- 20180101 - 20191231
+									show partitions dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230620 
+									show partitions dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230620
+									show partitions dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230620
+							-、最新数据更新 
+							-、切换表名
+								alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230724;
+								alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230620 rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl;
+								
+								alter table dm_ordi_predict.dws_air_flow_six_dims_day rename to dm_ordi_predict.dws_air_flow_six_dims_daybackup20230724;
+								alter table dm_ordi_predict.dws_air_flow_six_dims_day_backup20230620 rename to dm_ordi_predict.dws_air_flow_six_dims_day;
+								
+								alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230724;
+								alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230620 rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb;
+								
+								alter table dm_ordi_predict.dws_static_cityflow_special_econ_day rename to dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230724;
+								alter table dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230620 rename to dm_ordi_predict.dws_static_cityflow_special_econ_day;
+								
+								alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230724;
+								alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230620 rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub;
+								
+							-、修改线上代码  -- 已更新版本草稿 V052  （mapping表）
+ 						--------------------- end ------------------------			
+								
+								
+					OMS : 
+						-、  1-、路由使用 运单表的，关联获取
+							ods_shiva_oms.tt_waybill_no_to_order_no
+						2-、从20230611开始刷新  ， 调度 20230612开始 ，t-1d
+							2023-06-11  1:01  ~  2023-07-06 23:59
+							【冻结】776390  -  添加订单为null判断  + 去丰网  【2023-06-12 ~ 2023-07-09 】  实际数据 20230611 ~ 20230708
+							【冻结】775835  -  添加订单为null判断     实际数据 20230611 ~ 20230708
+								 
+							1、oms和航空动态保持一致，暂时不剔丰网
+								 777315   补录   20230713 00:00 ~ 09:59    
+								【777525 - 冻结】，补录历史 实际数据 20230611   ~ 20230712  
+						--------- 复制历史数据至备份表 --------------- 
+							
+							dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230620
+							2021052001~ 20230611
+							-、20210501 ~ 20230531 月初月末【779978 已冻结】   √
+							-、手动写入 '20230601' and '20230611'  √
+							-、最新数据更新 
+								-、【777315】 与线上代码同步执行，数据不需要更新。  -- 需要保证小时内切换
+							-、切换表名
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230724;
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230620 rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi;
+							-、修改线上代码  -- 已更新版本草稿 V006
+							-、任务冻结：777315
+						--------------------- end ------------------------				
+						
+					特快件：
+						773470 【冻结】
+							202104~ 202306，按月执行
+							202307 手动执行    √
+						----------------------------------数据更新 -----------------------
+						-、最新数据更新 
+						-、切换表名
+								alter table dm_ordi_predict.dws_static_cityflow_tekuai_base rename to dm_ordi_predict.dws_static_cityflow_tekuai_base_backup20230724;
+								alter table dm_ordi_predict.dws_static_cityflow_tekuai_base_backup20230620 rename to dm_ordi_predict.dws_static_cityflow_tekuai_base;
+						-、修改线上代码  -- 已更新版本草稿 v15 
+						----------------------------------数据更新 -----------------------
+						
+						
+					城市省流向&丰测 
+						------------------------------------------数据更新 -----------------------
+						485757  -- 航空流向省到省日度真实值汇总  dm_predict.dws_airflow_province_qty_d_backup20230620
+								780052   历史数据数据迁移-copy
+								780055   航空件调整，从backup重新刷入写入   ~ 20200101~ 20230717    √
+								-、切换表名
+								alter table dm_predict.dws_airflow_province_qty_d rename to dm_predict.dws_airflow_province_qty_d_backup20230724;
+								alter table dm_predict.dws_airflow_province_qty_d_backup20230620 rename to dm_predict.dws_airflow_province_qty_d;
+						------------------------------------------------------------------------------------
+						738841  --  城市省流向      -- 不需要
+						775194  --  城市省流向产品重量日度真实数据汇总（丰测）   -- 不需要
+						
+
+					航空主数据（450805）  -- 不需要
+					
+					业务区新需求：
+						1-、新增表 
+							-、更换表明	
+								
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230713 rename to dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi;  -- 产品+业务区
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230713 rename to dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi; -- income+业务区 
+								
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230713 rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi; -- oms + 业务区
+									-- oms 数据异常
+											20221012 没数据  -24条 
+											+12条 
+											inc_day=20230216/inc_dayhour=2023021524
+											inc_day=20230217/inc_dayhour=2023021624
+											inc_day=20230224/inc_dayhour=2023022324
+											inc_day=20230228/inc_dayhour=2023022724
+											inc_day=20230304/inc_dayhour=2023030324
+											inc_day=20230316/inc_dayhour=2023031524
+											inc_day=20230323/inc_dayhour=2023032224
+											inc_day=20230325/inc_dayhour=2023032424
+											inc_day=20230328/inc_dayhour=2023032724
+											inc_day=20230329/inc_dayhour=2023032824
+											inc_day=20230330/inc_dayhour=2023032924
+											inc_day=20230401/inc_dayhour=2023033124
+											
+							-、修改代码 -- 表名
+									线上版本： 
+										780068 - 航空
+										780205 - oms 
+							-、回刷数据  
+								- 动态 ，【780217 已冻结】 
+									20221001 ~ 至今 
+								- oms .【780222 已冻结】
+									20210520~ 至今 
+										20221001~ 至今 
+						2-、依赖上游任务从结果表输出
+					
+					2023-07-10
+						1、验证 营运，静态，oms（加订单表）数据  √
+						2、产品表，流向表 监控最新的表  √
+						3、全流程切换，528211,499690 冻结  			√
+						4、省流向 + 雄伟交接代码，航空件调整回刷。  √
+						5、航空口径调整，正式代码整理   √
+						6、临时表 欢哥清空     √
+						7、歆悦，主数据修改逻辑？   
+						8、流向底表-缺少的航空件是否都是某个cityflow ,数据分析   √  -- 集中在
+						9、OMS出分析报告，确定是否切换去丰网。-- 和航空动态保持一致 -- 不去  √
+						10、质量监控 -- 模型   <-->
+						11、更新海艳文档 -- 质量监控
+							数据组周会我建了共享文档，大家周五前更新下各环节本周的内容 https://doc.sf-express.com/view/l/ts2t01j，有其他要补充的可反馈我
+						12、大件代码梳理，落地文档。
+							select * from vt_has_arrive_cars
+							replace into vt_has_arrive_cars 
+							zip:
+								127304
+									127304
+								126697
+									127304
+								112978
+									127304
+									127304
+									127304
+									127304
+											460984									
+											247099
+											449074
+											248838
+											470818
+											553293
+											430625
+											472976
+
+						13、oms,航空动态， 添加网点 ，任务排期。  -- 2023-07-18~07-20   √
+						14、1- 跟进OE核对数据，    √
+							2- 确认航空流向调整，分布在部分流向怎么看？  √
+						15、跟进产品&流向新表，质量监控   √
+						16、剩余表代码完善-航空件调整    √
+						17、质量监控-静态&模型   
+								dws_air_flow_dynamic_income_qty_hi
+						18、大件逻辑梳理
+							大件底表梳理（输入逻辑/对应模型/模型输出表）
+							-、上游表 --对应模型 ， 其他表可能是中间结果表
+						19、质量告警发群里，添加告警人
+						20、加业务区字段，模型自己在聚合  √
+					
+					2022-07-18
+						1、营运维度 2021-04数据缺失，件量异常  -- 历史数据缺失，具体原因不确定，补录 
+						2、营运维度表，优先级切换，确认是否存在多个的情况。
+						3、航空income表，hdfs文件不存在 -- 和雷超确认补数是不是遗漏？
+							-、693148  
+							inc_day=20221018/inc_dayhour=20221018 24
+							inc_day=20221019/inc_dayhour=20221019 24
+							inc_day=20220824/inc_dayhour=2022082410.0
+							-、修复20221001之后分区， 之前分区暂不处理
+						4、航空动态，oms，1、新增表 2、只汇聚业务区
+						5、oms,航空动态 ，线上调整代码
+						6、保哥，新表添加监控  √
+						7、和OE数据对比 
+							dwd_o.dwd_tp_air_waybillno_info_di    --  （航空运单明细表）
+							dm_tp.dm_air_traffic_control_index_board_di  -- （规调航空看板P0级指标
+							dm_kafka_rdmp.dm_rdmp_waybill_simple_par_dtl_di  -- 运单小表落Hive
+						8、
+							-、线上代码更新
+						    -、数据迁移，
+						2023-07-19
+						9、大件线上代码调整  √
+							V042线上版本 01431437	2023-07-11 15:06:49 已通过 已发布  【雷超版本】
+								select * from dmpdsp.t_monitor_in_road_cargo_new where preArriveTm is null 
+						2023-07-20
+						10、工时  √
+						11、大件hbase迁移。
+							-- old:
+								# 生产
+									hbase {
+									  zk.quorum = "cnsz17pl6536,cnsz17pl6537,cnsz17pl6538,cnsz17pl6539,cnsz17pl6540"
+									  zk.client.port ="2181"
+									}
+							-- new:
+								zk是： 10.119.101.132 cnsz17plkblc
+										10.119.100.4 cnsz17plh6b2
+										10.119.100.5 cnsz17pl5y3a
+										10.119.101.133 cnsz17plc8m2
+										10.119.102.4 cnsz17plq03w
+									hbase {
+										  zk.quorum = "cnsz17plkblc,cnsz17plh6b2,cnsz17pl5y3a,cnsz17plc8m2,cnsz17plq03w"
+										  zk.client.port ="2181"
+										}
+						ALTER TABLE dm_predict.dm_air_province_flow_week_dtl_di CHANGE COLUMN weight_seg weight_level STRING ;
+						
+						2023-07-24
+							1、底盘新增业务区字段    √
+								-、和何龙确认，pro，income表，新增字段对他们的影响。
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi add columns (src_area_code string comment '起始业务区编码') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi add columns (src_area_name string comment '起始业务区名称') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi add columns (dest_area_code string comment '目的业务区编码') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi add columns (dest_area_name string comment '目的业务区名称') cascade;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi change src_area_code src_area_code string after weight_type_code;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi change src_area_name src_area_name string after src_area_code;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi change dest_area_code dest_area_code string after src_area_name;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi change dest_area_name dest_area_name string after dest_area_code;
+								
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi add columns (src_area_code string comment '起始业务区编码') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi add columns (src_area_name string comment '起始业务区名称') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi add columns (dest_area_code string comment '目的业务区编码') cascade;
+								alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi add columns (dest_area_name string comment '目的业务区名称') cascade;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi change src_area_code src_area_code string after weight_type_code;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi change src_area_name src_area_name string after src_area_code;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi change dest_area_code dest_area_code string after src_area_name;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi change dest_area_name dest_area_name string after dest_area_code;
+								
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi add columns (src_area_code string comment '起始业务区编码') cascade;
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi add columns (src_area_name string comment '起始业务区名称') cascade;
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi add columns (dest_area_code string comment '目的业务区编码') cascade;
+								alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi add columns (dest_area_name string comment '目的业务区名称') cascade;
+									alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi change src_area_code src_area_code string after city_flow;
+									alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi change src_area_name src_area_name string after src_area_code;
+									alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi change dest_area_code dest_area_code string after src_area_name;
+									alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi change dest_area_name dest_area_name string after dest_area_code;
+								-- 测试 
+								-- 	1 添加字段可重刷历史，2 指定位置
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230620 add columns (src_area_code string comment '起始业务区编码') cascade;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230620 change src_area_code src_area_code string after income_code;
+								
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230620 add columns (src_area_name string comment '起始业务区名称') cascade;
+									alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230620 change src_area_name src_area_name string after src_area_code;
+								
+							2、动态任务 -- mapping表取最近两天最大分区数据。  
+								-、航空动态 - 业务区  & oms   √
+								-、490824 & base  -- 已重刷 √
+							3、和何龙确认，是否只过滤国内省份？  -- 不需要海外 √
+						2023-07-26    <-->
+							1、hive需要一份底表结果表 
+							2、确定大件业务场景 。
+									2023-08-03 会议纪要 
+									-、底表 对应模型表 
+									-、模型业务场景
+									-、输入输出表。
+							3、大件改造 - zip 
+								-、必要性 
+								-、改造计划
+								大件中转场发出 -  hive  重量10%以内（底表对比 - 大件中转场）
+							4、OE 统一申请  √
+						2023-07-28
+							数据治理会议：   <-->
+								-、临时库 ->  只能用自己的。
+									临时表不能用 
+								-、正式见表 ，测试使用 
+								-、明文修改。
+						2023-07-31   <-->
+							-、 1， oms ，order 为0， area也需要刷新   [783698 已冻结]   √
+									-、上游表产品为null , push  
+									-、下游重刷  
+										-、三要素表，关联dim.dim_prod_base_info_df  , -- 上游表也没有对应字段
+										-、关联运单宽表实现。
+									-、更新质量监控 ， 分区校验，air_order为0检测。  √
+									1.1 bug解决：
+										-、发现某些日期，小时打点数据上游积压。 例如 20230701 15:00 ~ 24:00   √ 
+											-、回刷脚本，process按天限制到14:00 ,导致，已修复 
+										-、发现bug，777525 限制process的时候，当天全部限制在了12点。   √
+											-、修改process 放在每小时限制（按天跑）
+											-、重刷2023-06-12 ~ 2023-07-12  [20230611 因为copy覆盖了，故15点以后正常]
+											-、覆盖线上， 06-12~07-12  15:00 ~ 24:00 
+								2-、航空动态补数，看差异趋势 。 -- 排期 （&oms）<-->
+									-、和刘允确认，航空动态对比效果。 - ×
+									-、补录 20221101~ 20221120   
+										-、 -- 测试通过运单小表 补数 
+											-- 通过运单宽表获取limit_tag
+											-- 补录数据 20230301开始   -- income之前版本
+										
+										784593  -- 航空补录 by运单小表  【已冻结】
+										784972  -- 航空补录，by运单小表，和线上同步 【已冻结，同步线上版本，limit_tag可能取不到】
+											-、limit_tag不全。--（ 航空件可能会少，如需准确，需要补录 T-1D的数据。）
+									-、运单小表 加limit_tag  , 
+										产品三要素 ： LimitTypeCode CargoTypeCode ExpressTypeCode
+											ods_bdus.psds_product_base_config（替换表：dim.dim_prod_base_info_df）
+										-、使用线上版本上游表 ，根据产品三要素关联 product_code , 同步跑数据
+											787977  -- 20230814 14点开始   【已冻结 ， 切换表，任务对接结果已出】 
+												-、同步跑，比较时点航空件量 
+													验证上游表缺失产品编码是否补全。
+													
+								3- 2022-10-12分区补全  （oms + oms&area）   √
+								4- oms订单量2023-07-01 偏低？ <-->
+									-、定位到是因为产品code为null ，重新根据原表三要素匹配后 ，产品code有值占比95%
+										-、确定上游是不是根据三要素获取的产品编码（自身表）， -- 1 尽可能确定原因 ， 2 同时排除三要素为可能为空的影响。
+											-、如果逻辑一样，重刷2023-07-01数据
+											-、逻辑不一样，关联三要素兜底，同步跑，对比线上。  788558 -- 【已冻结】
+											-、796606 【已冻结】，按天补录 2023-07-01数据。 写入 dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230815
+											
+								5- oms 任务执行不稳定，监控优化？   <-->
+									application_1689848257265_4234255  任务存在数据清洗，837个job ，其中一个job执行话费20min
+											-、过滤时间类型 格式问题，导致倾斜？ 
+												AND from_unixtime(cast(processversiontm AS bigint) / 1000, 'yyyy-MM-dd HH:mm:ss') < '$[time(yyyy-MM-dd HH:00:00)]' 
+											-、order_id null值太多？
+									application_1689848257265_4255299  任务正常 ，896个job, 最大1.5min 
+									
+							-、特色经济切换表   <-->  20230810 
+								-、dm_bdp_datamining.spe_waybill_category 切换表 。
+								-、影响 dm_ordi_predict.dws_static_cityflow_special_econ_day
+								
+								1、level3的逻辑 是否也是根据托寄物生成的  
+									-、比较差异：如果差异大， 需要回刷，能回刷多久？
+								2、比较新的特色经济表pro_name的差异
+								
+								3、托寄物新表的逻辑，要确认清楚
+									-、直接用的话，会影响底盘数据生成时间。
+									追溯：  667680 (dm_bdp_datamining.spe_waybill_category -- 特色经济-数据底表)[业务时间：04:00  每天凌晨5点跑完] -> 
+												667676 --每日任务    [业务时间：04:00 每天凌晨4.50点跑完] 
+											233185（检查 dm_bdp_datamining.consign_category_info1【dwd.dwd_waybill_consign_category_info_di】  -- 运单托寄物分类明细表） [业务时间：04:30 每天凌晨4:40 跑完]
+									-、根据运单关联[托寄物新表]-> 输出-类型 ， 关联[特色经济新表] --> 输出-特色经济项目。
+								4、数据刷新范围验证。
+								
+									-、托寄物执行时间，上游是不是有依赖 
+										-、上游有依赖，依赖4点多跑完。
+										不知道你们那边是啥场景时效要求高 如果真的是极高的话 就不要用离线报表 。目前上游3点多跑完  然后跑全网两千多万的运单  每天不到5点就出数 已经是很快了
+									-、特色经济表执行完需要多久， 
+										-、5点前。
+									-、托寄物->特色经济 是否可以复现。
+										-、可以，参考代码  233185
+									-、下游特色经济表，模型什么时候用
+										-、7点
+							-、月度数据检测 --  <--> 
+							-、confluence -- √
+						2023-08-02：
+							阶段评估：
+								1、评估下需求，考虑完善一点。 优化 。。 -- 1 思路转化  & 2 细心。  & 3 问题定位。
+								2、数仓规范。
+								3、业务场景，在加强 （了解业务。） -- 加强。
+								4、 
+									来源表 --- 了解 。。
+									OE -- 数据指标 
+									航空 -- 数据了解_
+								5、航空动态 -  
+										历史刷新 -- 
+									刘允 
+										1、- 航空动态是否有。
+										2、- 没有的话，重刷一版
+						2023-08-03 
+							1、营运维度重复 499690   √
+								-- 省份维度重复，
+									-- 、原因： 2022年某些时间段之前不同的版本，没有合并 
+									-- 、异常数据区间： 20221220 ~ 20230105
+								-- 城市维度，预测重量重复
+									-- 原因： 件均重 重复 	
+									--  异常数据 ： '20220808','20220809','20220823','20220824','20220825','20220826','20220827','20220905'
+								-- 解决： 1、底表关联省份字段  2、重新生成预测重量 3、生成城市&省份
+									-、新数据写入 dm_predict.dws_fc_hk_six_dims_predict_collecting_di_backup20230803
+						2023-08-09
+						大件会议2：
+							1、大件上游表， mysql ,Hbase  独有的表梳理  -- 2023-08-15
+								-、
+							2、底盘落地表， 是否是独用的表， 切换至数仓。
+								1、
+							3、完善excel ， 表对应的db库 
+							
+							这个改造好后，
+								-、统一更新到共享文档，
+								-、并且发邮件出来吧（对应模块、原表名、现表名、是否涉及模型修改、是否需要下游做什么等）
+								-、这些都要确定好
+								-、范浩那边要做的也提前发邮件通知到他们
+								
+						数据组会议【2023-07-04】：
+						航空动态
+							1 to_date(case when pickuptm='0' 
+									 then from_unixtime(cast(cast(consignedtm as bigint) / 1000 as bigint), 'yyyy-MM-dd HH:mm:ss')
+									 else from_unixtime(cast(cast(pickuptm as bigint) / 1000 as bigint), 'yyyy-MM-dd HH:mm:ss')
+									 end
+							   ) ='$[time(yyyy-MM-dd,-1h)]'
+								逻辑调整   from_unixtime(cast(cast(consignedtm as bigint) / 1000 as bigint), 'yyyy-MM-dd HH:mm:ss')
+							2、历史回刷 -- 换产品板块。  （2023-07-04）
+								-、脚本调整，日期限制为 consignedtm， 线上同时修改？   -- 切换的时候在修改
+								-、历史按产品板块修改 【2023-06-30  20:00 之后】    
+									20230616  ~ 2023-06-30  19:00    历史产品板块  【777469】   -- 失败
+									2023-06-30  20:00  ~ 至今  新的产品板块  【777543】
+						oms  
+							1 order time 时间替换  -- 需先设置  processTIme 过滤。
+							2  关联运单替换实时运单 
+								-、当天用 dm_ordi_predict.dwd_pis_route_info_v2_df表的路由代码 
+								或者 dm_ordi_predict.ods_pass_waybill_dtl_hi 实时运单打点表，加一个路由代码
+								-、历史用运单宽表
+							3  当天数据也需要同时跑 以及  按小时跑 
+							5  partition by orderid order by processversiontm desc   ，存在null
+								oms取明细数据，参考 579027
+
+							-、线上是否precess过滤?  -- 切换后调整？
+								AND from_unixtime(cast(processversiontm AS bigint) / 1000, 'yyyy-MM-dd HH:mm:ss') < '$[time(yyyy-MM-dd HH:00:00)]' 
+							-、回刷数据多了？ -- 后续对比   
+								777315   补录   20230713 00:00 ~ 09:59    
+								777525 - 【冻结】，补录历史 实际数据 20230611   ~ 20230712  
+						流向静态
+							1、换产品判断
+						营运维度
+							-、趋势，每天趋势 ，
+							1、维度趋势 
+							2、每天总量
+						大件：
+							1、平台bug -- 转应用
+							2、文档更新  -- 
+							3、大件逻辑整理。
+							4、换成python？
+						其他表新建 
+							1、城市省维度  ，以及丰测 
+							2、航空-雄伟	
+							
+						2023-08-14
+							1、航空分享会 
+								-、ARES  -> 数仓 
+									dwd_o dwd_tp_air_full 
+									-、 流向表 -- 货量不重复
+										航空发运情况 -- 用航段表
+										散航  有发必有提，有提不一定有发
+											重量 -- 航空主运单真实重量得来
+										班次(订舱需求表) <- pass  
+								需求 ->  订舱  -> 任务执行 -> 发运
+									
+							2、营运维度切换表，  使用新表然后关联，计算跑出来的时间。   <-->
+								790039【已冻结】 -- test
+									dm_ordi_predict.dws_spec_consign_waybill_day_new -- 托寄物 
+									dm_ordi_predict.dws_spec_eco_pro_waybill_day_new -- 特色经济备份表
+									
+									dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230817  
+									dm_ordi_predict.dws_air_flow_six_dims_day_backup20230817
+									dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230817
+									dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230817
+									dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230817
+									
+										dm_ordi_predict.dws_spec_consign_waybill_day	航空营运维度-特色经济中间明细表
+										dm_ordi_predict.dws_spec_eco_pro_waybill_day	航空营运维度-特色经济结果表
+										
+										dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl	航空营运维度-详情
+										dm_ordi_predict.dws_air_flow_six_dims_day	航空营运维度-汇总
+										dm_ordi_predict.dws_air_flow_six_dims_day_newhb 	航空营运维度-特色经济
+										dm_ordi_predict.dws_static_cityflow_special_econ_day	航空营运维度-特色经济汇总
+										dm_ordi_predict.dws_air_flow_five_dims_day_sub	航空营运维度-特色经济
+								-、【营运维度-切换特经底表】  
+										1、确认233185任务，延迟 ，是否有问题？
+											-、曾庆维 ，确认原因。
+											-、切换任务类型为S级 <-->
+										2、底表延迟2小时
+											2.1-、同步跑历史数据。
+										3、数据对比 ，重刷 
+											-、dtl : 
+												if_econ_fresh	是否特色经济
+												pro_name	特色经济-项目
+												level_1_type	特色经济一级类目
+												level_2_type	特色经济二级类目
+												type	维度
+											-、
+											
+											-、主要看的指标： 
+												newhb , 今年6月，上年9月，项目带大闸蟹。
+												newhb , 和底盘数据对比，保证一致。
+												-、比较2023-06月突然下跌是什么原因 
+												-、今年newhb, 某些日期，波动50%原因，拉详情。
+												-、回刷历史 按月： 798801【已冻结】
+													-- 回刷 2022-08 ~ 2023-07
+											-、790039 【已冻结】 【线上同步执行任务】
+											Question: 
+												1、dtl 和 six_dims ，特色经济的件量怎么对不上，近10天   √
+													-、筛选条件要一致都用 type = '特色经济'
+												2、特色经济新表，每次刷新只会刷，近10天，  比如： 20230818 ， 下次，0818 又用old逻辑。
+												3、托寄物表dm_ordi_predict.dws_spec_consign_waybill_day_new  是否 按照以前的，运单：cons = 1 ： 多 
+													-、left 
+												4、关联 dm_bie.special_eco_pro_2022new 是否要过滤 pro_start ，pro_end？   -- 按照起始日期过滤 
+														1.202001～202207  补录特经
+														2.特色经济配置表，限制prostart proend （1.790039【已冻结】 暂时不该，只有2020-202207使用
+														3.copy 吴群英托寄物配置表
+														4.
+															-、202001 ~ 202103  （航空件使用历史版本，仅去除路由）    798801【已冻结】
+															-、20201216  上游表剔除当天数据跑。
+																-、托寄物表& 特色经济表 ，没有20201216当天数据 ，
+																-、其他表不影响
+														5、 newhb , 件量和历史数据对比。  √
+															5.1、copy 历史数据至  _backup20230817 
+																	dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230817
+																	dm_ordi_predict.dws_air_flow_six_dims_day_backup20230817
+																	dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230817
+																	dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230817
+																	dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230817
+																	
+																	dm_ordi_predict.dws_spec_consign_waybill_day_new  （ dm_ordi_predict.dws_spec_consign_waybill_day）
+																	dm_ordi_predict.dws_spec_eco_pro_waybill_day_new  （dm_ordi_predict.dws_spec_eco_pro_waybill_day）
+																	-、因为790039，2023-08-18执行，只刷新近10天， 导致20230801 ~ 20230807 托寄物&特经配置 - 新表 没有数，补数。
+																		-- 已补数 813441临时任务
+																		--、托寄物上游表 ，20201216没有数据导致，   托寄物&特经配置  20201216没有数据。
+																	
+															5.2、件均重 ， 20220601 ~ 20230508  newhb新规则没有值？ 
+																-- 因为send_province 为null ，  【784192 】
+															5.3、维护T-1代码 ，兜底代码     【812678-已冻结】   √
+																	-【兜底T-1D】
+																	_doudi
+																			dm_ordi_predict.dws_spec_consign_waybill_day  【写入使用新的表字段。】
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1_doudi;
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp2_doudi;
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp3_doudi
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp4_doudi 
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp5_0_doudi
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp6_doudi
+																			tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp7_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp2_doudi 
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp3_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp4_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp9_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp5_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_0_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_1_doudi
+																			
+																			tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp2_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4_doudi 
+																			tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp5_doudi;
+																			tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp6_doudi
+																			tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp7_doudi
+																			
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp7_doudi;	
+																			tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp8_doudi
+																			
+															5.4、
+																-、准备线上切换代码  -- 特色经济 ，限制 proStart ,proend ,参考 798801【已冻结】  <-->
+																-、托寄物表， 新增字段。
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new add columns (cons_name_concat string comment '托寄物-拼接-old') cascade;
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new add columns (fetch_data string comment '托寄物配置表-托寄物名称-old') cascade;
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new add columns (priority_no string comment '托寄物配置表-优先级-old') cascade;
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new add columns (broad_heading string comment '托寄物配置表-大类-old') cascade;
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new add columns (subdivision string comment '托寄物配置表-小类-old') cascade;
+																	-、修改-2023-09-08 17:55:00   √
+																			798801【已冻结】
+																					-- 托寄物表，新增字段。
+																			790039【已冻结】   
+																				-- 托寄物表，新增字段。
+																				-- 特经限制 pro_start,end
+																-、托寄物表，特色经济中间表 ，copy历史数据至备份表。  √
+																-、切换线上代码 
+																	1-、修改代码  √
+																	2-、依赖修改 -- 添加 233185   √
+																		-、调度时间暂时不改。
+																	3-、线上表切换
+																	
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day rename to dm_ordi_predict.dws_spec_consign_waybill_day_backup20230911;
+																		alter table dm_ordi_predict.dws_spec_consign_waybill_day_new rename to dm_ordi_predict.dws_spec_consign_waybill_day;
+																		
+																		alter table dm_ordi_predict.dws_spec_eco_pro_waybill_day rename to dm_ordi_predict.dws_spec_eco_pro_waybill_day_backup20230911;
+																		alter table dm_ordi_predict.dws_spec_eco_pro_waybill_day_new rename to dm_ordi_predict.dws_spec_eco_pro_waybill_day;
+																		
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230911;
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230817 rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl;
+																		
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_day rename to dm_ordi_predict.dws_air_flow_six_dims_daybackup20230911;
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_day_backup20230817 rename to dm_ordi_predict.dws_air_flow_six_dims_day;
+																		
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230911;
+																		alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230817 rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb;
+																		
+																		alter table dm_ordi_predict.dws_static_cityflow_special_econ_day rename to dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230911;
+																		alter table dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230817 rename to dm_ordi_predict.dws_static_cityflow_special_econ_day;
+																		
+																		alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230911;
+																		alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230817 rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub;
+															
+														6、兜底方案	   √
+															1、确认超时时间 
+															2、确认同步跑，还是手动跑？
+															3、兜底，只刷新T-1 ,   涉及哪些任务。 
+															4、 托寄物表使用新表字段？还是添加新字段？
+																会后：
+																	1、兜底逻辑，T-1d ,代码维护 。
+																	2、2023-09-11切换。 营运维度 
+																	3、2023-09-11切换。 航空主数据。   <-->
+																		-、航空主数据逻辑准备。  
+																		-、调度，依赖 730590 
+																	4、托寄物，使用新表，+ 新字段，老数据新增字段置空。  √
+																	
+															final:
+																1、营运维度-特色经济切换底表，
+																	1、数据已核对完毕，波动数据已验证。
+																	2、兜底方案如下: 1、采用旧逻辑，计算T-1D数据。  2、手动执行 
+																	背景：切换特经底表，T-1D数据，每天获取最新数据，若出现数据延迟，兜底处理，保证下游数据正常。
+																	具体实施：
+																		1、维护T-1D兜底线下逻辑代码. 【任务ID:812678】 
+																		2、手动刷新执行T-1D数据（T-1D，使用替换前逻辑补全）。  —T-45 ~ T-2D 使用之前数据。
+																		3、原任务强制成功，保证任务正常流转。
+																3、营运维度-切换特经，计划2023-09-11切换线上。
+															
+															流向主数据 - 切换： 
+																1、拆分城市 & 航空
+																	1、建议营运维度刷新7天， 和静态底盘保持一致。
+																	
+																	
+																一、营运维度-特色经济底表切换
+																1、线上逻辑已切换
+																2、历史数据已回刷（刷新范围：20200101~至今）
+																3、数据已核对完毕，波动数据已验证。
+																4、涉及底盘数据备份表如下：
+																	dm_ordi_predict.dws_spec_consign_waybill_day_backup20230911;
+																	dm_ordi_predict.dws_spec_eco_pro_waybill_day_backup20230911;
+																	dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230911;
+																	dm_ordi_predict.dws_air_flow_six_dims_daybackup20230911;
+																	dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230911;
+																	dm_ordi_predict.dws_static_cityflow_special_econ_day_backup20230911;
+																	dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230911;
+																5、T-1D兜底逻辑已维护【任务ID:812678】
+
+																二、流向主数据
+																1、逻辑已调整上线
+																2、数据已验证
+
+												
+							3、 航空动态&oms-整理关联三要素线上跑的版本差异
+								航空动态，by运单小表，补录 20221001~ 至今
+									1-、优化为按天 
+									2-、并行。
+								
+								历史数据回刷-使用新口径    <-->   【航空动态】
+									1、历史2022-10-01 ~ 2023-06-30  (按天)
+										-、income old版本
+										-、 运单小表关联获取limit_tag（不用TransitFlowType，因为历史数据是老口径）
+											-、对比线上历史数据，查看新口径差异
+										-、任务id: 789622 【已冻结】[调整未predict执行6月份]
+												(1、income之前 2、cancel和OE保持一致，不处理)  补录： 20221001~ 202306230
+										 临时表 ： backup20230817  
+									2、最近数据2023-07-01 - 2023-07-31  (按天)
+										-、income new版本 
+										-、运单小表关联获取limit_tag
+										-、任务ID: 789817   【已冻结】 
+									3、最近数据 2023-08-01 ~ 2023-08-16   (按天)
+										-、直接用运单小表TransitFlowType=1
+											-、对比运单小表根据limit_tag生成的数据，查看使用TransitFlowType之间的差异。
+										-、任务ID : 789871 -predict队列 【已冻结】 
+									4、同步线上版本   （按小时）  20230817 16点开始
+										-、直接用运单小表TransitFlowType=1
+										-、任务ID : 789859   【已冻结】 
+											-、后续回刷20230817全天数据，根据（789871）   <-->
+										
+										5-- 、修补BUG 
+											1-、2023-08-01 之后的总件量，多了1倍  -- 789859  ， 789871
+												-、inner join cf_air_list 表 ， 只取航空流向数据 
+											2-、业务区字段添加。
+											
+											2023-10-07  bug   航空动态，income & pro  总件量多了。 <-->
+												-、通过789871 按天。  修复 2023-08-01 ~ 2023-08-23 （除2023-08-17 当天） ， 因为关联air_list，导致总件量，总运单翻倍（pro表翻倍，income是18~23数据和新重刷的略微有差异）
+													-、
+														20230801,20230802,20230803,20230804,20230805,20230806,20230807,20230808,20230809,20230810,20230811,20230812,20230813,20230814,20230815,20230816,
+														20230818,20230819,20230820,20230821,20230822,20230823
+												-、写入临时表
+													tmp_dm_predict.dws_air_flow_dynamic_income_qty_hi_backup20230825
+													tmp_dm_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230825
+												-、线上 pro,income  ,2023-08-01 ~ 2023-08-23 （除2023-08-17 当天）  数据备份到临时表 ，
+													tmp_dm_predict.dws_air_flow_dynamic_income_qty_hi_backup20230815
+													tmp_dm_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230815
+												-、验证数据 - 回写 正式表 。
+													-、产品，收入板块表  -- 852668 【已冻结】  √
+													-、业务区表   --  780217【已冻结】  √
+													-、省份维度表。  852123【已冻结】 √
+												
+												
+												
+										-- 切换线上版本 √
+											--、对比 oe版本 和limit_tag 航空订单趋势 
+											--、确认执行时间和之前的区别。 
+											--、切换线上版本 ：  √
+												1-、切换表
+													alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230825;
+													alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20230817 rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi;
+												
+													alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230825;
+													alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20230817 rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi;
+												2-、-- 冻结任务 【789859】 【已冻结】 
+												3-、切换线上代码  
+											--、航空业务区数据切换 。
+												dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi  305.94M
+												dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi	157.19M
+												1-、数据补录   √
+													-、780217  【已冻结】
+														202210 ~ 202308  按月 
+															  补录 '20230701' and '20230731'   -- 单独补录 
+															  补录 '20230601' and '20230630'   -- 单独补录 
+															  补录 '20230501' and '20230531'   --  单独补录 
+															  补录 '20230401' and '20230430'   --  单独补录 
+															  补录 '20230301' and '20230331'   --  单独补录 
+															  补录 '20230801' and '20230825'   --  单独补录 
+													-、注意20230825 17点数据 情况。
+												2-、切换表
+													alter table dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20230825;
+													alter table dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20230817 rename to dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi;
+												
+													alter table dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20230825;
+													alter table dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20230817 rename to dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi;
+											--、发大群，发邮件    
+											--、整理 航空动态 数据段 逻辑 情况。<-->
+												20221001 ~ 20230731   数据来源表：运单小表  航空件逻辑：使用TransitFlowType=1 --> 航空件
+												20230801 ~ 至今 	  数据来源表：运单小表	航空件逻辑： 1、产品+limit_tag(时效标签)+route_code + 航空流向 --> 航空件
+									
+							2023-08-23  
+								1、城市动态 ，收件时点数据有波动（比如10点，具体找何龙）
+									-、对比航空动态收件，业务区时点，确定城市动态收件数据是否异常。
+									
+								2、航空动态 - 动态收件补录 
+									-、确定最近1个月的件量波动和补录的趋势
+									-、确定 动态订单和动态收件 24点比值有波动的原因。
+									
+								3、历史阶段，质量监控   -- 动态 -  每3个月，1个月。
+								
+								4、数据组周会【2023-08-23】：
+									-、航空动态：  
+										1、航空动态-  详情 （by 运单  oe字段 和 limit_tag逻辑  ，差异） √
+											-、784972 补录 20230805 10点，查看详情 ，by limit 
+												结论： -、 1、oe约束字段有bug ， 2 、数据延迟，导致差异（重新回刷limit ,差异仅500票，之前是7000票）
+										2、oms动态 和航空动态 趋势 对比   【2023-08-24】    <-->
+										 -- 需要回刷 20221122 ~ 20230611 
+												至 dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801（次表之前回刷20221001~20221121 处理order为0 ）
+											1-- 任务 777525[bi]【已冻结】  按天补录
+															补录 (20221122  ~ 20230201)  √
+															补录 (20230201 ~ 20230509 )
+													-、并行 796547 【已冻结】 
+															补录  20230510 ~ 20230612 
+											2-- 使用新口径 
+											3-- oms  2023-07-01 数据修复 。 -- 已重刷至 backup20230815
+											
+										-- oms 比例趋势 重刷，替换线上版本 【OMS】
+											oms 回刷 20221122 ~ 20230612 替换线上版本 
+											1、dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801  添加字段 area_code 等，并更新业务区数据（和线上同步）
+												alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 add columns (src_area_code string comment '起始业务区编码') cascade;
+												alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 add columns (src_area_name string comment '起始业务区名称') cascade;
+												alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 add columns (dest_area_code string comment '目的业务区编码') cascade;
+												alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 add columns (dest_area_name string comment '目的业务区名称') cascade;
+														alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 change src_area_code src_area_code string after city_flow;
+														alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 change src_area_name src_area_name string after src_area_code;
+														alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 change dest_area_code dest_area_code string after src_area_name;
+														alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 change dest_area_name dest_area_name string after dest_area_code;
+											2、验证 _backup20230801 的20221001 ~ 20221121 ，数据是否和线上一致   -- 一致 √
+											3、补全  2023-06-13 ~ 至今 数据 √
+												-、补全最近数据 ！！！！
+												-、补全历史area业务区数据 ，任务798027【已冻结】 
+											4、替换线上 oms表数据 。 √
+													alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230825;
+													alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20230801 rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi;
+											5、业务区表  dm_ordi_predict.dws_cityflow_dynamic_area_order_hi   数据替换    √
+												780222【已冻结】 从dws_cityflow_dynamic_order_hi_backup20230801 --> 补录数据至临时表 dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20230801
+														2022-10 ~ 2023-08
+												-、补全最近数据  ！！！！ 
+												-、替换area表
+													alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20230825;
+													alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20230801 rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi;
+											记录问题： 
+												1、2022-11-22 0 ~ 11点 数据  ，  产品编码 ，三要素等字段都为null，导致 航空件这个时间段数据异常，
+													【797874】	【tmp_ordi_predict.dm_full_order_dtl_df_by_day_tmp20230829_new2】
+										
+											背景： 
+												一、航空动态相关：
+												航空动态，by运单小表 - 使用OE字段约束 与 by运单小表 - 使用产品/limit_tag/路由代码/流向约束。
+												两种方式对比了20230805~ 20230816的航空件量数据差异百分比，时点整体差异在2%以内， 个别时点差异过高（10%，6%等）是因为
+													1、和上游确认，OE约束字段存在bug，导致部分航空件判断有误，上游反馈20230815之后已修复
+													2、两类刷新执行时间不同，导致数据存在偏差（已验证） 
+												 综上，航空动态上游表可以做以下替换 。
+													1、切换上游表为运单小表 
+													2、航空件约束条件使用OE约束字段（TransitFlowType=1）
+											  二、航空动态24点订单量/动态收件量比值趋势异常相关：
+												比值在 202211月底，202306月底， 出现波动原因分析，可能是因为
+													1、历史数据回刷导致。 
+														[ 20221001~ 20221121 数据重刷（因航空订单为0，使用新口径重刷数据）,20230612 ~ 至今 ，数据重刷（航空口径调整）]
+												基于此，使用新口径重刷OMS航空动态订单20221122 ~ 20230611, 时间段数据，观察24点数据趋势。
+									-、大件：
+										1、排期给到晓惠
+										
+										
+							2023-08-30：  
+								1-、大件 补录    <-->
+									顺心动态 -- ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt  【货量预测_顺心车辆数据】    -- inc_day=20211001/inc_hour=0000   上游表 = 20210918
+									顺心静态 -- ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di  【货量预测_顺心车辆数据】   -- inc_day=20210102   上游表 = inc_day=20211223
+									
+										show partitions dm_freight.dm_sx_in_vehicle_detail_info_dtl_di
+										show partitions ky.dm_heavy_cargo.sx_rt_jd_sink
+										show partitions bdp.dm_freight.tbl_car_info_data_new
+										show partitions ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+
+									select * from ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di where inc_day = '20210918' -- 顺心进港车辆数据
+									select * from ky.dm_heavy_cargo.sx_rt_jd_sink where inc_day = '20210918'   -- 顺心交接单数据
+									select * from bdp.dm_freight.tbl_car_info_data_new where inc_day = '20210918'   -- kafka to hive ，舒心车辆
+									select * from ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di where inc_day = '20210819'  -- 中转到达班次信息
+									
+										方案1 : 补历史之前的场地，需要怎么补 
+											-、新表不过滤 
+											-、确认范浩他们是否使用  -- 不使用
+										方案2 : 如果不好补，直接新逻辑加上新增的场地。
+										
+										我跟业务重新核对了：  新场地： dim_heavy_transit_info (--> dim_heavy_transi_info) 表 
+											select * from 
+											dim.dim_dept_info_df t2
+											where inc_day = '20230905'
+												and dept_type_name in ('快运中转场','大件集分站','航空大件集分站')  
+												and upper(t2.dept_name) not like '%SX%' 
+												and t2.dept_code not in ('531VH','753WH','757VJA','769VX','891VH')
+												and delete_flg='0'
+										
+								2-、任务失败-2023-08-31 -营运维度 -- dm_bie.special_eco_pro 这张表不存在 被删除 
+										处理步骤：
+											1、448419 ， 762589  ， 去掉特色经济的union ,上面表直接取 T-45~ T-0d 
+											2、因平台不能保存任务，测试环境执行 800181，800184  ， 
+											3、强制成功上游，下游执行。
+											4、dm_ordi_predict.dws_spec_eco_pro_waybill_day  查看下游依赖 。
+											
+										后续处理：
+											1、历史数据暂时恢复 dm_bie.special_eco_pro  表数据 。
+												-- 临时表  tmp_dm_predict.test_lh_special_eco_dm_ordi_predict.special_eco_pro pro 
+													写入正式表 ：dm_ordi_predict.special_eco_pro  [448434任务已更新]
+											2、2023-09-07 托寄物表也使用复制表。
+												dm_bie.tm_consign_info替换为dm_ordi_predict.tm_consign_info
+														   
+								3-、流向主数据 --  整改    <-->
+									-、依赖归集的表，修改。
+								
+								4-、航空业务区 + SLA看板 
+								
+								
+							2023-09-01 
+								1、任务，加运维周聪  √
+								2、看板 - 新增任务   √
+								3、数据质量监控  - 新增底表  
+								4、更新底盘表 - 共享文档  
+								5、分析 -- 沙沙要关注  √
+								6、大件 -  晓雯， 全网，集配站SLA看板
+							
+							【数据组会议】
+								1、航空主数据，筛选 cityflow   √ 
+									-、去掉过滤 cityflow -- 不影响，过滤航空件，限制至少3位数字
+										-、确认其他地方是否有 过滤 cityflow regexp '(\\\d{3})-(\\\d{3})'   ， 仅限制至少有3位数字。
+											regexp '^(\\\d{3,4})-(\\\d{3,4}$)'  -- 限制 ，3~4位-3~4位
+											--、月度归集 【663516】
+											--、非空网   【617182】
+											拉会确认 -- 国际件的过滤是否用这个标识.  <-->
+								2、大件排期，改造方式 
+								3、件均重	√
+									-、和业务确认 - 为什么去除 路升航 
+									-、确认，件均重表，是否有路升航的数据。
+									-、和分析确认 - 计算件均重方式 ， sum(real_weight) / sum(waill_cnt) 
+								4、静态底盘，修改730590， 早上刷新 近45天数据   √
+								5、航空产品新增：
+									1-、确定是否是近45天有数据，之前有，刷新历史， 之后有不需改变 
+									2-、产品判断的时候，优化关联。
+									
+							2023-09-14 
+								1、航空件新增两个产品，是否直接加？ 看历史数据是否此两个产品件量。
+								2、拉通OE确认是否新增这两个产品。
+								
+								3、件均重 -- predict_weight  
+									dws_fc_hk_six_dims_predict_collecting_di   -- 心仪
+																			  -- 歆悦
+									-、 测试 avg 
+										100 2 
+										25 3 
+										45 5 
+										-6 2 
+									-、确认sub表下游是否在用 
+									
+							2023-09-20 
+								1、件均重   √
+									1-、663516 -【归集-流向】月度流向特快件重量调整
+										-、由上游表回刷历史 
+										-、修改逻辑，
+											1-、优先使用最小粒度，异常数据avg_weight=1.65  【未来数据，件均重只有按天，不能匹配】
+											2-、聚合时，剔除异常数据，sum(真实重量)/sum(件量）
+										-、替换表 
+											
+											alter table dm_predict.hk_cityflow_predict_month_collecting rename to dm_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20230920;
+											alter table dm_predict.hk_cityflow_predict_month_collecting_backup20230919 rename to dm_predict.hk_cityflow_predict_month_collecting;
+											-- 未执行
+											alter table dm_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20230920 rename to dm_predict.hk_cityflow_predict_month_collecting_backup20230920;
+										-、发布版本
+									2-、617182 - 【预测归集-流向】非空网航空件归集
+											alter table dm_predict.dws_fc_nohk_tekuai_predict_collecting_di rename to dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_backup20230920;
+											alter table dm_predict.dws_fc_nohk_tekuai_predict_collecting_di_backup20230919 rename to dm_predict.dws_fc_nohk_tekuai_predict_collecting_di;
+								
+								2、营运维度 - 特经判断 
+									1、调整线上代码 
+										-、航空件动态代码   √
+										-、特经判断逻辑（关联dm_bie.special_eco_pro_2022new，根据area_code,pro_name,start,begin 约束是否是特经）   √
+										-、件均重， 1、剔除，2、添加负数兜底  3、当天数据，看下均重表是否有值（每天10点，回刷时，注意）   √
+											-、重新执行202309数据。 √
+										-、sub表 ， -特色经济，添加 判断，保证无负数。  √
+									2、回刷历史 	   √
+											-- 【829914-【已冻结】】
+											-- 、 20200101~ 至今（20230921）
+									3、copy历史数据  √
+											dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230921  -- 20191229 ~ 20191231 
+											dm_ordi_predict.dws_air_flow_six_dims_day_tmp20230921    -- 20180101~ 20191231
+											dm_ordi_predict.dws_air_flow_six_dims_day_newhb_tmp20230921    -- 20191229 ~ 20191231 
+											dm_ordi_predict.dws_air_flow_five_dims_day_sub_tmp20230921      -- 20191229 ~ 20191231 
+									
+									4、替换表   √
+											alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230922;
+											alter table dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl_backup20230921 rename to dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl;
+											
+											alter table dm_ordi_predict.dws_air_flow_six_dims_day rename to dm_ordi_predict.dws_air_flow_six_dims_day_backup20230922;
+											alter table dm_ordi_predict.dws_air_flow_six_dims_day_tmp20230921 rename to dm_ordi_predict.dws_air_flow_six_dims_day;
+											
+											alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb_backup20230922;
+											alter table dm_ordi_predict.dws_air_flow_six_dims_day_newhb_tmp20230921 rename to dm_ordi_predict.dws_air_flow_six_dims_day_newhb;
+											
+											alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub_backup20230922;
+											alter table dm_ordi_predict.dws_air_flow_five_dims_day_sub_tmp20230921 rename to dm_ordi_predict.dws_air_flow_five_dims_day_sub;
+									5、交付报告 -- 发布   <-->
+									6、兜底方案代码检查。
+										-、812678 - 任务 T-1D 
+											无需改动，因为使用的是旧的特经配置表， 故特经判断逻辑还是沿用旧的，处理T-1D 
+										2023-10-13更新：
+											-、优化航空件判断为动态。
+											-、优化件均重处理逻辑，处理负数
+								3、√
+									-、静态底盘，航空件动态修改 
+									-、dm_ordi_predict.tm_air_product_config  产品表数据更新 20230922
+									
+								2023-09-25
+									1、心仪 ， 件均重拉会 
+										-、479043    √ 
+											-、回刷历史 件均重 
+											-、修改逻辑 。 
+												-- 修改为  重量/件量 = 件均重。 
+											-、心仪 ，下游目前不回刷数据，最新数据来自于营运维度，下游若需聚合需要修改逻辑 ，重量/件量 = 件均重。
+												--、下游用dm_ordi_predict.dws_air_flow_wgt_qty_actual_dtl  ，  不需要负数处理，因为用的30天汇总的数据， 负数直接剔除。
+											
+									2、大件
+									
+											
+								2023-09-28 
+									-、大件：
+										1、任务名称规范  √
+										2、任务加表头 ， 加注释  
+										3、告警，依赖，重试次数 
+
+									-、流向 oms&航空动态 + 省份维度 ：  √
+										流向oms,航空动态 加省份维度 （参考 780205，780068）
+										-、起始省份，到达省份。
+											发布时间在10月12号，交付在10月16号，临时表在10月8号给到他们先用
+										-、整理正式表名， 写数据
+										-、上游表同样添加省份字段。  -- 暂时不用加 
+										-、
+											oms，航空动态 添加 省份维度汇总  -- 发布   √
+											-、851940  航空动态-省份
+											   851932  oms-省份
+											-、数据范围，截止2023-10-07 ，后续上线需要回刷 10月 
+												-- 852123【已冻结】  航空动态回刷
+												-- 852010【已冻结】  oms省份回刷
+											-、数据验证/质量监控/SLA看板/告警监控/开发&运维人员/
+											-、交付报告。
+											-、航空-income & pro  2023-08-01 ~ 2023-08-23 不一致 。  -- 已修复   √
+										
+									-、流向-特经 ：  <-->
+										1、area_code 不能直接取运单宽表？
+												-- SF1678732144106   769-451   异常
+												-- SF1152007909223   769-025  运单宽表 src_area_code = 769Y
+											-、询问吴群英，area_code 来源。
+												-、与dim_department 保持一致 
+										2、托寄物的area_code也不能去运单宽表？  -- 是的   （参考 dm_bdp_datamining.spe_waybill_category）
+											left join
+											(select 
+												 dept_code
+												,area_code -- 速运地区代码
+												,area_name 
+											from dim.dim_department 
+											)t3 
+											on t2.src_dist_code = t3.dept_code;
+										-- 验证 近10天的特经表， 不用关联 area，start，end，pro_name ，特经标识是否一致。
+										3、
+										背景：特经判断，是否需要在关联new表，根据area,pro_name,start,end_time
+										结论：
+											1、特经表，近10天的结果无需关联（因为生成的特经表，已经是关联验证后的了）【如图，近10天关联与否，特经条数一致】，
+											2、但是T-45~T-11需要关联配置表，验证是否属于特色经济。【如图，T-45~11天,关联与否，特经条数不一致】
+						
+										
+								2023-10-08
+									1、静态底盘 + 托寄物   <-->
+										-、参数改成动态，online
+											853410【已发布】  -- online ，每天4点，刷新T-45D
+											852907【已冻结】  -- 刷新历史 2021-04之后 
+											855970【已冻结】  -- 刷新历史 2021-04之前
+										-、新表质量监控 ，主要是跟流向底表做量级对比，理论上应该是一模一样  √
+										-、刷新 2021-04之后的数据，航空件对不上， 是因为静态底盘，航空件的规则用的老的版本。  √
+										-、修复income_code丰网
+												-、重刷202001~至今   写入tmp表  √
+												-、后续刷入tmp -->  dm_ordi_predict.dws_static_cityflow_consign_base 
+													-、只刷新 ， 202001~202308 （因为近45天已刷新，每天）
+										-、临时表不是不能公用? -- 切换正式 √
+										-、观察可能存在的异常数据，托寄物分类。
+											-、查找202001~至今 ，占比异常的
+												-、后续回刷 托寄物异常天数， 要把 20201216 当天加上。
+													-、'20201216' 
+													-、'20210704' ,'20210711' ,'20210725' ,'20210801' ,'20210802' ,'20210803' ,'20210804' ,'20210805' ,'20210807' ,'20210808' 
+													   ,'2021004' ,'2021005' ,'2021006' 
+												-、维护代码-修复数据。	
+													864012 【已冻结】  --  2021-04之前   ， 按天 ，刷新  20201216
+													864054 【已冻结】  --  2021-04之后   ， 按天 ，刷新  
+											-、添加质量监控
+										-、数据验证/质量监控/SLA看板/告警监控/开发&运维人员/
+											--质量监控   √
+												--、和底盘对比 
+												--、托寄物配置表，无法分类占比。
+									2、询问浩哥，  上游任务数据来源。 
+									
+								2023-10-13 
+									1、双11压测。
+								【数据组会议 - 20231012】
+									1-、tmp_ordi_predict 不需要的表，剔除掉，
+									2-、优先级不高的，放到bl队列。
+								2023-10-17
+									1、交付报告 - oms&航空动态 ， 托寄物一级分类   √
+									2、月结  -- 线上化   
+										-、870568 【已冻结】
+											-、代码更新为 ， 托寄物 和 客户类型一起的版本 ， 都写入临时表
+												tmp_ordi_predict.dws_static_cityflow_customer_base_1
+												tmp_ordi_predict.dws_static_cityflow_consign_base
+											-、暂时冻结， 后续根据模型情况 ，开发使用。
+										-、写入临时表 。
+									3、spark ppt    √
+									4、压测   √
+										1、航空动态  -- 3倍数据量测试 
+											-、数据翻3倍，24亿
+											-、执行时间7min(之前5min)
+										2、oms 663166-
+											--、- 内存由 48->24g 每小时执行 871987-【已冻结】
+											--、3倍数据量  
+												- 半小时执行  （压测-871416-【已冻结】  - 子任务 871443）
+												- 整点执行  -- 待测试
+										3、动态底盘 - 欢哥。  774229
+										4、营运维度
+												762589    【压测 871334】
+													- 增加并行度= 800
+														时间 由 30min  --> 15min  
+												452264  【压测 871337】
+													- 增加并行度= 1600
+														-时间未变化（可能与整点资源有关）
+														-分区确实翻倍，
+													优化： 关闭推测执行，参考第一步
+										-- 整点 ， 半小时 
+											-- 涉及到 运单小表 ， oms动态、
+										4、托寄物 & 一级分类 -- 合并到一起 
+									5、大件 - 改造任务 ，切换队列。  √
+									6、修复上游数据bug，动态收件 & 航空动态		 √
+										-、修复
+											动态收件：2023-10-22 01 
+												-、468144 （dws_dynamic_cityflow_base_hi）
+											航空动态：2023-10-22 01 
+												-、income(484086) -> area(780068) -> province (851940)
+										-、记录问题原因
+									7、看任务是否可以放 ， 补录队列   √
+										-、大件改造任务  -- 已切换至bl
+									8、高峰卡顿任务切换 hive   √
+									   448086（632525）   备份hive  [875851【已冻结】] 
+									   663166   备份hive [875828【已冻结】]
+									   448434   兜底逻辑 [812678【已冻结】] 
+									9、 航空流向-业务表 --  91399  		
+										air_list 		-- 	91416
+											剔除： ('351-335','826-917','8983-8981','8983-8983','591-751','776-855','856-773','714-398','798-736','897-897','909-995','953-970','833-871','417-459','8983-898','898-8983','8981-8983')
+										-- 10.10 变动
+										-、监控  剔除的流向件量分布 。  （大流向刷，小流向不刷？）
+										-、后续决定是否回刷历史。
+									10、-、448434兜底逻辑- 812678，测试   -- 40min左右 √
+											tmp_ordi_predict.dws_spec_consign_waybill_day_doudi
+											tmp_ordi_predict.dws_spec_eco_pro_waybill_day_doudi
+											tmp_ordi_predict.dws_air_flow_six_dims_waybill_dtl_doudi
+											tmp_ordi_predict.dws_air_flow_six_dims_day_doudi
+											tmp_ordi_predict.dws_air_flow_six_dims_day_newhb_doudi
+											tmp_ordi_predict.dws_static_cityflow_special_econ_day_doudi
+											tmp_ordi_predict.dws_air_flow_five_dims_day_sub_doudi
+										-、线上修改 ，812699 -bug  √
+										 
+									11、468144/468146 ,  兜底 参考 774229
+										-、核对字段，数据
+										-、准备代码，
+											-、兜底任务 【877118-线下】
+												-、手动传参，指定兜底补录-小时打点数据
+													参数示例： 
+														参数1 :  ${yyyy_MM_dd_manual} -- 计算日期 (示例:2023-10-25)
+														参数2 ： ${H_manual}   	      -- 计算时点 (示例:0,1,2,3,4,5 ... 23 (0~23))
+													示例： 需要兜底计算2023-10-25 00:00:01 时点任务， 只需传参 
+														$1=2023-10-25 
+														$2=0
+												-、验证数据无误后，切换写入表为 dm_ordi_predict.dws_dynamic_cityflow_base_hi
+									12、告警异
+										-、航空动态 
+											-、oms订单 -  业务区维度 ，（780205）   -- 2023-10-25  08:36 ~ 08:37 
+												告警时间：
+													2023-10-24 19
+													2023-10-25 08 
+												--、783423  （AI-hk_area_dynamic_pred_hour_1631）
+												--、797204 （航空配平） 
+											链路 ： 797204  <-  783423 <-  780205  <-  663166
+											原因：	
+												1、任务初始化，额外耗时10min
+												2、运行较正常时效，额外耗时10min
+												
+										-、动态收件 （468144）  -- 2023-10-24 23:25  ~ 23:40 --> 等待31min
+											-、278374  -- 为了集群稳定，暂时调整了写入速度改成1M/S [彭凯]
+											-、797034(全网动态城市配平)   <- 664360 （AI-cityflow_dynamic_pred_hour_971）  <- 468144  <- 278374   <-  447202
+										
+									13、正式库，dm_ordi_predict 看下数据量比较大的，删掉。
+								
+								2023-11-27
+									1、沙沙业务提供航空表（t_collect_disperse_city(集散城市配置表））   -- 监控给流向组内所有人  √
+									2、大家检查一下自己的任务，有涉及分拨区的，有'888Y' 的都要改名，由 '全国航空枢纽（杭州）' 改成 '浙皖分拨区' 、  √
+										-、dm_ordi_predict.dim_city_level_mapping_df 表，888Y分拨区 ，目前是写死为 '浙皖分拨区' ， 需要动态生成。
+										原因：	上游表 ： dim.dim_department  ， dm_ops.dim_city_area_distribution ， dm_oewm.dim_area_fbq 中取分拨区名称。
+										 dm_ops.dim_city_area_distribution 在2023-11-23 当天才更新888Y分拨区的名称，导致 2023-11-16~2023-11-23之间的888Y显示为旧的分拨区名称。
+										实施方案：
+											-、回溯之前版本（观察888Y数据-质量监控）  √
+											-、后续若还存在全网修改数据的情况，跟进上游表的变化，通知下游。 -- 
+									3、航空动态 ，663166优化，
+										1、过滤放内部       <-->
+											and iscancel = 0
+											and to_date(from_unixtime(cast(cast(ordertmstamp as bigint) / 1000 as bigint),'yyyy-MM-dd HH:mm:ss')) = '$[time(yyyy-MM-dd,-1h)]'
+											and from_unixtime(cast(cast(ordertmstamp as bigint) / 1000 as bigint),'yyyy-MM-dd HH:mm:ss') <=concat('$[time(yyyy-MM-dd HH)]',':00:00')	
+										  -- 、优化获取路由代码
+											替换为dm_ordi_predict.ods_pass_waybill_dtl_hi  
+										  -- 、  关联运单号任务 ，都为null，联系上游 
+										  -- 、  rank放内部，select * 写成固定字段。 
+										2、AI任务耗时过多跟进。  -- 反馈平台跟进 
+									4、大件改造任务，跟进质量管理
+									5、cf_air_list 表是否替换。  	 √
+										-、发出对比报告，
+										-、告知下游，统一替换。【897547】
+									6、448434 ， 
+										-、托寄物表关联dim_department 获取area_code ,不能直接使用运单宽表的area_code,
+										-、任务优化，推测执行
+									7、新需求， 动态订单有一个数据需求，你可以先跟发哥一起评估下排期。流向目前用到的动态订单表里，增加订单未揽收字段，
+										-、业务区，省份维度是否需要同步加？
+										-、历史数据需要回刷？
+												--、补录 20231001 ~ 20231129    	915525【已冻结】    -- 新增补录   20230112~20230131  ，  20230512~20230531 ，20230911~20230930 
+													--、 20221001 ~ 20230131		916546【已冻结】	-- 切换队列 predict ，又切换回bl
+													--、 20230201 ~ 20230531		916555【已冻结】
+													--、 20230601 ~ 20230930		916559【已冻结】
+												--、产品code,limit_tag 优先取订单，取不到取运单宽表 【补录 20221001 ~ 20221121  air_order_num 都为0 】 			   √
+												--、写入 dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20231129  （维护后续从tmp复制补全 779978【已冻结】）  √
+												--、924506  - 添加未揽收，同步线上版本，写入tmp表。 [20231205 15:00 开始，0~14 已补录（注意上游临时表是否被清空）]
+												--、优化rank , processversiontm要按照时间戳排序。
+									1、小时打点 ，数据治理  
+										-、和算法沟通，数据范围至少多久
+										-、历史表，只有天分区，加标识字段 + hour
+											
+									2、日期剧本
+										-、农历闰月 -- 注意数据是否异常
+										-、
+									3、2023-12-01 修复动态打点数据（因平台故障）  √
+										-、动态收件
+										-、oms打点/业务区/省份维度    -- 663166 -> 851932/780205
+										-、航空动态/业务区/省份维度   -- 484086 -> 851940/780068   【修复积压，去掉update】
+									3、梳理pis数据源整理共享文档
+									4、工时+周报  -  √
+										-- 闰月。
+									5、这张表 dm_predict.ka_warehouse_inventory_sku_detail 是从供应链那边过来的库存明细表，有办法找到从
+										仓库库存→订单生成→SF收件量关系吗（收件网点预测-需求？）
+											stg_oms5.wom_tb_warehouse   -> ods_oms.wom_tb_warehouse
+										-、联系业务梳理是否可行。
+										dm_elog_dvp.kafka_elog_wpm_order_info_v3_data_D11  <-  dm_elog_dvp.kafka_elog_wpm_order_info_v3_data 
+											t.companycode=t2.company_code
+												and t.warehousecode=t2.warehouse_code
+										-- 18682903179   	770386 * 3395015
+									6、oms打点任务， -- 启动超时  ，因为调度任务慢了，排队。
+											方案1 
+												添加A级看板 
+												780205 启动超时10min  2023-12-15 15:28:09
+											方案2 
+												提前排队
+												任务sleep 
+											方案3 
+												kafka订单全量表 - 添加路由代码。
+									
+											备注： 
+												-、任务ID：943001 
+													-、优化v2 
+														-、 切换为字段少的表  							    	 √
+															-、set runner.support.reading-hudi=true;
+															-、dm_ordi_predict.dwd_pis_route_info_v2_df -->  dm_ordi_predict.dwd_inc_route_code_info
+														-、对比前后耗时差异
+														-、验证时点航空件差异	
+													-、订单不用关联。 -- 因为约束了订单日期，当天关系表无数据。   √
+													-、优化663166 ， * / 过滤 / 去掉临时落表 。					  √
+												-、AI任务是否可以优化？   -- 无可优化空间 
+												
+									7、任务优化/看板告警/质量监控-高峰告警生效双12/看板时间/  
+											468144/468146 ->兜底逻辑-发版
+												468144	V006	【兜底逻辑】切换上游表
+												468146	V005	上游表冻结，切换上游表
+									8、confluence需求文档化。
+									9、述职报告。
+										
+								
+									2023-12-15
+									1、双12值班文档填写
+									2、周报 
+										1-、双12高峰值班
+										2-、大件已发送/到达-数据源异常处理。
+										3-、航空动态超时异常跟进。
+										【双十二】高峰值班
+										【流向】航空动态超时异常跟进处理（进度80%）
+										【大件】已发送/到达-数据源异常处理（已完成）
+									
+									2023-12-18 
+										1、大件，优化Hbase并行度 ：
+											- 取T-60D  ？ 是否可以缩短日期。
+										2、小时任务优化  -- 更新文档 & 反馈项目组
+											-、模型读取小时任务 优化。  -- 优先航空动态优化。
+										3、双12复盘，文档编辑
+											2023-12-11 3 
+											2023-12-12 5
+											2023-12-12 7
+										4、工时 48 ~ 52    -- 52周待填，截止12-21.  √
+										
+									2023-12-20 
+									1、233185 托寄物执行延迟，兜底处理：		    √
+										一、营运维度 
+											1、件均重表，812708 逻辑 修改为 T-45~T-1d ，因为T-1D要等到10点后才出结果。
+											2、验证记录：
+												-- 一、验证营运维度相关表
+													select * from tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp9_doudi
+													select * from  tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_0_doudi
+													select * from tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_1_doudi
+													-- 验证newhb 
+													select inc_day,days,type,sum(air_waybill_num  ) as air_waybill_numsum(air_quentity_num ) as air_quentity_num
+														,sum(air_sum_weight   ) as air_sum_weight,sum(air_avg_weight   ) as air_avg_weight,sum(air_mid_weight   ) as air_mid_weight
+														,sum(avg_weight       ) as avg_weight,sum(sum_avg_weight   ) as sum_avg_weight from dm_ordi_predict.dws_air_flow_six_dims_day_newhb
+													where inc_day>='20231218' group by inc_day,days,type
+													-- 验证托寄物表   -- 兜底
+														-- ,priority_no          --old字段        
+														-- ,broad_heading         --old字段       
+														-- ,subdivision           --old字段
+													select * from dm_ordi_predict.dws_spec_consign_waybill_day
+													where inc_day = '20231219'
+													-- 验证特色经济  兜底版本level_1,2 有值 ，  线上版本 是 1,2，3都有值，
+													select * from dm_ordi_predict.dws_spec_eco_pro_waybill_day
+													where inc_day = '20231219'
+													-- 减特经表结果，件均重验证
+													select * from  dm_ordi_predict.dws_air_flow_five_dims_day_sub where inc_day = '20231219'
+												-- 二、验证件均重下有任务
+													-- 验证 478999
+													select * from tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp9 where inc_day = '20231218'
+												-- 三、强制448434及子任务成功
+										二、853410 【底盘-流向】-托寄物一级分类静态数据
+												-、是否需要兜底？ -- 暂不需要。
+								2、663166 
+									-、何时开始延迟 
+									-、优化v2后，耗时对比，看是否有必要切换。    <!-1229-1>
+								3、流向规划图。
+								4、知识库 ，  归档。。
+								5、大件 -- ky.dim_freight.dim_heavy_transi_info   -- 405031  存在重复
+								
+								2023-12-25
+								1-、大件上游表，对接人确认    √
+									-、jpz表上游。  dm_heavy_cargo.dp_business_stat_rt_collect_new_report -- 206203(货量流向预测T表)
+								2-、大件集配站 -- 数据验证    √
+									dm_predict.dj_jpz_pickup_ltsf_model_result		-- 716311
+									dm_predict.dj_jpz_delivery_ltsf_model_result    -- 734962
+									收件：906381
+									派件：926184
+										由于eta数据长度远端覆盖问题，本周还是周一周度手动写入结果，后续建议还是周度更新集配站中长期预测服务
+									-- 查看 收件 -输出大件类型
+										-- 关联 dim.dim_dept_info_df  获取网点类型
+								3、0D 数据验证， case when确定那个过滤条件导致数据差异。  
+								2023-12-28 
+								1-、主数据需求 -- 截止 2024-01-05   			 <!-1229-2>
+									-、需求：
+											主数据 - 航空省份  = 3 
+											城市流向 ， 添加type标记考核  is_check
+											航空动态  根据航空列表，标记考核。
+										问题：
+											1、添加航空省份对象， object_type_code	对象类型代码 - 1城市流向，2航空流向 3航空省份流向
+											2、新增考核标识 ， is_check   0否 1是  
+											3、考核的航空列表都有哪些？
+											4、历史数据是否回刷？ --  浪哥反馈需回刷近1年。
+									-、近30天的cityflow/省份/网点,  昨天没有的数据，打什么标签，不考核？
+									-、回刷1年数据，只回刷is_check？ -- 是的
+									-、主数据在关联当天打标签。
+									-、省份维度，   
+										- origin_code,dest_code,origin_name,dest_name,  -- 对应省份名字  
+										- 只取航空流向 的省份数据。
+											-、线上 & 回刷 -- 同步修改，
+									-、目前主数据，存在6 -航空流向省到省  【20200101 ~ 20201215 ， 20221024 ~ 20230410】 ，  -- 咨询浪哥。
+										因为之前的代码没加 concat(origin_code,'-',dest_code) regexp '(\\\d{3})-(\\\d{3})'
+									-、回刷历史的‘航空省份流向’ - 中位数 和  最新跑出来的有差异。  
+											-、原因： 数据粒度不一样，
+									-、历史数据备份：
+										回刷-备份type=3,带中位数 ： dm_ordi_predict.dws_static_flow_master_data_di_backup20240104  
+										历史数据备份表： dm_ordi_predict.dws_static_flow_master_data_di_backup20240106
+										
+										-、替换表： 
+											alter table dm_ordi_predict.dws_static_flow_master_data_di rename to dm_ordi_predict.dws_static_flow_master_data_di_backup20240106;
+											alter table dm_ordi_predict.dws_static_flow_master_data_di_backup20240105 rename to dm_ordi_predict.dws_static_flow_master_data_di;	
+										
+								2、节前
+									-、逻辑/参数-优化
+									-、梳理是否要停掉的任务 
+									-、小时打点治理
+									-、新表-质量监控
+									-、质量告警 - 春节阈值
+									-、知识库 - 怎么搞？  confluence / 框架开发 -文本定义 <!--!>
+								3、中转耗时  -- 看下耗时原因- 超时?执行慢？  √
+									765171 [ <- 471334] 		-- 业务预测_中转场_下一跳航空场地
+									644479						-- 业务预测_中转场_下一跳航空场地
+									722122						-- 新_业务预测_中转场_动态班次到件量
+									771391						-- 业务预测_中转场_下一跳陆运场地
+									672570						-- 业务预测_中转场_下一跳陆运场地
+									767368 						-- 业务预测_中转场_下一跳陆运场地
+								755068
+								455669						-- 新_业务预测_中转场_动态班次到件量
+								
+								52周报： 
+									1、【流向】中转场OD-数据回刷/验证
+									2、【大件】底盘上游数据-运维拉通
+									3、【运维】看板超时任务，定位超时原因。
+								53计划
+									1、【流向】主数据考核开发。
+									2、【流向】小时打点数据治理
+									
+							2024-01-02
+								1、五维度： √
+									3、路升航：SE0004+SP6(时效标签) + T6(时效类型)
+									4、新空配: 顺丰空配【'SE0089' +  T4(时效类型) ,'SE0146' +  T4(时效类型)】 
+											   特快包裹【'SE0107' +  T4(时效类型) ,'SE0152'】
+								2-、空仓项目 
+									-、梳理上游表
+										dm_oia.dm_flight_execute_condition_no_land_dtl_di 航班执行情况-无陆运填仓重量】
+										1.【实际仓位量】和【实际发货量】区别
+											flight_load		航班业载 : 	28000 			-- 
+											actual_space	实际舱位量 : 16360 			-- 
+											plan_send_weight   计划发货量 : 27998
+											actual_send_weight	实际发货量 : 15205		-- 
+											plan_load_rate		计划装载率 : 99.99 ( 计划发货量/航班业载)
+											actual_load_rate	实际装载率 : 54.3  ( 实际发货量/航班业载)
+											box_load_rate		板重装载率 : 58.43 ( 实际舱位量/航班业载)
+											actual_send_weight_noempty	实际发货量（不含空舱） : 15205
+											actual_load_rate_noempty	实际装载率（不含空舱） : 54.3  ( 实际发货量（不含空舱）/航班业载)
+										2.【实际发货量】是实际重量还是计费重量
+										3.【车标信息】含义
+											actual_send_weight（实际发货量）:航空主提单开单重量，单位：KG
+											car_no（车标号）: 始发发货的车标集合
+											flight_load（航班业载）：指的是航班理论上可以装货物的容量
+											actual_space（实际舱位量）：指的是航班实际上可以装货物的容量（按航班计划板箱的业载类型，也是理论值）
+											actual_send_weight（实际发货量）：指的是航班实际发出的货物容量（一般我们使用实际发货量不含空舱，也是航空主提单开单重量）
+											plan_load_rate（计划装载率） : ( 计划发货量/航班业载) * 100 【计划业载/航班业载】
+											actual_load_rate（实际装载率） :  ( 实际发货量/航班业载)* 100
+											box_load_rate（板重装载率）:  ( 实际舱位量/航班业载)* 100   【打板重量/航班业载】
+									-、申请上游表权限
+									-、接底盘数据。
+										-、noland表，任务交接 & 表名更换？
+										-、分析用到的其他表， 看是否可以合并，否则取字段生成底盘表。
+								3-、质量监控排查
+								4-、小时打点治理。
+								5-、年度回顾 & 年度自评	√
+									1、既定需求按时交付。
+									2、数据异常及时跟进处理结局。
+									3、保障高峰时效
+									4、底盘任务优化
+									5、完善补充SLA看板及数据质量监控
+								6-、周报：				√
+									1、流向主数据-新增是否考核/历史回刷 （已完成）
+									2、空仓项目-上游表梳理
+							2024-01-08 	
+								1、主数据-邮件通知 				 √
+								2、oms关联优化 - 统计耗时    	 -- 2024-01-15 开会讨论。
+									-、未揽收 -- 如果订单量按照原数据，则涉及到未揽收数据按照比例计算。 --> (未揽收/新订单量) * 旧订单量。 		
+									-、1、rank优化/临时落表优化， 2、 关联切换v2  3、去掉关联订单，
+									问题： 
+										OMS小时打点数据表-历史回刷需求：
+										一、回刷背景：
+											 1、OMS小时打点耗时波动不稳定，逻辑&耗时优化 
+												 1-、耗时优化：去掉冗余关联 & 优化排序
+												 2-、逻辑优化：切换关联辅表（v2辅表切换），路由当天准实时更新，更合理。
+											 效果：打点任务耗时平均缩小3倍左右（18min -> 6min）且耗时波动更平稳。
+											 问题：切换辅表后，航空路由代码当天会更新，导致时点航空订单量与原航空订单差异(5%~10%)，可能会影响模型回测效果。
+											 2、添加未揽收字段，回刷仅更新未揽收标识。
+											 问题：回刷的未揽收订单比原订单高的情况，目前手动按照比例修正，可能会影响模型回测效果。
+									   二、目前措施：基于以上背景&问题
+											1、回刷历史数据，同步更新全网/航空/未揽收全网/未揽收航空-订单量等指标数据，
+												1-、保证历史航空订单数据与优化后航空订单数据为统一逻辑。
+												2-、保证未揽收订单量与订单量为统一逻辑。
+											2、回刷范围：20221001~至今
+											3、回刷耗时：预计3天
+												
+									1、未揽收回刷，仅回刷未揽收，可能会导致未揽收比原订单高，目前采用按比例修正 [按照回刷后的 （未揽收/回刷订单量） * 原订单量]  
+										-、【任务ID:924506  - 已冻结】
+										-、结果表：dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20231129  （异常数据已修正）
+									2、切换v2表后，时点航空订单会存在差异，12~24时点差异在4% ~ 10 之前。  
+										-、【任务ID:943001 - 已冻结】
+										-、结果表：tmp_ordi_predict.dws_cityflow_dynamic_order_hi_20231220_tmp1 未揽收表-
+									开始回刷：
+										-、切换v2表，回刷，订单量/&揽收
+											-、采用小时治理表的方式？
+												-、回刷完，写入小时治理表 。  √
+												-、线上代码，更新为小时治理表。
+											-、oms历史回刷，产品code,limit_tag 优先取订单，取不到取运单宽表 【补录 20221001 ~ 20221121  air_order_num 都为0 】  √
+										-、后续 oms-业务区/省份 同时改造分区结构。
+										
+										OMS底盘相关：
+											1、添加未揽收 2、产品code,limit_tag 优先取kafka表，取不到取运单宽表  3、processversiontm rank优化 4、去掉订单关联  5、通过运单宽表回刷  6、写入结果表 _backup20240116
+											任务ID：965410  -已冻结		20221001 ~ 20230131		队列：predict
+											任务ID：965426	-已冻结		20230201 ~ 20230531		队列：predict
+											任务ID：965431  -已冻结		20230601 ~ 20230930		队列：predict_bl
+											任务ID：965433	-已冻结		20231001 ~ 20240116		队列：predict_bl
+											
+										数据验证：
+											1-、对比切换V2的时点数据 和回刷按照运单宽表 这段时间航空订单量。
+											2-、业务区/省份维度 ，是否添加未揽收字段？
+									切换验证：
+										1、治理验证：模型按天/小时取数是否正常。
+										2、数据验证：模型验证底盘历史数据变更对模型影响。
+										备注：
+											1、涉及表： 
+													dm_ordi_predict.dws_cityflow_dynamic_order_hi  			 -- oms小时打点表
+													dm_ordi_predict.dws_cityflow_dynamic_area_order_hi		 -- oms业务区汇总表
+													dm_ordi_predict.dws_cityflow_dynamic_province_order_hi	 -- oms省份汇总表
+											2-、变更范围： 20221001 ~ 至今  						
+											3-、涉及字段：订单/航空订单/未揽收订单/未揽收航空订单
+									线上数据准备： 
+										oms : 
+											1、任务ID：965410-已冻结  ， 补录 202240117 ~ 20240121   √
+											2、961174 任务改造为切换v2 ， 补录 20240122  ，				√
+												-、v2切换，后 写入新表 dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240116
+										业务区表： 
+											1、通过 上游_backup20240116 -> 下游_backup20240109， 回刷历史业务区数据   【ID:780222 -已冻结 】  √
+										省份维度表： 
+											1、通过 _backup20240116 ， 回刷历史省份维度数据  【ID:852010 -已冻结 】  √
+									线上切换： 
+										1、对应代码切换 
+											OMS：1、hudi依赖 2、小时治理   
+											业务区/省份： 1、未揽收 2、小时治理
+ 										2、业务区/省份 ，刷新备份表切换前时点数据。			  √
+										3、表重命名
+											alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi_20240123;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240116 rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi;
+											
+											alter table dm_ordi_predict.dws_cityflow_dynamic_province_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_20240123;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_backup20240109 rename to dm_ordi_predict.dws_cityflow_dynamic_province_order_hi;
+											
+											alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_20240123;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20240109 rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi;
+											
+									-、小时打点治理 - 统计耗时   
+										方案：
+											1、原小时分区字段修改为小时字段，
+											2、修改原代码，改为union 方式。
+											3、测试耗时变化。
+										1-、oms改造验证
+											-、新增未揽收字段 / 历史数据写入新表。  
+												dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240109  
+												【任务id: 961174- 已冻结】
+											-、测试耗时变化（union改造后-对比663166）。  √
+											-、2024-01-22 改造 ： 
+												1、切换v2,添加hudi依赖 2、输出表改为 backup20240116
+										2-、航空动态小时治理
+											1-、小时治理测试任务 ，写入备份表
+											【任务id: 1001802    - 已冻结 】	1-24时点  {test-1001781,1001792}  {online-484058,484083}
+											【任务ID：1001815    - 已冻结】  copy数据至新表
+												-- 耗时对比
+												-- 历史copy对比 
+												-- 484086 - 632525 近期耗时过长探索。  -- 节点机器压力过大，没有数据倾斜。
+											2-、原任务切换
+												1-、线上代码更新
+												2-、涉及表更新
+													-、航空动态 
+														484086	-- 484058/484083  
+															dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20240109
+															dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20240109
+													-、业务区/省份  -- 数据线下补全 
+														780068  -- 业务区 
+															dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20240109
+															dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20240109
+														851940	-- 省份维度 	
+															dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi_backup20240109
+															dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi_backup20240109
+											3、线上切换： 
+												1、对应代码切换    √
+													小时治理   
+													业务区/省份： 小时治理
+												2、业务区/省份 ，刷新备份表切换前时点数据。			  √
+												3、表重命名		 √
+													-- 底表
+														alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi;
+														
+														alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi;
+													-- 业务区
+														alter table dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi;
+														
+														alter table dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi;
+													-- 省份维度 
+														alter table dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi;
+														
+														alter table dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi rename to dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi_backup20240109 rename to dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi;
+												4、冻结测试任务 及 新表别名更新。	  √
+										3-、动态收件 
+											1-、小时治理测试任务 ，写入备份表
+												【任务id: 971886   - 已冻结】	1-23时点
+												【任务id: 1001628  - 已冻结】	24时点
+												【任务ID：1001603  - 已冻结】  copy数据至新表
+													-- 添加历史数据后，耗时对比
+													-- 历史copy对比
+											2-、原任务切换		
+												1-、线上代码更新		 √
+													468144 
+													468146 
+												2-、涉及表更新		 	 √
+														dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20240109
+														
+														alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20240221;	
+														alter table dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20240109 rename to dm_ordi_predict.dws_dynamic_cityflow_base_hi;
+												3、冻结测试任务  √
+													
+										
+								4、中转场OD上游梳理。  √
+								5、672570【中转场特征】PIS发件-发出班次&下一跳  - 拆经停 补录   √
+									补录ID : 961915
+									补录范围： 2023122910  ~ 2024011012
+									
+									数据复制：963903
+										范围： 2023122918  ~ 2024011012
+									  
+								6、【中转场-下一跳V3】静态底表(实发pass-应发pis)下一站字段异常：
+									原因： 上游表 dm_oia.super_flow_vehicle_tasks_split_info_full_hudi_pro_rt [（运力实时数据表（车辆拆经停））] ,dest_zone_code目的网点数据异常（上报异常数据导致）。
+									解决方案：
+										1、底盘不变，分析使用底盘数据，通过网点维表过滤异常数据。
+										2、追溯上游表异常数据是否是正常网点填写错误导致，确认剔除异常数据的合理性。
+											-、正常网点，需业务方确定是否剔除。
+									
+									周报：	
+										1、空舱项目-数据源梳理 
+											-、梳理数据流向，确定空舱底盘表
+											-、回刷历史数据
+										2、小时打点治理
+											-、OMS小时打点，治理前后数据/耗时对比。
+										3、中转-拆经停PIS发件-发出班次-数据回刷
+											-、定位异常原因，切换数据源表。
+											-、回刷异常数据。
+										4、中转-拆经停网点异常跟进处理
+											-、定位异常原因，确定后续方案
+											-、跟进上游数据源数据修复
+							2024-01-09	
+							项目复盘：
+								1、数据质量监控检查
+								2、资源配置检查
+								3、表权限/远程办公权限
+								4、临时表权限
+								5、春节休假人员提前申请，安排资源
+								
+							2024-01-17 流向周会
+								1、空舱项目 
+									- confluence   
+										-、目录 
+										-、底盘逻辑梳理 
+									- 底盘，接入讨论。
+										-、任务交接
+											-  任务告警添加 。√
+										-、任务改造，1、依赖 2、代码 （观察后，改造切换） 。
+										-、结果表 -质量监控。 √
+								2、小时打点任务，是否可以切片计算，提升速度？
+									周报：
+										1、空舱项目-底盘接入
+										2、OMS打点历史回刷	
+										3、小时打点 
+											- 航空动态 
+											- 动态收件 
+								2024-01-22~ 28 
+									1、小时打点治理
+										-、航空动态
+										-、动态收件 
+									2、OMS逻辑优化&回刷验证		√
+								2024-01-22 周会	
+									1、空舱 - 是否有动态底盘表 ？
+										-、航班执行情况  -- 验证是否是按小时刷新。
+									2、是否有预计未来航班 ？
+										-、未来T+2D 
+									3、知识库 - demo
+									4、年前表权限/质量监控/等梳理
+										-、质量监控  
+											dm_ordi_predict.dws_air_flow_six_dims_day    : inc_day='20240124' 波动检测【50000~113630】条，当前检测值为【117172】条
+											dm_ordi_predict.dws_spec_eco_pro_waybill_day : inc_day='20240124' 波动检测：表行数的合理范围为【900000~3300000】条，当前检测值为【5002444】条
+											dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi 	 : 【900~38500】条，当前检测值为【39093】
+										-、看板调整
+											694537  -> 9:00 -> 11:00
+											614318  -> 9:10 -> 11:10
+											
+									5、年假咨询。 -- 请假提前通知。
+								2024-01-29 
+									1、oms航空订单- 产品配置表变更
+										1、切换配置表版本解决
+										2、质量监控 -
+											1-、产品业务表 - 环比对比   √
+											2-、备份表2024-01-26分区[oms在用] 和业务区当天数据对比    √
+											3-、动态任务 添加 -  环比对比
+										2、评估新增的时效标签对空网件 和非空网件的影响。
+											1-、拉会春保沟通    √
+											2-、回刷oms-航空动态订单 - 添加航空流向约束    √
+												-、【1005439 - 临时任务】
+												-、 dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240130
+													dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20240130
+													dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_backup20240130
+									2、收转派 - 春节报表 
+										1、tmp_ordi_predict.lh_dm_waybill_newyear_d_tmp0  录入数据     【任务ID  : 1011954 线下】   √
+										2、dm_ordi_predict.dm_waybill_newyear_2024_df  表，新旧寄件日期，重新对齐(去年派件比例，未来比例),    【任务ID  : 1011954 线下】  √
+										3、动静态代码日期修改。   √
+										4、静态代码，收件少了，添加dest_dist_code去重 。 涉及任务ID: 1002270
+									3、动态收件 - dm_oewm.oewm_receive_flow_ez  没读到数据 ， 2024-01-29 16点时点。
+										-、2024-01-30 23 同样问题， 跟进上游优化反馈。  
+											-、上游添加超时告警   √
+											-、上游添加无数据写入失败
+											https://doc.sf-express.com/view/p/21377424									   -- 数据问题-协作文档
+											https://fsdocs.sf-express.com/smartsheet/DQXJjRXdQa3pjSXhSSFhDd211?tab=tL7YoU  -- 周报
+										-、2024-02-07 24 
+									4、会议纪要：
+										1、特快件 -非空网数据回刷历史数据（节后当周）   -- 490824 
+											涉及表： 
+												dm_ordi_predict.dws_static_cityflow_tekuai_base	-- 城市流向特快件 
+											回刷范围： 
+												20210401 ~ 至今  [预计2天]
+											回刷方式：
+												从运单宽表回刷。使用新的口径回刷（时效标签更新）
+											备注： 
+												1、dm_ordi_predict.dws_static_his_cityflow 添加 route_code字段。   【任务ID : 1015860 已冻结】
+													-、生成中间表，添加route_code 
+													-、刷新 20210401 ~ 至今。  （因为202104之前， SE0004不算航空产品。）
+												2、去掉 731274-静态底盘回追任务。 （年货节后 - 冻结）
+										2、空网产品配置数据若有更新，反馈英楠。  	 -- 保哥
+									5、中转OD-动态 - 线上执行 
+										-、ro -> rt 
+										-、切换为spark引擎
+									6、工时： 
+										1、航空配置表变更
+											-、变更沟通
+											-、特快件-非空网回刷准备
+										2、收转派-春节报表
+											-、数据准备
+										3、中转OD-
+									7、大件 -  
+										-、数据过滤条件调整 ，  范围减小 
+										-、去掉BI队列 ，大件改造任务 
+										-、任务重新梳理。
+									8、分析下0127号之后到0204，航空动态收件和动态订单数据相较原来产品配置变更前的变化情况，
+										尤其是12点之前的部分，自从27号之后早时点的效果跟之前比差的还是有点多
+										-、环比，同比对比上涨趋势。
+									6、2.5~ 2.11工时： 
+										1、航空配置表变更-航空订单/收件趋势对比
+											-、
+												航空订单：
+													1、近1个月，时点-环比
+													  时点环比趋势：基本一致。
+													  时点环比波动：
+														 1~13点，波动幅度较大，20%~ 90% 之间。
+														 14~24点，波动幅度较小，1%~9%之间。
+												航空动态收件：
+												1、近1个月，时点-环比
+												  时点环比趋势：基本一致。
+												  时点环比波动：
+													 1~13点，波动幅度较大，20%~ 80% 之间。
+													 14~24点，波动幅度较小，1%~5%之间。
+												航空订单&收件-对比：
+													1、时点量级趋势基本一致
+													2、时点环比趋势基本一致，波动基本一致。
+											-、查看 新增时效标签后， 0127之后，航空收件，件量每天新增多少
+												【ID:1020761  -- 已冻结】  -- 2024-01-27 ~ 20240206 
+										2、收转派春节报表-数据开发  √
+										3、节前运维准备
+											-、顺心进港车辆数据 -- 2024-02-03 关闭 ，春节后开启 ，以下表可能没数据。
+												ky.dm_freight.dwd_sx_vehicle_dtl_di
+												ky.dm_freight.dm_sx_vehicle_his_sum_di 
+												ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di				-- 顺心场地到货量		2024-02-07  0
+												ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt		-- 顺心车辆数据
+										2024发展计划：
+											-、多支持其他环节逻辑。
+											-、业务上下游。					△ 			
+											-、主动承接数据开发/质量要求。	△ 	
+											-、其他环节-复用数据开发。		△ 		-- 数据框架。
+											-、多思考。 
+										
+									2024-02-20 
+									1、动态超时 -  数据层面看是否正常 		  √
+										783423  - 2024-02-18 23	2024-02-18 14/17/18/22/23/00
+										-、平台任务资源未做隔离，导致单个host节点执行缓慢，平台未来3-6月计划切换至spark on k8s解决。
+										2024-02-25 20:00  同样问题  [484086-632525]
+									2、小时治理 - 切换线上。  2024-02-22 前   √
+										-、邮箱？
+									3、特快件 - 回刷 。 	  2024-02-23 前 
+										-、【ID:1015860  -- 已冻结】   -- 按月回刷 his表， 添加route_code
+										-、【ID:1046200  -- 线下】     -- 特快件回刷历史 ，写入 dm_ordi_predict.dws_static_cityflow_tekuai_base_backup20240204 
+										-、【ID:1046339  -- 已冻结】     -- 特快月度回刷历史 ，写入 dm_predict.air_flow_two_dims_month_backup20240204
+											-、his回刷 202402月  ->  tekuai回刷20240201~0229   ->  tekuai月度汇总， 回刷历史-至今 [2021-05 ~ 2024-02]    √
+												-、核对数据。   √
+											-、切换底表    √
+												 特快 ： 
+													alter table dm_ordi_predict.dws_static_cityflow_tekuai_base rename to dm_ordi_predict.dws_static_cityflow_tekuai_base_backup20240222;	
+													alter table dm_ordi_predict.dws_static_cityflow_tekuai_base_backup20240204 rename to dm_ordi_predict.dws_static_cityflow_tekuai_base;
+												 特快月度 ： 
+													alter table dm_predict.air_flow_two_dims_month rename to dm_predict.air_flow_two_dims_month_backup20240222;	
+													alter table dm_predict.air_flow_two_dims_month_backup20240204 rename to dm_predict.air_flow_two_dims_month;
+													-、问题 ： 2022-10 ~11月,  回刷后，原来是升 ，目前是降 。
+											
+												
+									4、航空订单/业务区/省份  		  		  √
+										1、线上调整逻辑
+											1、添加航空流向约束 。
+											2、使用新口径。
+												-、是否使用业务备份表，有变动后续根据情况处理？
+												问题： 
+													-、航空动态使用的是oe字段判别航空件（ 后续若有变动会和当前使用备份产品表不一致。）
+										2、历史数据回刷-添加航空约束。	   √
+											【1005439 - 临时任务】  截止 20240221 10:00 
+										3、数据表替换    √
+											alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240222;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_order_hi_backup20240130 rename to dm_ordi_predict.dws_cityflow_dynamic_order_hi;
+											
+											alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20240222;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20240130 rename to dm_ordi_predict.dws_cityflow_dynamic_area_order_hi;
+											
+											alter table dm_ordi_predict.dws_cityflow_dynamic_province_order_hi rename to dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_backup20240222;	
+											alter table dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_backup20240130 rename to dm_ordi_predict.dws_cityflow_dynamic_province_order_hi;
+									
+										4、线上代码更新  √
+								2024-02-26 
+									1、resume
+									2、work handover
+									
+									1、流向需求&交付文档 
+									2、空舱项目文档 
+									
+								2024-03-18
+									1、840236 测试切换应用授权。
+									
+									1、母女迁户口到深圳，需要当地什么资料？
+										1、女儿迁到母亲名下，可以当时开迁出证明吗?
+										2、非农户 迁移到农村户口，需要征求当地村民委员会、乡政府的意见 。 
+										3、子女在母亲名下，可以一起迁移到深圳吗？ 需要准备什么材料？
+										
+									
+									2、 dm_ordi_predict.t_collect_disperse_city  添加质量监控。 
+									
+			16、月度预测重量，兜底处理？ <->  
+			17、最近2个月  静态，  票量，件量，   45天波动值。  
+			18、643198  雄伟任务交接   -- 航空件调整，重刷数据  √
+			19、city_code切换。  06-27 组内复盘切换  √
+			
+			会议：
+				1、拉OE过下需求
+					OE那边产品是黎珊，你可以找他（让他拉他们研发）核对下逻辑
+				2、对比方式， 按天路由前，路由后差异。
+				3、确定下游历史数据，是否需要重刷，刷新节点，快照表。
+				4、城市流向的数据，不需要变动
+			
+			2023-07-05环节周会
+			1、和OE确认，规则一致，待OE13号上线，上线后安排核对数据。
+			2、航空口径调整静态动态数据验证。
+			3、丰测城市省流向维度汇总，添加重量段，产品板块。
+			4、查看数据是否因为某个流向的差异，导致票量变化比较大。
+	10、治水任务  √
+	11、dm_predict.dws_fc_flow_predict_collecting_di 检测出来orign_name为''，因为有其他任务写入数据。  <->
+	
+ 2、8点/14点/18点
+ 2、-、流向看板， 标签，自己的改为C级别   √
+	-、流向主要关注的 发群里。 √
+ 3、其他看板都需要加关注， 任务添加负责人和开发者
+ 4、 下游OE获取推送时间点
+	历史预测（t-45,t-1） 每天5点0分到7点59分间隔30分钟执行
+	t0                   每天7点0分到8点59分间隔30分钟执行
+	t1                   每天18点0分到20点59分间隔30分钟执行
+	t2-t75               每天21点0分到22点59分间隔30分钟执行
+	至少要再最后一次拉取前推送完成（尤其长周期预测下游消费需要120分钟）
+	
+ 5、城市维度切换
+		- 617182 【预测归集-流向】非空网航空件归集  dm_predict.dws_fc_nohk_tekuai_predict_collecting_di
+		- 528211 【预测归集-流向】&航空0至75D归集new   dm_predict.dws_fc_flow_predict_collecting_di
+			-、兜底操作
+				-、528080 - 未替换
+				-、528183 - hq,area,fbq 为替换
+			-、存在 2 ，5 ，6 类型的数据。  origin_code = 全部， 省份这些。
+			-、是否存在海外城市？
+		-、499690  
+			528201	dm_predict.hk_cityflow_qty_predict_day_short_period  <- tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_1
+			511463  tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp9;  <-  dm_predict.dws_fc_hk_six_dims_predict_collecting_di partition(partition_key)
+		-、以上归集，需要添加城市&省份 为null的监控。
+ 6、大件  √
+	-、队列
+	-、SLA看板/质量监控  -- 封版不影响。
+ 7、城市维度   <->
+	    1、城市维度表 city_code唯一性约束优化    √
+		2、历史流向数据历史city_code无需回刷。（基于历史票量分析，数据详见附件<2021至今_流向底表old-city_code票量统计.csv>）
+		3、存在历史city_code的数据，手动补全至城市维度表，并添加标识。  
+		4、其他模块涉及city_name,provice匹配的，尽量在BDP封版前修改完，时间紧张的可高峰过后再修改。
+
+ 8、git申请， 江莹清  -- 自定义map，反序列化等。  -- 开发、实时Flink
+     statRock -- 
+ 9、dm_predict.dws_fc_hk_six_dims_predict_collecting_di 重复数据重刷  √
+ 10、大件添加依赖  √  -- 依赖没生效，已生效，不过还会告警
+ 11、城市动态打点（468144，468146）， 添加质量管理   √
+ 
+ 12、小组会议： 
+		oms订单转运单的表，可能不及时 【ods_shiva_oms.tt_waybill_no_to_order_no】
+13、流向静态底盘，底表监控    <->
+14、dim.dim_prod_base_info_df 修改  20230629  <->
+	dm_predict.dim_prod_base_config_full 这个是新的产品板块维表，取数逻辑用 inc_day='9999' 过滤就可以，历史版本数据存在各自对应时间分区。原 dim.dim_prod_base_info_df 取20230315  的逻辑对新增的产品板块会有影响，最近有新增产品，所以大家改一下各个任务的产品板块的取数逻辑
+	730590/731274
+		-、select product_code,income_code from dm_predict.dim_prod_base_config_full 
+		where inc_day='9999'
+		-、,case when nvl(product_code,'') in ('SE0101','SE0100') then '大件'
+		 else nvl(income_code,'其他') end as income_code 
+		 
+	484086
+	 ,case when t1.income_code is not null then t1.income_code
+           when nvl(t2.productcode,'') in ('SE0101','SE0100') then '大件'
+           else '其他'
+     end as income_code
+		
+	-、历史口径调整版本刷新， 使用原表dim.dim_prod_base_info_df
+		
+15、468146 ，调度更新。  <->  √  --上游调整为按天
+16、静态income=丰网剔除
+SE0134
+
+17、738841 
+	-、产品 + 重量段
+	-、和雄伟确认表使用方式
+	-、刷新历史数据近400天	
+		1、表结构
+		-- 城市省流向，产品板块+重量段真实值统计
+		`dm_predict.dws_city_province_weight_qty_di`
+		2、重量段范围：>=15kg ，<15kg 
+	-、回刷数据
+		'20230101' and '20230520'  √
+		'20220101' and '20221231'	√
+		'20210101' and '20211231'  √
+		'20200101' and '20201231'  √
+	-、质量监控 
+	-、更新到confluence
+	
+18、
+	-、流向模型输出表 -- 质量监控 
+    -、底表质量监控
+	
+19、全流程切换会议 -2023-07-05
+	499690 	冻结
+	528211  冻结
+		2023-07-10 任务跑完，冻结
+20、歆悦，朗祺， 后面滚动的数据是否需要重刷?
+
+
+2023-06-26 ~ 07-02
+1、航空件调整-涉及底表开发
+2023-07-03 ~ 07-09
+1、航空件口径调整-数据回刷
+2、航空省维度添加重量段&收入板块-丰测
+2023-07-10 ~ 07-16
+1、航空件调整-数据核对
+2、航空件调整-产品&流向表变更完善质量监控
+3、大件zip任务异常跟进
+2023-07-31~ 20230804
+1、流向oms动态打点-历史航空订单为空补录
+2、航空动态数据-补录(通过运单小表)
+	-、回刷历史（历史工作日&近期），对比趋势。
+3、营运归集历史重复数据修复
+2023-08-07~ 2023-08-13
+1、航空动态数据-时点产品代码延迟-处理
+	-、回刷抽查2023年工作日时点数据-对比
+2、营运维度项目-切换底表
+	-、底表切换梳理
+2023-08-14~ 2023-08-20
+1、航空动态数据-通过运单小表补录历史数据
+	-、回刷历史202210~至今数据
+2、营运维度项目-特色经济切换底表
+	-、整理回刷脚本，同步测试执行
+2023-08-21~ 2023-08-27
+1、航空动态数据-切换上游表为运单小表
+	-、对比补录数据差异趋势
+	-、线上切换上游表
+2、营运维度项目-切换底表
+	-、历史数据回刷
+2023-09-11~ 2023-09-17
+1、流向主数据-逻辑调整
+2、流向件均重-逻辑调整
+
+1、大件-顺心-动态/静态-回刷历史数据
+2023-09-18~ 2023-09-24
+1、流向件均重调整-发布上线
+2、营运维度特经判断-逻辑调整 
+3、航空件判断优化-调整为动态判定
+2023-09-25~ 2023-10-01
+1、大件zip包改造
+2、中秋值班
+周报：
+
+/**
+验证not in 
+-- 总计  968
+-- null  254
+-- hq_code in ('CN03','CN06')   431
+-- hq_code not in ('CN03','CN06')   283 
+
+-- nvl(hq_code,'') in ('CN03','CN06')  431
+-- nvl(hq_code,'') not in ('CN03','CN06')  537
+
+-- hq_code in ('CN03','CN06',null)  431
+-- hq_code not in ('CN03','CN06',null)  0 
+
+
+--  nvl(hq_code,'') in ('CN03','CN06',null)   431
+--  nvl(hq_code,'') not in ('CN03','CN06',null)  0 
+结论：
+  1、B不存在null，A存在null
+    -、A not in B  如果A存在null，则null值被过滤
+    -、nvl(A,'') not in  B 如果A存在null，null值不会被过滤
+   
+  2、A,B都存在null
+    -、A不管是否做nvl， in B 的时候， null都不会被查出来
+    -、A不管是否做nvl，not in B 的时候,  什么都查不出来。
+    
+**/
+
+
+/**
+    验证   !(nvl(income_code,'')='丰网' or nvl(hq_code,'')='CN39')  -- 去丰网  incomecode  手动回刷历史数据 去丰网
+结论，加了nvl,可以查出来is null的数据
+**/
+-- 总数  968
+-- nvl(hq_code,'') = 'CN03'  89
+-- hq_code is null  254
+select count(1) from dm_ordi_predict.dim_city_level_mapping_df
+where  inc_day = '$[time(yyyyMMdd,-1d)]'
+-- and nvl(hq_code,'') = 'CN03' 
+-- and (hq_code != 'CN03')
+-- and (hq_code != 'CN03' or hq_code is null  )
+-- and nvl(hq_code,'') != 'CN03'
+-- and !(nvl(hq_code,'') = 'CN03')
+-- and !(hq_code = 'CN03')
+
+
+-- 总数  968
+-- nvl(hq_code,'') = 'CN03'  88
+-- hq_code is null  254
+select count(1) from 
+ (select if(hq_code = 'CN03' and city_code = '010','',hq_code) as hq_code  from  dm_ordi_predict.dim_city_level_mapping_df
+where  inc_day = '$[time(yyyyMMdd,-1d)]'
+ ) al
+ where
+--   !(nvl(hq_code,'') = 'CN03')
+-- hq_code = 'CN03'
+!(hq_code = 'CN03')
+
+
+-- 测试  avg 
+select avg(weight) from (
+  (select  15 as weight  from dm_ops.dm_zz_air_waybill_avg_weight
+    where inc_day = '20230913'
+     limit 1) 
+ union all 
+ (select  13  as weight  from dm_ops.dm_zz_air_waybill_avg_weight
+    where inc_day = '20230913'
+     limit 1 )
+ union all 
+(select  32   as weight  from dm_ops.dm_zz_air_waybill_avg_weight
+    where inc_day = '20230913'
+     limit 1) 
+) al 
+1、 + limitTag  , 运单小表
+	-、如果可以加， 实时表替换为运单小表。
+2、ProcessON  .
+	-、数据流程图 ，精简 ’
+	-、介绍数据为什么要整改？，  
+	-、业务流程图 
+3、中间表  - 维度，周期
+4、分动静态 ， 场地到件，场地班次到件 。
+5、刷新周期， 为什么要这么刷?  刷新字段含义？
+
+-- 正则匹配 
+19 分钟 40 秒
+20 分钟 122 秒
+分钟 [0-9]+ 秒$  --> 	' 分钟 40 秒'
+							' 分钟 122 秒'
+					
+2023/12/11 22:03			
+[0-9]+/[0-9]+/[0-9]+ [0-9]+:
+
+-- 查看表上下游  next_is_freeze  0 否 1 是
+select table_name,next_task_id,next_flow_id,next_table_name,next_task_name,next_owner_code,next_owner_name,
+next_app_name,next_is_freeze,cancel_flag,next_cancel_flag
+ from adl.adl_rel_next_depend_info_df 
+where inc_day = '20230913' 
+and  table_name = 'dm_ordi_predict.dws_air_flow_five_dims_day_sub'
+
+
+select table_name ,
+       next_sch_time    as  `下游调度时间`,
+       next_task_id     as  `下游任务id`,
+       next_flow_id     as  `下游工作流id`,
+       next_table_name  as  `下游表名`,
+       next_task_name   as  `下游任务名`,
+       next_owner_code  as  `下游责任人工号`,
+       next_owner_name  as  `下游责任人姓名`,
+       next_app_name    as  `下游应用名称`,
+       next_is_freeze   as  `下游是否冻结 0否 1是`,
+       cancel_flag      as  `是否离职`,
+       next_cancel_flag as  `下游责任人是否离职`,
+       is_use_table     as  `下游代码是否使用表`,
+       insert_task_id   as  `写入任务id`
+ from adl.adl_rel_next_depend_info_df 
+where inc_day = '20240130' 
+and  table_name = 'dm_ordi_predict.dws_static_his_cityflow'
+and is_use_table = '是'
+and next_is_freeze = '0'
+;
+
+-- 查看任务历史执行时间
+SELECT
+  app_id,
+  -- application_type,
+  queue_name,
+  started_time,
+  finished_time,
+  substring(started_time,1,13) as start_hours,
+  substring(started_time, 15, 2) as start_mins,
+  round((unix_timestamp(finished_time,'yyyy-MM-dd HH:mm:ss') -  unix_timestamp(started_time,'yyyy-MM-dd HH:mm:ss') ) / 60 ,1) as drawing_time,
+  -- unix_timestamp(started_time,'yyyy-MM-dd HH:mm:ss') as start_timestamp,  -- 时间戳
+  -- unix_timestamp(finished_time,'yyyy-MM-dd HH:mm:ss')as finish_timestamp,-- 时间戳
+  -- datediff(finished_time,started_time) as diff,  -- 相差天
+  -- total_vcore_seconds,total_memory_seconds,
+  task_id,
+  task_instance_id,
+  date
+FROM
+  dm_dqc.dm_queue_app_resource_consumption_dtl_di
+where
+  inc_day between '20231101'and '20231225'
+  and task_id = 663166
+;
+
+select
+*
+from
+  adl.adl_rel_next_depend_info_df
+where
+  inc_day = '20230913'
+  and array_contains(task_id, '731274')
+
+
+
+-- 写入800个
+insert overwrite table dm_ordi_predict.seq_tool
+SELECT ROW_NUMBER() OVER() AS seq FROM 
+dm_ordi_predict.dim_city_level_mapping_df
+LIMIT 800
+
+
+
+1、按时交付既定开发任务。
+2、及时处理跟进数据异常问题。
+3、高峰保障线上任务时效正常。
+4、日常完善新增任务质量监控，SLA看板，跟进数据质量。
+
+
+数据开发：
+1、航空产品口径调整开发。（已完成）
+2、航空动态订单&收件-业务区维度开发。（已完成）
+3、城市省流向-重量段开发。（已完成）
+4、航空营运维度-特色经济底盘调整开发。（已完成）
+5、流向主数据-逻辑调整开发。（已完成）
+6、流向件均重规则调整开发。（已完成）
+数据维护：
+1、新增底表，已完善质量监控，SLA看板告警。
+2、新增底表，根据业务需要，回刷历史数据
+高峰支援：
+1、高峰期间，保障任务正常，及时反馈异常问题，跟进处理。
+日常维护：
+1、完善数据质量监理
+2、针对部分任务数据倾斜，耗时等优化处理。
+
+
+ insert overwrite table  dm_ordi_predict.tm_air_flow_config_wide partition(inc_day='20231024')
+    SELECT
+        id,city_flow,src_city_code,src_city_name,src_province_name, dest_city_code, dest_city_name,dest_province_name,distance, distance_range, city_rel,is_express_config,	 is_3600_flow,
+        is_2686_flow,
+        is_7a_flow,
+        is_air_flow,
+        effective_dt,
+        expiry_dt,
+        creator,
+        created_tm,
+        modifier,
+        modified_tm 
+from
+    dm_pass_atp.tm_air_flow_config_wide
+where inc_day  = '20231024'
+
+
+
+
+hive/Spark避坑：
+	1、A not in (select B from t_1) ,若A存在null值，会存在数据缺失，用nvl(A,'') not in 方式替换。
+	2、去重尽量用group by替换distinct / 查询避免使用select *
+	3、表新增字段，建议指定cascade更新元数据信息，未指定新字段历史分区数据无法更新数据。
+		alter table A add columns (X string ) cascade;
+hive/presto不同引擎差异：
+	1-、substr(A,1,10),字符串截取，建议都从索引1开始（hive支持从0，prosto默认从1开始）
+	2-、hive中别名的符号为``，presto中别名的符号为""。
+	3-、hive中如果有子查询时必须对子查询取别名，但是在presto中可不必。
+	4-、hive中字符串类型用string表示，在presto中用varchar表示。
+	5-、hive中单精度浮点类型用float表示，在presto中用real表示。
+	6-、hive中如果用了order by，一定要跟limit，在presto中不是必须。
+	7-、presto注释中不能有分号';'
+	8-、datediff('2023-01-02','2023-01-01')  									-- hive 	前减后
+		date_diff('day',cast('2023-01-02' as date),cast('2023-01-01' as date))  -- prosto   后减前
+		
+		
+2024 : 
+	-、件均重 ， 月度优化， 
+	   流程  和吴鑫 再讨论取数逻辑。
+	-、
+		P0 ：航空城市流向动态模型15点精度，提升至90%以上。
+		P1:  航空城市流向,T14/T30D ， T14 平峰打到85% 
+		P2 : 空舱项目
+		P3 : 航空大件货量预测:件/票，重量
+		P4: 5维度，优化 ， 特经，特快，鞋服，空配。陆升航，
+		
+
+select 
+A.city_code,B.city_code,
+ if(b.city_code is not null,'1','0') as is_check,
+  if(b.weight >= 150,'1','0') as is_check_2
+ from (
+select city_code from 
+(
+select city_code
+ from dm_ordi_predict.dim_city_level_mapping_df 
+ where inc_day='20240102'
+limit 2 
+)
+union all 
+select city_code from (
+select '999' as city_code
+ from dm_ordi_predict.dim_city_level_mapping_df 
+ where inc_day='20240102'
+limit 1)
+union all 
+select city_code from (
+select '888' as city_code
+ from dm_ordi_predict.dim_city_level_mapping_df 
+ where inc_day='20240102'
+limit 1
+)
+) A  
+left join 
+(
+    select city_code ,100 as weight from (
+select '888' as city_code
+ from dm_ordi_predict.dim_city_level_mapping_df 
+ where inc_day='20240102'
+limit 1
+)
+union all 
+  select city_code ,200 as weight from (
+select '999' as city_code
+ from dm_ordi_predict.dim_city_level_mapping_df 
+ where inc_day='20240102'
+limit 1
+)
+) B 
+on A.city_code= B.city_code
+
+
+「库表已过期提醒」您bdp的表[dim.dim_consign_category_cfg_nd]，表[dwd.dwd_waybill_consign_category_info_di]权限已过期 	-- 误报  ， dim.dim_consign_category_cfg_nd 是应用下的，需要对应人续期。
+「库表即将到期提醒」您ky的表[dim_freight.dim_department]权限即将到期，  -- 客户主数据 - 应用申请
+
+=CONCAT(LEFT(A2,8)," ",RIGHT(A2,2))
+
+工作经验：8年
+教育背景：
+	2012.9 ~ 2016.6 郑州大学 国际金融贸易 学士学位
+专业技能：
+	1、具备全局业务开发能力，包括外商洽谈/报价/制单/接单/排单/生产跟踪/英文信函书写等，确保流程0-1闭环。
+	2、良好的沟通/谈判/索样技巧，引导供应商提供报价。
+	3、良好的资源整合能力，定期资源复盘/考核/整合。
+	4、良好的英文口语能力，通过CET-6。
+	5、熟练掌握PS/二维CAD/ERP系统/B2B/常见办公软件使用。
+工作经历：
+	2016.06 ~ 2018.01  	澳洲真维斯	大货跟单
+	工作描述：
+		1、负责澳洲真维斯大货跟单开发，包括样办/物料采购/大货进度/涵文书写/生产跟踪等环节。
+		2、协调部门间资源沟通。
+	工作业绩：
+		1、
+		2、
+	2018.02 ~ 至今		MK男装品牌	采购开发/主管
+	工作描述：
+		1、负责外商洽谈/物料采购/制单/安排走货/核账/部门协调等环节，跟进闭环。
+		2、负责供应链管理计划，定期出具计划清单。
+		3、负责供应商考核评级。
+		4、负责物料资源盘点，按月/季度/年，降本增效。
+		5、负责培养新人。
+	工作业绩： 
+		1、筛选合适的供应商，帮助公司累计节省成本10W+
+		2、考核/复盘采购环节流程，提前发现异常制单，保证公司避免损失5w+
+		3、协助培养新人3人。
+自我评价：
+	1、8年工作经验，具有一定的领导及抗压能力。
+	2、良好的商务谈判/沟通技巧。
+	2、良好的沟能力及团队合作精神。
+	3、良好的项目管理与协调能力。
+	
+
+select inc_dayhour,  sum(all_order_num) as old_all_order_num,  sum(air_order_num) as old_air_order_num      
+from  dm_ordi_predict.dws_cityflow_dynamic_order_hi
+    where 
+    inc_day >= if('$[time(HH)]' = '00','$[time(yyyyMMdd,-2d)]', '$[time(yyyyMMdd,-1d)]')
+    and substr(inc_dayhour,9,2) = if('$[time(HH)]' = '00','24','$[time(HH)]')
+group by inc_dayhour
+
+
+select inc_dayhour, 
+        air_order_num,      -- 今天时点 -航空订单
+        lag(air_order_num, 1,1) over(order by inc_dayhour)  as yesterday_air_num , -- 昨日时点 - 航空订单  【 -- 所有值分区，取前1位，默认值设为1】
+        abs((air_order_num - lag(air_order_num, 1,1) over(order by inc_dayhour)) / lag(air_order_num, 1,1) over(order by inc_dayhour) ) as yoy_rate_air_order   -- 航空订单同比
+from(
+select inc_dayhour, sum(air_order_num) as air_order_num      
+from  dm_ordi_predict.dws_cityflow_dynamic_order_hi
+    where 
+    inc_day >= if('$[time(HH)]' = '00','$[time(yyyyMMdd,-2d)]', '$[time(yyyyMMdd,-1d)]')
+    and substr(inc_dayhour,9,2) = if('$[time(HH)]' = '00','24','$[time(HH)]')
+group by inc_dayhour
+) t order by inc_dayhour desc 
+limit 1 

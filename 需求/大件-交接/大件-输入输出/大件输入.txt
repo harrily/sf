@@ -1,0 +1,276 @@
+目前的情况是，我这边使用的大件相关的表，ky实时表/离线表，hbase/mysql表，这些上游表数据有问题，是浩哥处理的。麻烦旭哥帮忙找下这些表的目前负责人，方便后续如果数据有问题，能及时处理（下游模型在用这些数据）。
+
+ky集群相关/管理员：
+	bdp.dm_freight.op_tp_wl_handover_detail_info（kafka to hive ）						-- 01388729/范浩
+	ky.dm_freight.dm_wl_handover_forecast_dtl_df（物联接驳货量预测流向明细表）			-- 01388729/范浩
+	bdp.dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4（kafka to hive ）	-- 01388729/范浩
+	ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_sum_di（顺心场站已到达货量表）				-- 01388729/范浩
+	ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di （顺心进港车辆监控明细）			-- 01389148/陈子纯
+	ky.dm_heavy_cargo.sx_rt_jd_sink（顺心交接单数据）									-- 01389148/陈子纯
+Hbase相关:
+	表：
+		rt_container_waybill_relation
+		wb_info_data_sf
+		wb_info_data_sx
+	链接：
+		hbase {
+		  zk.quorum = "cnsz17plkblc,cnsz17plh6b2,cnsz17pl5y3a,cnsz17plc8m2,cnsz17plq03w"
+		  zk.client.port ="2181"
+		}
+Mysql相关：
+	表/jdbc/db库：
+		pub_table_sync_version			dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		vt_has_arrive_cars_batch		dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		dws_sx_vehicle_sum				dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		op_tp_wl_handover_count_rt		dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		vt_has_arrive_cars				dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		dim_heavy_transit_info			fmsrms-tilb.db.sfcloud.local	fmsrms
+		t_transportct_info				sdmtransit-m.dbdr.sfcloud.local	sdmti
+		t_monitor_detail_data_process	dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		t_monitor_detail_data_row		dmpdsp-tilb.db.sfcloud.local	dmpdsp
+		t_monitor_in_road_cargo_new		dmpdsp-tilb.db.sfcloud.local	dmpdsp
+	
+
+----------------------------------------------------------->  接驳  <-------------------------------------------------------------------------
+
+:dm_freight.op_tp_wl_handover_detail_info 事件地址 这个字段 eventaddress
+ val detailData = spark.sql("""select * from (select *,row_number() over(partition by eventtype,tripid,packageno order by eventtime) as rn from bdp.dm_freight.op_tp_wl_handover_detail_info where inc_day between '"""+startDay+"""' and '"""+endDay+"""')t where t.rn = 1 """).drop("rn")
+    detailData.createOrReplaceTempView("detail_data")
+
+-- 460984 -- 每小时调度接驳车辆 在途+已到     【 zip】
+	输入：bdp.dm_freight.op_tp_wl_handover_detail_info  【车辆运输详情信息 kafka to hive  -- 上游表根据事件时间写入】  (起始网点，运单，运单计费重量，行程id,)    <上游表>
+		  ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di【中转到达班次信息】  <上游表>
+	输出：ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt 【货量预测_接驳车辆数据】
+
+ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt ： 
+	过滤： T-3D  ~  T-0d 
+	来源： 车辆运输详情， 中转到达班次信息
+	刷新频次： 每小时
+op_tp_wl_handover_count_rt  ： 
+	过滤： T-1D  ~  T-0d 
+	来源： 车辆运输详情
+	刷新频次： 每20min
+两者区别：
+	1、前者有场地，班次信息，后者只有场地信息
+	2、数据刷新频次/范围不一样
+
+-- 473852 每天调度_接驳车辆 已到达 --每日计算已到达用于校验预测    《依赖 405031 + 459747》
+	输入：（ky.dm_freight.dm_wl_handover_forecast_dtl_df【（物联接驳货量预测流向明细表）】t1 + （当前网点 -- 下一网点  -- 目的，寄件时间，发车/到达时间，运单，计费重量）  <上游表>
+			ky.dim_freight.dim_heavy_transi_info【顺丰实时车辆的场地列表】 b ） 
+		left join （ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di t2  + 
+			ky.dim_freight.dim_heavy_transi_info【顺丰实时车辆的场地列表】 b）
+		union  ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di【货量预测_接驳到达货量按到达时间分区】 t3
+	输出：ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di
+
+-- 459747  班次基表-货量预测_中转已到达班次	    ！！！
+	-- 459748 - 货量预测_ 中转到达班次信息
+		输入： bdp.dm_pass_rss.sbsa_tm_transfer_batch_pro【中转班次表  from pass】 t1   left Join  bdp.dm_freight.dim_calendar t2 
+		输出：ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+	-- 475426 货量预测_班次 
+		输入：ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+		输出：ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di  【中转班次基表】
+   
+----------------------------------------------------------->   顺丰  <-------------------------------------------------------------------------
+
+-- 451091 （每天8:30 ） -- 顺丰车辆实时已到达同步离线 (tidb --> hive )  《依赖 553293 ， 449074》
+	-、ETL : （按天全量）
+		vt_has_arrive_cars --> dm_heavy_cargo.ky_has_arrive_cargo  [$[time(yyyyMMdd)]]
+	-、车标去重 ：
+		输入：ky.dm_heavy_cargo.ky_has_arrive_cargo
+		输出：ky.dm_heavy_cargo.ky_has_arrive_cargo
+		逻辑： 过滤 当天 ，(partition by car_no order by arrive_time) 
+		
+-- 247099 -- sf车辆 未发+在途+已到  【HBase】（全天-每天间隔30min执行）
+	输入：bdp.dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【车辆详情 kafka to hive】  -- 上游表
+		  select dept_code as deptCode from dim_heavy_transit_info; 【mysql 中转场信息】  -- 上游表
+		  vt_has_arrive_cars  【mysql 已到达车辆信息】-- 上游表
+		  rt_container_waybill_relation 【hbase 】  -- 上游表 车标运单关系维表
+		  t_transportct_info 
+	输出： t_monitor_detail_data_process 【mysql 状态】	
+		   t_monitor_in_road_cargo_new 【mysql 结果表】	
+		   t_monitor_detail_data_row 【mysql count结果】
+		   
+		 逻辑：  车辆状态(1待指派,2已指派,3待执行,4异常,5执行中,6已完成,7取消)
+			-、	逻辑：过滤 参数1,T-60D ， 数据"null"处理为null，取字段。
+			-、计算 未发，
+					在途（关联hbase重量表 ，获取重量，ticket）
+					已到数据  （聚合重量）
+			     
+	rt_container_waybill_relation
+	startRowkey=[749880876349], endRowkey=[774860326743]
+	
+	749880803946
+	49880803946	{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360136124,"dataStatus":1,"jobType":"31","inferStatus":2}	{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360878930,"dataStatus":1,"jobType":"31","inferStatus":2}	{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690359176354,"dataStatus":1,"jobType":"31","inferStatus":2}			
+	
+-- 449074  -- 每30分钟刷新车标货量信息   【Hbase】
+	输入： vt_has_arrive_cars  【mysql】
+		    rt_container_waybill_relation 【hbase 】
+	输出： vt_has_arrive_cars
+	
+-- 248838 -- 快运离线已发出货量_场地发出货量 【Hbase】  每天06:15执行
+	输入:dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【车辆详情 kafka to hive】
+			dim_heavy_transit_info 【mysql 中转场信息】
+	输出： dm_heavy_cargo.ky_has_send_cargo
+		逻辑： 
+			1、过滤 T-24D ~ T-D 
+			2、关联 hbase 表获取重量，ticket 
+			3、根据晚点
+			4、写入当天分区。
+-- 470818  -- 每小时调度_sf车辆 未发+在途+已到 加班次
+		 最新代码；！！！！！
+	输入： 
+				 dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  
+				ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di   【中转到达班次信息】
+				t_transportct_info
+				vt_has_arrive_cars  【mysql 已到达车辆信息】-- 上游表
+				dim_heavy_transit_info 
+	输出： ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt
+			逻辑： 
+			1、-、过滤近60天数据且lastUpdateTm 小于等于 当前时间 ，
+	
+-- 469910   -- 每天调度_sf车辆 已到达(班次信息)--每日计算已到达用于校验预测
+	输入：ky.dm_heavy_cargo.ky_has_arrive_cargo t1  left join （ ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di a + ky.dim_freight.dim_heavy_transi_info  b） t2 
+	输出：ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di
+	
+-- 473276  -- 每天调度_sf车辆 已发出归班次 --每日计算sf已发出用于校验sf预测未发  【依赖 248838 ， 459747】
+	输入：( bdp.dm_heavy_cargo.ky_has_send_cargo  a  left ( ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di b + ky.dim_freight.dim_heavy_transi_info c ) ) t1  union ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di  t2 
+	输出： ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di
+
+-- 553293 （每天间隔1小时执行）
+	-- 555314 -- 货物预测-回刷已到达 【Hbase】  
+		输入： dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【车辆详情 kafka to hive】
+			  dim_heavy_transit_info 
+			  rt_container_waybill_relation【hbase】
+		输出： dm_heavy_cargo.ky_has_arrive_cargo_rb
+			逻辑： 过滤 T-2d ~ T-0d
+		
+	-- 553366 -- hive -- 已到达补刷idkey
+		输入： bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb
+		输出： bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb
+		逻辑： 重新生成id，取当天数据覆盖写入inc_day='$[time(yyyyMMdd)]'
+		输出： bdp.tmp_dm_predict.ky_has_arrive_cargo_huishua_tmp_20221025
+			写入临时表，为etl使用
+		
+	-- 553379  补数etl任务 
+		输入： bdp.tmp_dm_predict.ky_has_arrive_cargo_huishua_tmp_20221025
+		输出： vt_has_arrive_cars	
+		
+
+-- 405031  etl (顺丰实时车辆的场地列表同步hive)
+	-、输入: dim_heavy_transit_info （tidb ~ mysql ）
+	   输出：ky.dim_freight.dim_heavy_transi_info
+	   
+----------------------------------------------------------->   顺心 <-------------------------------------------------------------------------
+
+
+-- 416809  -- sx_已到达数据(旧版) --每日计算已到达用于校验预测   （顺心白名单场站到货量）   《依赖 405031 ，451091》 
+	输入： ( ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_sum_di【顺心场站已到达货量表】 a 
+			+ ky.dim_freight.dim_heavy_transi_info【顺丰实时车辆的场地列表】  b) t1  
+			left ky.dm_heavy_cargo.ky_has_arrive_cargo 【顺丰车辆实时已到达】t2 
+	输出：  ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di  【顺心场地已到达数据】
+	
+	逻辑： 
+		1-、T-60D~ T-D 
+		2-、取实时场地已到达数据
+		3-、过滤顺丰车辆实时已到达
+		
+	
+-- 430625 -- 顺心大件场地 - 近实时计算顺心车辆基础数据_需求id去重_聚合   《依赖 472969，553293 》   <场地班次到件>
+	-- 431213 -- zip 大件ky场地顺心货量聚合
+		输入： ky.dm_freight.dwd_sx_vehicle_dtl_di
+				dim_heavy_transit_info 【中转场信息】
+				vt_has_arrive_cars - 顺丰车辆过滤
+		输出：pub_table_sync_version  -- 配置更【mysql 】
+			  dws_sx_vehicle_sum 【mysql 】   
+	-- 432978  小件场地顺心车辆数据into同步hive  (etl)
+		输入： dws_sx_vehicle_sum
+		输出： ky.dm_freight.dm_sx_vehicle_his_sum_di  inc_day = $[time(yyyyMMdd)]
+
+-- 472969 -- 近实时计算顺心车辆基础数据
+	-- 472962 聚合顺心车辆数据 _ dm_dwd_sx_vehicle_mid 
+		输入：  ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di 【顺心进港车辆监控明细】
+		输出： ky.dm_heavy_cargo.dm_dwd_sx_vehicle_mid 
+	-- 472963 聚合顺心交接单数体积 dm_sx_vehicle_rt_jd_mid
+		输入:  ky.dm_heavy_cargo.sx_rt_jd_sink（顺心交接单数据）
+		输出： ky.dm_heavy_cargo.dm_sx_vehicle_rt_jd_mid 
+	-- 472964 聚合顺心车辆 dwd_sx_vehicle_dtl_di
+		输入：  （ky.dm_heavy_cargo.dm_dwd_sx_vehicle_mid a   bdp.dm_freight.tbl_car_info_data_new b ） t1 + ky.dm_heavy_cargo.dm_sx_vehicle_rt_jd_mid t2 
+		输出： ky.dm_freight.dwd_sx_vehicle_dtl_di
+		
+-- 472976  -- 每小时调度sx车辆 在途+已到                   
+	输入： ky.dm_freight.dwd_sx_vehicle_dtl_di
+			dim_heavy_transit_info (--> dim_heavy_transi_info)
+			vt_has_arrive_cars_batch  - 顺丰车辆过滤
+			 ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di -- 班次   【中转到达班次信息】
+	输出： ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt  【货量预测_顺心车辆数据】
+	
+-- 473836  -- 每天调度_sx车辆 已到达  --每日计算已到达用于校验预测    <场地到件>
+	输入：（ ky.dm_freight.dm_sx_vehicle_his_sum_di b +  【inc_day=20211223】
+		(ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di a1 +  【中转到达班次信息】
+		ky.dim_freight.dim_heavy_transi_info a2) c  ） t1 
+		union ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di  t2 
+	输出 ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di
+	
+
+2023-08-30
+	-、补录 ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt  【货量预测_顺心车辆数据】
+		show partitions dm_freight.dm_sx_in_vehicle_detail_info_dtl_di
+		show partitions ky.dm_heavy_cargo.sx_rt_jd_sink
+		show partitions bdp.dm_freight.tbl_car_info_data_new
+		show partitions ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+
+	select * from ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di where inc_day = '20210918' -- 顺心进港车辆数据
+	select * from ky.dm_heavy_cargo.sx_rt_jd_sink where inc_day = '20210918'   -- 顺心交接单数据
+	select * from bdp.dm_freight.tbl_car_info_data_new where inc_day = '20210918'   -- kafka to hive ，舒心车辆
+	select * from ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di where inc_day = '20210819'  -- 中转到达班次信息
+	
+		方案1 : 补历史之前的场地，需要怎么补 
+		方案2 : 如果不好补，直接新逻辑加上新增的场地。
+
+1-- 接驳
+	-- 到达班次表
+		ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt
+		op_tp_wl_handover_count_rt  【接驳货量统计】
+	-- 发出场地货量表
+	-- ？
+
+2-- 顺丰
+	-- 到达班次货量表
+		-- dm_heavy_cargo.ky_has_arrive_cargo 
+	-- 发出场地货量表
+		-- dm_heavy_cargo.ky_has_send_cargo
+
+3-- 顺心
+	-- 到达班次货量表
+		ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di
+	-- 发出场地货量表
+		--  ?
+		
+每天调度_接驳车辆 已到达 --每日计算已到达用于校验预测
+
+
+
+-- 模型输入底盘表 
+hive:
+1.dm_heavy_cargo.ky_has_send_cargo(249544)
+2.ky.dm_heavy_cargo.ky_has_arrive_cargo(246197)
+3.ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di(421544)
+		4.ky.ods_fop_fnp_init.batch_transfer_sync_pass(203906)
+tidb:
+1.dmpdsp.t_monitor_in_road_cargo_new
+		2.dmpdsp.op_tp_wl_handover_count_rt
+3.dmpdsp.dws_sx_vehicle_sum
+4.dmpdsp.t_monitor_in_road_cargo_new
+5.dmpdsp.t_monitor_detail_data_process
+
+hive:
+ky.dm_heavy_cargo.dm_transit_dept_cargo_day_dtl_df(249537)
+
+
+类型	模型		动态												静态
+接驳	场地到件	ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt	ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di
+顺丰	场地到件	ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt	ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di
+顺心	场地到件	ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt	ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di
+接驳	场地班次到件	op_tp_wl_handover_count_rt	op_tp_wl_handover_count_rt
+顺丰	场地班次到件	t_monitor_in_road_cargo_new	ky.dm_heavy_cargo.ky_has_arrive_cargo
+顺心	场地班次到件	dws_sx_vehicle_sum	ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di

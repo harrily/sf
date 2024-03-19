@@ -1,0 +1,185 @@
+
+language：	
+	exactly-once semantics  -- 精确一次执行语义[sɪˈmæntɪks]
+	It can also be crucial[ˈkruːʃl] to pay attention to the order in which events occurred  --  同样重要的是要注意事件发生的顺序
+	be able to reason about   -- 推断出
+	Goals and Scope of this Training -- 训练的目标和范围
+	while leaving out a lot of （ultimatly import）details -- 同时省略了许多细节
+	ultimatly ： [ˈʌltɪmətli] 最终; 最后; 根本上; 终归; 最基本地;
+	condensed view -- 简略视图
+	parallelized view  -- 并行(度)视图
+	parallelism -- 并行;平行;相似
+	Programs in Flink are inherently parallel and distributed  -- Flink 程序本质上是分布式并行程序
+	inherently -- 固有的
+	parallel -- 并行的，平行的
+	preserve the partitioning  -- 保留分区 
+	ordering among the elements -- 元素之间的顺序
+	there requirements for timely steam processing can be met by using event time timestamp that are recorded in the data stream ,rather than using 
+		the clocks of the machines processing the data.
+	Fault Tolerance via State Snapshots  -- 通过状态快照容错
+	fraud detection model. -- 作弊检测模型
+	given operator -- 给定算子
+	sharded key-value store -- 碎片化按照key存储
+	a parallelism of two across the first three operators  -- 其前三个算子的并行度为 2
+	broadly cover -- 广泛覆盖 （充分覆盖）
+	composite types -- 复合类型 [kəmˈpɑːzət]
+	efficiently  [ɪˈfɪʃntly ]  有效地
+	if you are curious to see how Flink works.  -- 如果好奇[ˈkjʊriəs] Flink 的工作原理
+	having a solid understanding  -- 有扎实的理解
+	luxury [ˈlʌkʃəri] of being able to have complete knowledge of the input   -- 完全了解输入是奢侈的
+	eventually stop  -- 最终停止
+	[take advantage[vt] of] having more complete knowledge of the input stream -- [利用]对输入流有更完整的了解
+	You can either configure your watermarking aggressively  -- 你可以任意积极地（侵略性地）配置watermarking
+	it is also prossible to implement hybrid [ˈhaɪbrɪd] solutions that produce initial [ɪˈnɪʃl] results quickly . --  也可以实施混合解决方案，先快速产生初步结果
+	this is a good approach -- 这是个好方法
+	lateness is defined relative to the watermarks  . -- 延迟是相对水印定义的
+	a watermarks[t] asserts(断言，表示) that the stream is complete up through time t .  -- Watermark(t) 表示事件流的时间已经到达了t 
+	any event following this watermark whose timestamp is ≤ t is late. --  watermark 之后的时间戳 ≤ t 的任何事件都被称之为延迟事件。
+	time associated[əˈsoʊsieɪtɪd] with each event -- 事件相关的时间
+	you will have to take care of this yourself -- 自己处理(照顾)
+	generates watermarks on demand -- 需要生成watermarks
+	The easiest way to do this is -- 最简单的方式是...
+	Flink features very expressive window semantics. -- Flink 在窗口的场景处理上非常有表现力。
+	principal[ˈprɪnsəpl] abstractions -- 主要的抽象
+	Triggers/Evictors  -- 触发器/驱逐器
+	notions of Triggers -- Triggers的概念
+	not be done in parallel -- 不能并行处理
+	flink has several built-in types of  window assigners  -- Flink 有一些内置的窗口分配器
+	Tumbling [ˈtʌmblɪŋ] time windows -- 滚动时间窗口
+	thumb[θʌm] 
+	come in both  a and b flavors [ˈfleɪvərz]  -- 有a和b两种风味/特色
+	but with the advantage[优势 n.] of lower latency. -- 但是有自己的优势，较低的延迟。
+	keep in mind  -- 牢记
+	that these windows will not fire until a batch is complete  -- 不会触发直到批次完成？
+	A couple of things to note -- 需要注意的几点
+	all of events assigns windows have to buffered in flink keyed state until window have trggiled . it is paently quite expensive 
+	All of the events assigned to the window have to be buffered in keyed Flink state until the window is triggered.
+	This is potentially quite expensive -- 这个可能(潜在)相当昂贵
+	is being passed a Context object   -- ..被传递一个context对象
+	if you want recording current window content ans use that when processing subsequent windows .				 -- 在处理后续窗口的时候，可能会用到当前窗口的信息。
+	if you want to record something about the current window and use that when processing a subsequent windows.  -- 在处理当前窗口的时候，可能会用到上一个窗口的信息。
+	Incremental Aggregation Example # incremental aggregation example -- 增量聚合示例 #
+	you can arrange for the events that would be dropped to be collected to an alternate[候补] output steam instead  - 安排将要删除的事件收集到侧输出流中
+	You can also specify an interval of allowed lateness during which the late events will continue to be assigned to the appropriate window(s) (whose state will have been retained).
+	you can also specify[指定] an interval of allowed lateness during which the late events will continue to be assigned to the appropriate[合适] windows whose state will have been retained  --
+			-- 可以指定允许的延迟(allowed lateness) 的间隔，在这个间隔时间内，延迟的事件将会继续分配给窗口（同时状态会被保留）
+	Based on frequently asked questions  -- 基于频繁被问起的问题
+	copy each event into every relevant[ˈreləvənt - 相关的] window -- 复制每个事件到每个相关的窗口中
+	epoch  [ˈepək]  -- 时代,时期
+	Aligned[使一致] to the Epoch -- 时期一致
+	provided with a context object that can be used to interact with a TimerService  -- 提供了一个上下文对象，可用于与 TimerService 交互
+	Collector that can be used to emit[iˈmɪt -- 发出/射出] results. -- 发出结果的 Collector
+	fare events can arrive out of order  -- 票价事件（fare-event）可能会乱序到达
+	previous hour -- 上个小时
+	open simultaneously[ˌsaɪməlˈteɪniəsli]  -- 同时打开
+	it makes it easy and efficient to lookup relevant information when timer fires . --  它使得在 Timer 触发时查找相关信息变得简单高效
+	related entry  -- 相关条目
+	accommodate[əˈkɑːmədeɪt] late events -- 通纳延迟事件
+	This is the equivalent[ɪˈkwɪvələnt] of setting the allowedLateness to zero  -- 这相当于..
+	optimized for RocksDB  -- RocksDB 优化
+	correspond to the type  -- 一致的类型
+	generic type  -- 通用的类型
+	can be referenced -- 可以引用（参考）
+	Alternatively -- 或者/要不
+	contorted [kənˈtɔːrtɪd] -- 扭曲;使弯曲   
+	Brenner was breathing hard, his face contorted with pain.
+	expire -- 过期
+	stale -- 不新鲜的；污浊，..
+	expiring stale state -- 清理过期状态
+	detect and clear any stale state. -- 检测和清理过期状态
+	will be held in state forever.   -- 状态永远保持
+	a sort of sharded, key/value store  -- 一种分片的键/值存储
+	taskmanager responsible for that key -- 负责key的任务管理器
+	transactional (or idempotent/aɪˈdempətənt/) -- 事务/幂等
+	accesses and updates involve reading and writing objects on the heap -- 访问和更新涉及在堆上的读写
+	is a significant benefit for applications with large amounts of slowly changing state.  -- 这对于具有大量变化缓慢状态的应用程序来说是大有裨益的。
+	significant/sɪɡˈnɪfɪkənt/  -- 重要的, 有重大意义的;显著的,
+	without impeding[ɪmˈpiːdɪŋ] the ongoing stream processing.  -- 不妨碍正在进行的流处理
+	impeding[ɪmˈpiːdɪŋ] -- 阻碍 
+	periodically  -- 定期地
+	somewhere more durable -- 更持久的地方
+	
+VOA: 
+appreciate how good life is   -- 欣赏感激生活（生活多么美好）
+count your blessings -- 细数幸福
+The united states observes this holiday on the forth thurday in November .  -- 美国在11月的第四个星期四庆祝这个节日
+gratitude is a feeling of appreciation or thanks . -- 感激是一种欣赏或感谢的情感.
+	gratitude  美[ˈɡrætɪtuːd]-- 感激
+it is better to be grateful for our blessings than to take them for granted .  -- 要对幸福心存感激，而不是认为他们理所当天 。
+when we take somethings for granted 	-- 当我们认为某件事理所当然
+	grant 授予;统一 
+	fortune 美[ˈfɔːrtʃən]  财富/好运
+The crowd observed a minute's silence in memory  -- 默哀1mins
+Celebrate 庆祝、 Observe 遵守。  -- 后者代表庆祝，引申为遵守某种节日规则
+lets take a step back  -- 让我们回想一下
+traditional marriage custom involves a blessing -- 传统的婚礼习俗包括（涉及）祝福。
+when we want to show our recognition of all the little things that prove helpful . -- 对于能帮助到我们的小事情，我们想表达认可时。
+lets say a friend of yours is angry about a flat tire on his car  -- 假设你的一个朋友因车爆胎而生气。
+easy to recognize -- 统一识别
+mixed blessing   -- 喜忧参半
+A blessing in disguise -- 因祸得福
+A secret agent might wear a disguise to hide her identity -- 一个秘密特工可能通过伪装隐藏她的身份。
+A bottle of perfume might disguise an unpleasant smell  . -- 一瓶香水可以掩盖难闻的气味。
+pleasant [ˈpleznt]  -- 令人愉快的
+perfume [pərˈfjuːm] -- 香水
+
+great minds think alike -- 英雄所见略同
+birds of a feather -- 同类的人
+
+visitors will soon BE able to SEE A LONG-hidDe space inside the medici Chapel in the italian city of Florence .   -- 游客们很快就能看到意大利佛罗伦萨美第奇-教堂内一个隐藏已久的空间。
+-- Chapel 小教堂
+The walls of the small space contain drawings that some experts believe may have been created by the famous artist Michelangelo . --狭小的空间有一些画作..
+officials discovered the room in 1975 when searching for a way to make a new exit from Medici Chapel . -- 1975年，官员们在寻找美第奇教堂的新出口时发现了这个房间。
+The museum's  then-director xxx  strongly believed that the drawings were by Michelangelo. -- 当时的博物馆长坚信这些画是米开朗基罗的作品
+were -- be的过去时复数
+A debate over the issue began then and continues to this day , -- 关于这个问题的争论，从那时开始持续到今天。
+	-- discover this in fifty year age , the experts not believed he create this drawings .
+he suggested that experts of Michelangelo’s drawings did not believe he created the works at the time of their discovery 50 years age .  -- 他表示，在50年前发现这个作品时，研究xx的专家不相信他创作了这些作品
+others had a more moderate view  . -- 其他人的观点更加温和
+in the sense they thought that some could be by A 。 -- 某种意义上，他们任务一些来自于A
+the room was used to store coal until 1955 . --  储存煤直到1955 。
+Then it was closed and forgotten for years below a special kind of opening known as a trapdoor . -- 它被关闭并遗忘多年，在一种特殊的开口下方（即活板门）
+The trapdoor was hidden beneath furniture . -- 活板门藏在家具下面。
+The drawings themselves were discoved under two layers of plaster - a substance used to make walls and ceilings smooth . -- 画作本身是被两层灰泥覆盖，灰泥是一种是墙壁和天花板光滑的物质。
+A believed B hid in a space to escape [ɪˈskeɪp]  the anger of C 。-- A认为B躲在这个房间是为了逃避C的愤怒。
+The artist has supported a short-lived republic that overthrew the A . -- 这个艺术家曾支持过一个推翻A的短命共和国。
+the artist drew for some of his projects . -- 艺术家为他的项目画画
+include drawings believed to be the legs of A . -- 其中包括被认为是A腿的画作
+reduce exposure of the artworks to light . -- 减少艺术品暴露在光线下的时间。
+starting on November 15 , -- 从11月15日开始
+small groups of four people 
+Visitors will have to pay an additional $20 on top of the $10 charged for entry to the main museum . -- 在主博物馆10美元入场费之外，还需支付20美元。
+
+
+China launched its youngest-ever crew for its orbiting space station Thursday.
+orbiting  -- 沿着...轨道运行  、  orbit --轨道 n. v. 沿着...轨道
+the launch is part of the country's plan to put astronauts on the moon before 2030 .
+XX lifted off from the JiuQuan satellite launch center in northweastern China at 03:14 UTC. 
+satellite  [ˈsætəlaɪt] -- 人造卫星 
+lifted off -- 起飞
+state media China dayily -- 官媒中国日报
+manned space craft/agency -- 载人航天 飞机/局
+the average age of the three-member crew  is the youngest since the launch of the space station  . 
+they will replace crew that has been on the station for six months . -- 他们将替换已经在孔间距工作了6个月的航天组成员。
+the new crew will perform experiments in space medicine,space technology ,and other areas during their mession . -- 新的航天组将在任务期间进行空间医学,技术，其他领域的实验。
+And they will help to place and do possible repairs to equipment inside and outside the station, the agency said .-- 该机构表示，他们将帮助安放和维修空间站内外的设备。
+China has plans to place astronauts on the moon before the end of 2023 in competition with UAS in space exploration . -- 中国计划在2023年底将宇航员送到月球上，与美国在太空探索展开竞争。
+this follows other competition for influence between the world's two largest economies  in the technology ,military,and diplomatic fields . -- 此前，世界上2大经济体在技术，军事，外交展开了影响力竞争。
+earlier on wednesday ,the chinese space agency announced plans to send a new telescope to look deep into the universe. -- 周三早些时候，中国航天局宣布计划发射一架新的望远镜来观测宇宙深处
+CCTV said the telescope would permit for mapping of sky. but no timeline was given for when it would be placed   . --  没有给出具体的发射时间表。
+built its own space station after it was not permitted to join the u.s -led international space station  . 
+China's first manned space mission in 2003 made it the third country after the former soviet Union and the u.s to put a  person into space using its own resources.  -- 成为继苏联和美国之后第三个利用本国资源将人送入太空的国家。
+is believed to be far ahead of china  -- 被认为远远领先中国。
+China has made some important steps . 
+bringing  back samples from the moon's surface for the first time in many years .  -- 多年来首次带回月球样本 
+and landing a vehicle on the less explored far side of the moon .  -- 在月球背面较少被探索的地方着陆。
+meanwhile ,aims to put astronauts back to the moon's surface by the end of 2025 . -- 与此同时，美国的目标是2025年底前让宇航员从新登月。
+it is aided by private American companies ,  -- 这得到美国私营企业的支持。
+aided v.援助;帮助; adj.辅助的；[自]半自动的
+two countries have also separately landed vehicle on mars . -- 分别在火星上着陆
+separately  [ˈseprətli] adv. 分别地;单独地;
+china plans to follow the u.s in landing a spacecraft on an asteroid .-- 中国计划效仿美国，让宇宙飞船在小行星着陆。
+asteroid [ˈæstərɔɪd]  -- n.小行星;
+lunar program -- 月球计划   lunar -- 月球的。
+
+

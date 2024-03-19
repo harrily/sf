@@ -1,0 +1,29 @@
+1、省份对比,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"where object_type_code  = '7'
+ and partition_key in ('20230514')
+ and (weight_level  = '' or weight_level is null )
+ and operation_type   = '特快' 
+ and (product_type  = '' or product_type is null )   
+ and src_province  = '北京'
+ and dest_province   = '广东'",,,,,,,,,,,,,,,,,,,,,,,,,,,
+OLD,,,,,,,,,,,,,,,,,,,,,,,,,,,
+data_version,feature_version,model_version,predict_datetime,origin_code,dest_code,origin_name,dest_name,object_type_code,object_type,weight_level,operation_type,product_type,predict_quantity,predict_waybill,predict_weight,predict_volume,record_time,src_area_code,src_fbq_code,src_hq_code,dest_area_code,dest_fbq_code,dest_hq_code,src_province,dest_province,partition_key,partition_key
+2023/5/12,2023/5/12,GAOFENG,2023/5/14,北京,广东,北京,广东,7,航空流向营运维度省份汇总,,特快,,12644,null,17444,null,27:54.0,,,,,,,北京,广东,20230514,20230514
+NEW,,,,,,,,,,,,,,,,,,,,,,,,,,,
+data_version,feature_version,model_version,predict_datetime,origin_code,dest_code,origin_name,dest_name,object_type_code,object_type,weight_level,operation_type,product_type,predict_quantity,predict_waybill,predict_weight,predict_volume,record_time,src_area_code,src_fbq_code,src_hq_code,dest_area_code,dest_fbq_code,dest_hq_code,src_province,dest_province,partition_key,partition_key
+2023/5/12,2023/5/12,GAOFENG,2023/5/14,北京,广东,北京,广东,7,航空流向营运维度省份汇总,,特快,,6322,null,9265,null,27:54.0,,,,,,,北京,广东,20230514,20230514
+,,,,,,,,,,,,,,,,,,,,,,,,,,,
+2、城市对比,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"    where object_type_code  = '4'
+    and partition_key in ('20230514')
+    and Origin_code = '010' 
+    and dest_code = '020'
+    and operation_type = '特快'",,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,
+OLD,,,,,,,,,,,,,,,,,,,,,,,,,,,
+data_version,feature_version,model_version,predict_datetime,origin_code,dest_code,origin_name,dest_name,object_type_code,object_type,weight_level,operation_type,product_type,predict_quantity,predict_waybill,predict_weight,predict_volume,record_time,src_area_code,src_fbq_code,src_hq_code,dest_area_code,dest_fbq_code,dest_hq_code,src_province,dest_province,partition_key,
+2023/5/12,2023/5/12,gaofeng,2023/5/14,10,20,北京市,广州市,4,航空流向营运维度,,特快,,1750,null,2565,null,27:54.0,010Y,333Y,CN03,020Y,111Y,CN01,北京,广东,20230514,
+NEW,,,,,,,,,,,,,,,,,,,,,,,,,,,
+data_version,feature_version,model_version,predict_datetime,origin_code,dest_code,origin_name,dest_name,object_type_code,object_type,weight_level,operation_type,product_type,predict_quantity,predict_waybill,predict_weight,predict_volume,record_time,src_area_code,src_fbq_code,src_hq_code,dest_area_code,dest_fbq_code,dest_hq_code,src_province,dest_province,partition_key,
+2023/5/12,2023/5/12,gaofeng,2023/5/14,10,20,北京市,广州市,4,航空流向营运维度,,特快,,1750,null,2343,null,27:54.0,010Y,333Y,CN03,020Y,111Y,CN01,北京,广东,20230514,
+2023/5/12,2023/5/12,gaofeng,2023/5/14,10,20,北京市,广州市,4,航空流向营运维度,,特快,,1750,null,2484,null,27:54.0,010Y,333Y,CN03,020Y,111Y,CN01,北京,广东,20230514,

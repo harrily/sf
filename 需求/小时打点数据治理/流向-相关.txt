@@ -1,0 +1,207 @@
+
+最新方案：
+	1、原小时分区字段修改为小时字段，
+	2、修改原代码，改为union 方式。
+	3、测试耗时变化。
+	
+历史方案：
+1、历史小时分区，合并为一个分区，只保留当天分区，小时分区置为'00'
+2、新增hours字段，存储历史小时标识。
+问题：
+1、合并多久的分区？
+2、对应的表是怎么使用的。比如：按天筛选，还是按小时筛选数据。
+
+
+1、航空动态
+	-- 产品表  
+CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_backup20240109`(
+  `days` string COMMENT '收件日期',
+  `city_flow` string COMMENT '城市流向对',
+  `src_city_code` string COMMENT '收件城市',
+  `dest_city_code` string COMMENT '派件城市',
+  `product_code` string COMMENT '产品代码',
+  `weight_type_code` string COMMENT '重量段',
+  `src_area_code` string COMMENT '起始业务区编码',
+  `src_area_name` string COMMENT '起始业务区名称',
+  `dest_area_code` string COMMENT '目的业务区编码',
+  `dest_area_name` string COMMENT '目的业务区名称',
+  `all_mainwaybill_num` double COMMENT '总票数',
+  `all_quantity_num` double COMMENT '总件量',
+  `air_mainwaybill_num` double COMMENT '航空总票数',
+  `air_quantity_num` double COMMENT '航空总件量',
+  `all_wgt_num` double COMMENT '总重量',
+  `air_wgt_num` double COMMENT '航空重量',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '收件日期yyyymmdd'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+ STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+  OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+;
+	-- 收入板块表
+CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_backup20240109`(
+  `days` string COMMENT '收件日期',
+  `city_flow` string COMMENT '城市流向对',
+  `src_city_code` string COMMENT '收件城市',
+  `dest_city_code` string COMMENT '派件城市',
+  `income_code` string COMMENT '收入版块',
+  `weight_type_code` string COMMENT '重量段',
+  `src_area_code` string COMMENT '起始业务区编码',
+  `src_area_name` string COMMENT '起始业务区名称',
+  `dest_area_code` string COMMENT '目的业务区编码',
+  `dest_area_name` string COMMENT '目的业务区名称',
+  `all_mainwaybill_num` double COMMENT '总票数',
+  `all_quantity_num` double COMMENT '总件量',
+  `air_mainwaybill_num` double COMMENT '航空总票数',
+  `air_quantity_num` double COMMENT '航空总件量',
+  `all_wgt_num` double COMMENT '总重量',
+  `air_wgt_num` double COMMENT '航空重量',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '收件日期yyyymmdd'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+ ;
+
+	-- 产品 - 业务区维度
+	CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_area_pro_qty_hi_backup20240109`(
+	  `days` string COMMENT '收件日期',
+	  `area_code` string COMMENT '业务区编码',
+	  `area_name` string COMMENT '业务区名称',
+	  `product_code` string COMMENT '产品代码',
+	  `weight_type_code` string COMMENT '重量段',
+	  `all_mainwaybill_num` double COMMENT '总票数',
+	  `all_quantity_num` double COMMENT '总件量',
+	  `air_mainwaybill_num` double COMMENT '航空总票数',
+	  `air_quantity_num` double COMMENT '航空总件量',
+	  `all_wgt_num` double COMMENT '总重量',
+	  `air_wgt_num` double COMMENT '航空重量',
+	  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+	) PARTITIONED BY (
+	  `inc_day` string COMMENT '收件日期yyyymmdd'
+	) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+	STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	;
+	-- 产品 - 省份维度
+	CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi_backup20240109`(
+	  `days` string COMMENT '收件日期',
+	  `src_province_name` string COMMENT '始发省份名称',
+	  `dest_province_name` string COMMENT '目的省份名称',
+	  `product_code` string COMMENT '产品代码',
+	  `weight_type_code` string COMMENT '重量段',
+	  `all_mainwaybill_num` double COMMENT '总票数',
+	  `all_quantity_num` double COMMENT '总件量',
+	  `air_mainwaybill_num` double COMMENT '航空总票数',
+	  `air_quantity_num` double COMMENT '航空总件量',
+	  `all_wgt_num` double COMMENT '总重量',
+	  `air_wgt_num` double COMMENT '航空重量',
+	   `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+	) PARTITIONED BY (
+	  `inc_day` string COMMENT '收件日期yyyymmdd'
+	) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+	STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 ;
+
+	-- 收入板块 - 业务区维度
+	CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_area_income_qty_hi_backup20240109`(
+	  `days` string COMMENT '收件日期',
+	  `area_code` string COMMENT '业务区编码',
+	  `area_name` string COMMENT '业务区名称',
+	  `income_code` string COMMENT '收入版块',
+	  `weight_type_code` string COMMENT '重量段',
+	  `all_mainwaybill_num` double COMMENT '总票数',
+	  `all_quantity_num` double COMMENT '总件量',
+	  `air_mainwaybill_num` double COMMENT '航空总票数',
+	  `air_quantity_num` double COMMENT '航空总件量',
+	  `all_wgt_num` double COMMENT '总重量',
+	  `air_wgt_num` double COMMENT '航空重量',
+	  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+	) PARTITIONED BY (
+	  `inc_day` string COMMENT '收件日期yyyymmdd'
+	) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+	STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	;
+
+	-- 收入板块 - 省份维度
+	CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi_backup20240109`(
+	  `days` string COMMENT '收件日期',
+	  `src_province_name` string COMMENT '始发省份名称',
+	  `dest_province_name` string COMMENT '目的省份名称',
+	  `income_code` string COMMENT '收入版块',
+	  `weight_type_code` string COMMENT '重量段',
+	  `all_mainwaybill_num` double COMMENT '总票数',
+	  `all_quantity_num` double COMMENT '总件量',
+	  `air_mainwaybill_num` double COMMENT '航空总票数',
+	  `air_quantity_num` double COMMENT '航空总件量',
+	  `all_wgt_num` double COMMENT '总重量',
+	  `air_wgt_num` double COMMENT '航空重量',
+	  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+	) PARTITIONED BY (
+	  `inc_day` string COMMENT '收件日期yyyymmdd'
+	) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 ;
+	 
+2、OMS 
+-- oms-业务区维度
+CREATE TABLE `dm_ordi_predict.dws_cityflow_dynamic_area_order_hi_backup20240109`(
+  `order_dt` string COMMENT '收件日期',
+  `area_code` string COMMENT '业务区编码',
+  `area_name` string COMMENT '业务区名称',
+  `all_order_num` double COMMENT '总订单量',
+  `air_order_num` double COMMENT '航空订单量',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '下单日期yyyymmdd'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+;
+-- oms-省份维度
+CREATE TABLE `dm_ordi_predict.dws_cityflow_dynamic_province_order_hi_backup20240109`(
+  `order_dt` string COMMENT '收件日期',
+  `src_province_name` string COMMENT '始发省份名称',
+  `dest_province_name` string COMMENT '目的省份名称',
+  `all_order_num` double COMMENT '总订单量',
+  `air_order_num` double COMMENT '航空订单量',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '下单日期yyyymmdd'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+;
+
+3、动态收件  468144/468146
+
+CREATE TABLE `dm_ordi_predict.dws_dynamic_cityflow_base_hi_backup20240109`(
+  `cityflow` string COMMENT '城市对',
+  `consignor_date` string COMMENT '查询时间',
+  `deliver_hq_code` string COMMENT '目的地大区名称',
+  `deliver_area_code` string COMMENT '目的地地区名称',
+  `deliver_fbq_code` string COMMENT '目的地分拨区名称',
+  `deliver_city_code` string COMMENT '目的地城市名称',
+  `pickup_hq_code` string COMMENT '寄件大区名称',
+  `pickup_area_code` string COMMENT '寄件地区名称',
+  `pickup_fbq_code` string COMMENT '寄件分拨区名称',
+  `pickup_city_code` string COMMENT '寄件城市名称',
+  `pickup_weight` double COMMENT '重量',
+  `pickup_weight_20kg` double COMMENT '大于20KG重量',
+  `pickup_piece` double COMMENT '票数',
+  `pickup_piece_20kg` double COMMENT '大于20KG重量票数',
+  `product_type_code` string COMMENT '产品代码',
+  `deliver_dept_code` string COMMENT '目的地网点代码',
+  `pickup_division_code` string COMMENT '寄件分部代码',
+  `pickup_dept_code` string COMMENT '寄件网点代码',
+  `deliver_division_code` string COMMENT '目的地分部代码',
+  `hour` string COMMENT '小时1-24'
+) COMMENT '动态收件流向数据打点表' PARTITIONED BY (`inc_day` string)
+ ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+ STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+ ;

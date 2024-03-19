@@ -1,0 +1,53 @@
+流向	真实归集	【归集】_航空6维度_真实数据归集	dm_predict.dws_fc_hk_six_dims_real_collecting_di	冯歆悦(01423266)	保留
+流向	真实归集	【归集】_流向_真实数据归集	dm_predict.dws_fc_flow_real_collecting_di	李国冬（01393493）	
+流向	真实归集	【归集】_流向_真实数据非空网	dm_predict.dws_fc_flow_real_collecting_di_nonair	冯歆悦(01423266)	
+流向	预测归集表	【预测归集-航空】营运维度0至75D归集	dm_predict.dws_fc_hk_six_dims_predict_collecting_di	申海艳（01379968）	保留，但建议使用接口对接
+流向	预测归集表	【预测归集-流向】城市&航空0至75D归集new	dm_predict.dws_fc_flow_predict_collecting_di	申海艳（01379968）	保留，但建议使用接口对接
+流向	预测归集表	【归集-流向】月度流向特快件重量调整	dm_predict.hk_cityflow_predict_month_collecting	申海艳（01379968）	
+流向	预测归集表	【预测归集-流向】非空网航空件归集	dm_predict.dws_fc_nohk_tekuai_predict_collecting_di	申海艳(01379968)	
+流向	未知	城市流向数据底盘分重量段产品表	dm_ordi_predict.cityflow_product_weight	梁朗祺(01413750)	预测底盘中间表，不建议下游对接
+流向	未知	特色经济生鲜项目	dm_ordi_predict.dm_special_econ_dely_fresh_dtl	申海艳(01379968)	预测底盘中间表，不建议下游对接
+流向	未知	航空6维度真实底盘表	dm_ordi_predict.dws_air_flow_six_dims_day	申海艳(01379968)	预测底盘真实表，不建议下游对接
+流向	未知	城市流向历史数据表	dm_ordi_predict.cityflow	梁朗祺(01413750)	预测底盘中间表，不建议下游对接
+流向	模型原始结果表	城市流向-总量Prophet0-75D	dm_predict.flow_prophet_output	何龙（01417664）	
+流向	模型原始结果表	城市流向Prophet0~75	dm_ordi_predict.city_cityflow_qty_predict_day	程旺(01416506),龙雄伟(01423567)	建议更换：dm_predict.dws_fc_flow_predict_collecting_di
+流向	模型原始结果表	城市流向LGBM0~2	tmp_dm_as.city_cityflow_qty_predict_day_vb	何龙(01417664)	模型原始结果表
+流向	模型原始结果表	城市流向LGBM-动态8点0D	dm_ordi_predict.cityflow_dynamic_resultz_online	赵金阳(01425879),何龙(01417664)	
+流向	模型原始结果表	城市流向滚动拆解0-10D	dm_predict.cityflow_qty_predict_gaofeng	梁朗祺（01413750）	
+流向	模型原始结果表	航空流向-总量Prophet0-75D	dm_predict.flow_prophet_output	何龙（01417664）	
+流向	模型原始结果表	航空流向-总量滚动拆解0-10D	dm_predict.hk_cityflow_qty_predict_gaofeng	李国冬（01393493）	
+流向	模型原始结果表	航空流向-省份Prophet0~75D	dm_predict.air_province_flow_predict_long_period	龙雄伟（01423567）	
+流向	模型原始结果表	航空流向-省份LGBM0~2D	dm_predict.hk_provinceflow_qty_predict_day_short_period	龙雄伟（01423567）	
+流向	模型原始结果表	航空流向-省份城市滚动拆解0-10D	dm_predict.hk_cityflow_qty_predict_gaofeng	李国冬（01393493）	
+流向	模型原始结果表	航空流向-城市Prophet0~75D	dm_predict.dm_airflow_city_pred_by_d	龙雄伟(01423567),许辉(01425006),何龙(01417664)	
+流向	模型原始结果表	航空流向-城市LGBM0~2D	tmp_dm_as.hk_cityflow_qty_predict_day_vb	何龙(01417664)	模型原始结果表
+流向	模型原始结果表	航空流向-城市LGBM-动态8点0D	dm_predict.dws_airflow_hour_pred_qty_hi	许辉（01425006）	
+流向	模型原始结果表	航空流向-城市滚动拆解0-10D	dm_predict.hk_cityflow_qty_predict_gaofeng	李国冬（01393493）	
+流向	模型原始结果表	航空流向-营运维度0-2D	dm_predict.hk_five_dim_short_period 	刘允（01425317）	
+流向	模型原始结果表	航空流向-营运维度营运五维-长期0~75D	dm_predict.hk_five_dim_long_period 	刘允（01425317）	
+流向	模型原始结果表	航空流向-营运维度营运五维滚动拆解0-10D	dm_predict.hk_cityflow_qty_predict_gaofeng	李国冬（01393493）	
+流向	模型后处理	城市流向日度	dm_predict.city_cityflow_predict_result	何龙(01417664),龙雄伟(01423567),肖沙沙(01376027),刘允(01425317)	建议更换：dm_predict.dws_fc_flow_predict_collecting_di
+流向	模型后处理	航空城市流向/省份流向长期（0~75D）	dm_predict.hk_cityflow_qty_predict_day_long_period	肖沙沙(01376027),刘允(01425317),许辉(01425006),何龙(01417664),龙雄伟(01423567)	
+流向	模型后处理	航空城市流向/省份流向长期（0~2D）	dm_predict.hk_cityflow_qty_predict_day_short_period	何龙(01417664),肖沙沙(01376027),刘允(01425317)	
+流向	快照表	丰测流向预测数据快照表	dm_predict.bfms_fc_predict_real_flow_snapshot2022	许颖聪(01213089),张潆尹(01378549),廖智鹏(01415843)	
+流向	快照表	航空流向营运维度快照表	dm_predict.bfms_hk_six_dims_predict_collecting_di_snapshot2022	许颖聪(01213089),张潆尹(01378549),廖智鹏(01415843)	
+流向	关联归集表	流向关联归集表	dm_predict.dws_fc_flow_predict_real_collecting_di	李国冬(01393493),冯歆悦(01423266)	建议更换
+流向	关联归集表	航空六维度预测真实归集表	dm_predict.dws_fc_hk_six_dims_predict_real_collecting_di	冯歆悦(01423266)	"建议更换：航空五维度预测归集表：
+航空五维度真实归集表：dm_predict.dws_fc_hk_six_dims_real_collecting_di"
+流向			dm_predict.airflow_predict_result	程旺(01416506),何龙(01417664),龙雄伟(01423567)	航空流向后处理结果表，不建议下游对接，建议更换：dm_predict.dws_fc_flow_predict_collecting_di
+大件	模型结果表	大件产品收件货量预测结果表	dm_predict.freight_product_pickup_model_result	陈晓雯（01381209）	保留
+
+------------------------------------------------------------------------------------------------------------------------------------
+流向	航空动态	dm_predict.dws_airflow_hour_pred_qty_hi   【"无模型，长短期摸底根据逻辑拆解得到：			 -- 何龙
+流向	航空五维度	dm_predict.hk_cityflow_qty_predict_day_long_period  【无模型，长短期摸底根据逻辑拆解得到：   -- 雄伟
+		dm_predict.hk_cityflow_qty_predict_day_short_period		【"无模型，长短期摸底根据逻辑拆解得到：			 
+		dm_predict.hk_cityflow_qty_predict_gaofeng   【已终止模型dm_ordi_predict.hk_six_dim_predict_result】"
+流向	城市流向特快件	"【城市流向动态结果表：dm_ordi_predict.cityflow_dynamic_resultz_online(旧）】
+特快长期结果表：dm_ordi_predict.cityflows_fast_resultz_online
+特快月度结果表：dm_predict.hk_cityflow_predict_month_period"
+流向	城市流向	"【已暂停写入：dm_predict.city_cityflow_predict_result】
+丰测生产线写回归集表：dm_predict.temp_v21_dws_fc_flow_predict_collecting_di"
+流向	航空流向	"短期：dm_predict.hk_cityflow_qty_predict_day_short_period
+长期：dm_predict.hk_cityflow_qty_predict_day_long_period
+摸底：dm_predict.hk_cityflow_qty_predict_gaofeng"
+流向	动态城市流向预测（0D）	dm_ordi_predict.cityflow_dynamic_resultz_online

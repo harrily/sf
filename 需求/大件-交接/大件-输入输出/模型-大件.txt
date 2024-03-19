@@ -1,0 +1,80 @@
+"hive:
+1.dm_heavy_cargo.ky_has_send_cargo(249544)    									-- 248838 
+2.ky.dm_heavy_cargo.ky_has_arrive_cargo(246197)   								-- 451091
+3.ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di(421544) 				-- 416809   sx 
+4.ky.ods_fop_fnp_init.batch_transfer_sync_pass(203906)
+tidb:
+1.dmpdsp.t_monitor_in_road_cargo_new											-- 247099
+2.dmpdsp.op_tp_wl_handover_count_rt
+3.dmpdsp.dws_sx_vehicle_sum														-- 430625   sx
+5.dmpdsp.t_monitor_detail_data_process"											-- 247099
+
+"hive:
+ky.dm_heavy_cargo.dm_transit_dept_cargo_day_dtl_df(249537)"						
+
+ dm_predict.dj_transfer_ltsf_model_result
+（天维度）：dm_predict.dj_transit_hub_dynamic_result_arrive
+（运输等级维度）：dm_predict.dj_transit_hub_dynamic_result_translevel
+（天维度）：dm_predict.dj_transit_hub_dynamic_result_send
+
+-- 使用到hbase的数据 
+	247099	zip	sf车辆 未发+在途+已到（读Hbase）	01431437(王英楠)
+	449074	zip	车标货量信息（读Hbase）				01431437(王英楠)
+	248838	zip	快运离线已发出货量（读Hbase）		01431437(王英楠)
+	553293	zip	货量预测数据_补数任务（读Hbase）	01431437(王英楠)
+	
+		
+	场地到件 - 日度（动态）：
+		顺丰： ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt  
+		接驳： ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt
+		顺心： ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt
+
+	场地到件 - （静态）：
+		顺丰： ky.dm_heavy_cargo.ky_has_arrive_cargo  -- 顺丰已到达
+		接驳： ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di   -- 接驳到达货量
+		顺心： ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di  -- 顺心车辆已到达
+			
+	-- 动态 --场地 班次到件
+		顺丰：t_monitor_in_road_cargo_new   --  顺丰车辆信息
+		接驳：dmpdsp.op_tp_wl_handover_count_rt -- 接驳动态班次
+		顺心：dmpdsp.dws_sx_vehicle_sum    --  顺心车辆班次信息
+		
+		 -- 动态 - 取状态信息 
+			t_monitor_detail_data_process
+	-- 静态 --场地 班次到件
+		顺丰： ky.dm_heavy_cargo.ky_has_arrive_cargo
+		接驳： dmpdsp.op_tp_wl_handover_count_rt
+		顺心： ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di
+		
+	场地-班次发件
+	中转班次动态预测取数SQL：	
+		bdp.dm_heavy_cargo.ky_has_send_cargo   -- 顺丰已发出车辆（只有顺丰）
+
+
+	全网/业务区		
+		模型结果表：
+			dm_predict.freight_product_pickup_model_result
+		模型输入底表：
+			dm_predict.input_ts_freight_product_pickup
+		分析灌数表：
+			ky.dm_nor.fc_freight_product_total_metric_v2
+
+	中转场 - 日期+中转场 - 货量  - 0~60D  - 每周二更新
+		模型结果表：
+			dm_predict.dj_transfer_ltsf_model_result
+		模型输入底表：
+			dm_predict.input_ts_freight_transfer_unload   (来源于 ： ky.dm_heavy_cargo.dm_transit_dept_cargo_day_dtl_df)
+		分析灌数表：
+			ky.dm_nor.tb_hub_forecasting_longterm_metric
+
+	中转场 - 日期+中转场 - 货量、件量  - 0~1D - 每半小时 
+		 已经有hive结果表可用，中转实时到达量预测
+		（天维度）：dm_predict.dj_transit_hub_dynamic_result_arrive
+		（运输等级维度）：dm_predict.dj_transit_hub_dynamic_result_translevel
+		（天维度）：dm_predict.dj_transit_hub_dynamic_result_send）
+		
+
+	中转场 - 日期+中转场+班次 - 货量、件量  - 0~1D - 每小时 
+		INPS结果表：
+		到达预测（明细表，班次及日度结果需要汇总加工）：tb_forecast_hub_arrive_kuaiguan   【mysql -> hive 】
+		发出预测：tb_forecast_hub_send_kuaiguan 【mysql -> hive 】

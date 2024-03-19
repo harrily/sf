@@ -1,0 +1,47 @@
+
+流向 		
+	-、城市流向   
+		 - 动态   1 收件流向分析数据[dm_kafka_rdmp.dm_full_order_dtl_df]   ->       动态base  [dm_ordi_predict.dws_dynamic_cityflow_base_hi]
+				  2 订单实时宽表[dm_kafka_rdmp.dm_full_order_dtl_df]       -> 	    动态order表 （带航空标记）[dm_ordi_predict.dws_cityflow_dynamic_order_hi]
+		 - 静态  1 运单宽表 [dwd.dwd_waybill_info_dtl_di]  
+									 ->	dm_ordi_predict.dws_static_his_cityflow[城市流向底表-多维度]  （带航空标记）
+										dm_ordi_predict.dws_static_cityflow_base[城市流向底表-少维度]（带航空标记）
+				 2 收派运单件重  [dm_ordi_predict.dwd_waybill_weight_kg_info_df]
+									->dm_ordi_predict.dws_static_his_zone[静态收派网点分布区统计信息]
+									  网点/001/城市/area . base数据，真实数据， 
+	-、航空流向
+		- 动态	1 实时运单宽表[dm_kafka_rdmp.rmdp_waybill_basedata ]   -> 
+						航空流向产品 - dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi 
+						航空流向income - dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi
+		
+		- 静态 1 dm_ordi_predict.dws_static_his_cityflow  [城市流向底表-多维度]  （带航空标记） 
+						-> 航空流向快慢base  dm_ordi_predict.dws_static_cityflow_tekuai_base
+						
+						
+						
+一、底表任务						
+ 1、城市&航空
+  1-、静态
+   1)、490824-城市流向航空件-快慢产品  
+   2)、448434-航空营运维度
+   3)、471403-真实航空件数任务（fvp）
+   4)、730590/731274-城市流向底表
+  2-、动态
+   1)、484086-航空动态打点(product&income)
+   2)、663166-OMS订单流向打点
+ 2、客户分仓-682306
+二、归集任务
+ 1-、上游模型数据:
+  1)、城市流向：动态模型(0D)，静态模型(0-74D)，摸底结果
+  2)、航空流向：动态模型(0D)，静态短期模型(0-2D)，静态长期模型(0-74D)，摸底结果
+ 2-、下游归集任务
+  1)、499690-航空营运归集（0-75D）
+  2)、528211-城市&航空归集	(0-75D)
+  3)、663516-月度预测重量调整	
+  4)、617182-非空网航空件归集	
+三、维度
+  业务维度：快慢产品/营运维度/收入模块/重量段/
+  地理维度：省/城市/大区/业务区/网点/分拨区
+4、指标
+  件量/票量/重量/体积
+

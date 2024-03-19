@@ -1,0 +1,130 @@
+-- 场地到件日度 
+select
+  target_day as ds,
+  pre_arrive_zone_code as hub,
+  concat(substr(count_time, 0, 14), '00:00') as create_tm,
+  sum(tickets) as vehicle_waybill_cnt,
+  sum(weight) as vehicle_weight,
+  count(require_id) as require_id_cnt,
+  'sf' as type  -- 顺丰
+from
+  (
+    select
+      *,
+      case
+        when substr(pre_arrive_tm, 12, 2) < '08' then date_add(to_date(substr(pre_arrive_tm, 0, 10)), -1)
+        else substr(pre_arrive_tm, 0, 10)
+      end as target_day
+    from
+      ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt
+    where
+      inc_day > '$[day(yyyyMMdd,-400)]'
+  ) a
+group by
+  target_day,
+  pre_arrive_zone_code,
+  count_time
+union all
+select
+  target_day as ds,
+  dept_code as hub,
+  count_time as create_tm,
+  sum(ticket) as vehicle_waybill_cnt,
+  sum(weight) as vehicle_weight,
+  count(trip_id) as require_id_cnt,
+  'jb' as type   -- 接驳
+from
+  (
+    select
+      *,
+      case
+        when substr(pre_arrive_time, 12, 2) < '08' then date_add(to_date(substr(pre_arrive_time, 0, 10)), -1)
+        else substr(pre_arrive_time, 0, 10)
+      end as target_day
+    from
+      ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt
+    where
+      inc_day > '$[day(yyyyMMdd,-400)]'
+  ) a
+group by
+  target_day,
+  dept_code,
+  count_time
+union all
+select
+  target_day as ds,
+  next_site_code as hub,
+  count_time as create_tm,
+  sum(total_out_piece) as vehicle_waybill_cnt,
+  sum(total_out_weight) as vehicle_weight,
+  count(shift_no) as require_id_cnt,
+  'sx' as type   -- 顺心
+from
+  (
+    select
+      *,
+      case
+        when substr(pre_arrive_time, 12, 2) < '08' then date_add(to_date(substr(pre_arrive_time, 0, 10)), -1)
+        else substr(pre_arrive_time, 0, 10)
+      end as target_day
+    from
+      ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt
+    where
+      inc_day > '$[day(yyyyMMdd,-400)]'
+  ) a
+group by
+  target_day,
+  next_site_code,
+  count_time
+  
+  
+  
+ -- 动态 -- 班次 
+ 
+ t_monitor_in_road_cargo_new、
+ op_tp_wl_handover_count_rt、
+ dws_sx_vehicle_sum
+ 
+ -- 动态 - 取状态信息 
+select count(*) as cnt 
+from  t_monitor_detail_data_process
+ where table_name in ('t_monitor_in_road_cargo_new') and statues=2;
+ 
+
+
+
+中转班次动态预测取数SQL：        
+sql_map = {
+# 班次信息 -- 维度表
+"batch": "select code,operate_site_code,begin_time,end_time,last_arrive_time,work_date from tb_batch_transfer_sync;",  -- （来源于ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di？）
+# 历史已到达车辆信息 -- 只有顺丰
+"pass_arrive": "select require_id,car_no,translevel,src_zone_code,dest_zone_code,send_time,arrive_time,tickets,weight,create_time,inc_day from ky_has_arrive_cargo_sync;",  -- 只有顺丰 (hive同步mysql)
+# 历史已发出车辆信息 -- 只有顺丰
+"pass_send": "select require_id,car_no,src_zone_code,dest_zone_code,send_time,arrive_time,tickets,weight,create_time,translevel,inc_day from ky_has_send_cargo_sync;",  -- 只有顺丰
+# 顺心历史已到达车辆
+"pass_sx_vehicle": "select shiftno,ewbslistno,cast(transport_level as UNSIGNED INTEGER) as transport_level,srczonecode,destzonecode,sendtime,arrivetime,piece,weight,createtime,inc_day from dm_sx_has_arrive_cargo_distinct_sum_di",
+# 车辆信息
+"vehicle": "select requireId,carNo,transLevel,carStatus,srcZoneCode,preArriveTm,preArriveZoneCode,tickets,weight,status,countTime 
+from t_monitor_in_road_cargo_new  -- 顺丰 
+ where preArriveTm is not null;",
+"shuttle": "select event_type,dept_code,event_time,trip_id,weight,ticket,count_time 
+from dmpdsp.op_tp_wl_handover_count_rt   -- 接驳 
+ where event_time >= UNIX_TIMESTAMP(date_sub(curdate(),interval 16 day))*1000;",
+"sx_vehicle": "select shift_no,cast(transport_level as UNSIGNED INTEGER) as transport_level,site_code,next_site_code,total_out_piece,total_out_weight,version_id as countTime, case when vehicle_status in ('2','3','4') and in_confirm_time not like '1970%%' then in_confirm_time else standard_plan_arrival_time end as preArriveTm, case when vehicle_status in ('2','3','4') then '2' else vehicle_status end as status from 
+dmpdsp.dws_sx_vehicle_sum   -- 顺心
+where version_id in (select version_id from dmpdsp.pub_table_sync_version where table_name='dws_sx_vehicle_sum');"
+}
+
+
+
+(6)dm_predict.dj_transit_hub_dynamic_result_send 大件下一跳
+​- 对应底盘表
+	--- 对应上游数据表
+
+上游  逻辑 --> 底盘输入  -->	场地     --> 模型输入 --模型输出 
+上游  逻辑 --> 底盘输入  -->	班次     --> 模型输入 -- 模型输出 
+上游  逻辑 --> 底盘输入  -->	场地下一跳  -- > 模型输入 -- 模型输出
+
+1、底表分区 ，
+2、刷新多久数据 。
+

@@ -1,0 +1,473 @@
+1、去年6月和今年3月每小时收件量  派件量 （全网维度）
+	dm_ordi_predict.dws_sp_dynamic_zone_summary_hi_20230517 这个表吧
+2、region_predict_result(业务区预测结果表) ，表波动检测。   √
+2.1、
+	OE页面链接  http://oewm.sf-express.com/quantity/orderQuantity/orderMonitorBoard
+	申请权限，模块？
+	
+3、播报模板
+	@所有人 资源&调度任务08点播报
+	【时间范围】: 2023/06/01 00:00-08:00
+	【资源】
+	1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+	2.predict_as队列资源在03:00-03:30,04:25-05:20,06:00-07:30期间使用占比95%以上，最长持续时长接近45min；
+	3.predict_model队列资源在整点时段使用占比比较高，使用占比在95%左右，持续时间在15min左右；
+	【调度任务/看板】
+	1.S/A/B/C级看板任务：
+	所有看板正常无异常延迟无失败任务；
+	
+	
+@所有人 资源&调度任务14点播报
+【时间范围】: 2023/06/01 08:00-14:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+2.predict_as队列资源，自8点开始，间隔半小时左右出现资源使用高峰，持续10min左右，使用占比95%以上，
+其中10:00-10:30，11:00-11:20,12:00-12:30,13:00-13:30持续时间较长，最长持续时长接近30min；
+3.predict_model队列资源，自8点开始，间隔1小时左右出现资源使用高峰，持续15min左右，使用占比在95%左右；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+所有看板正常无异常延迟无失败任务；
+
+
+@所有人 资源&调度任务18点播报
+【时间范围】: 2023/06/01 14:00-18:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+2.predict_as队列资源在14:00-14:10，15:00-15:30，16:00-16:20，16:50-17:20期间使用占比95%以上且持续时间较长，最长持续时长接近30min；
+3.predict_model队列资源，自14:15开始，间隔1小时左右出现资源使用高峰，持续10min左右，使用占比在95%左右；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+所有看板正常无异常延迟无失败任务；
+
+	
+	 adl.adl_rel_next_depend_info_df,
+	 dm_dqc.dm_queue_app_resource_consumption_dtl_di
+	
+	model (maxMem: 6553600 maxCpu:1600 ):
+		application_1684325517623_5885737  SPARK  3687424MB  801core   
+		application_1684325517623_5889518		  3687424	 801core   
+		application_1684325517623_5889573		  2857984	 621
+	
+4、白班，18：00 播报，还是  14:00 ~ 18 ： 00
+   白班 14点播报，是 8：00~14:00 
+	18点播报 ，是14:00 ~ 18:00
+	-、看板完成时间更新
+	-、监控运行情况
+	-、问题定位处理
+	-、质量监控异常
+	
+
+5、质量异常表
+	dws_fc_airflow_real_predict_2dims_month_collecting_di -- 忽略 （每月一次）
+	zone_code_deliver_model_pre 	-- 杨志群
+	region_pickup_qty_predict_3day   -- 马亚宁
+	dwd_inc_pis_send_mor_df  -- 李欢
+	dwd_inc_pis_arrive31_mor_df			-- 李欢
+	
+	transit_depot_predict_result_new  -- 孙雪娇  （异常规则，修改）  √
+	zone_qty_predict_day_recent_3day  -- 马亚宁 （异常规则，修改）  √
+	transit_depot_predict_ts_erro   --  上游任务冻结 662875  √
+	dws_oms_order_snapshot_detail_di  -- 李欢
+	oewm_pickup_dept_sum
+	node_predict_result  -- 上游任务冻结 432247    √
+	dws_fc_flow_real_collecting_di   -- 歆悦  （异常规则，修改）  √
+	dm_gtl_cust_pickup_cnt_detail_di  -- 李欢
+	
+	transit_batch_dynamic_forecast_result  -- 叶永峰  √
+	region_predict_result
+	dws_dynamic_cityflow_base_hi
+	
+发哥整理
+sede_aoi_batch_spark_total
+oewm_pickup_dept_sum(经管需求数据支持:揽收率)
+oewm_pickup_dept_sum(经管需求数据支持:揽收率)
+dws_oe_dynamic_deliver_depot_data_hi(动态收派网点出仓表)
+dws_dynamic_cityflow_base_hi(动态流向数据打点表)
+dws_sp_dynamic_zone_summary_hi(动态收派网点数据打点表)
+dws_oms_dispick_order_detail_hi(oms未揽收订单实时明细表)
+dws_oms_dynamic_order_hi(oms动态网点订单信息表2)
+dws_static_his_cityflow()
+region_predict_result(业务区预测结果表)
+dws_oewm_cockpit_info_hi(中转已装未发/未装未发数据)
+
+
+dm_has_send_cargo_dtl_di	2023-06-03 07:33:31	  -- 我已修改比例   √
+zone_code_deliver_model_pre	2023-06-03 16:02:21	-- 杨志群  √
+region_pickup_qty_predict_3day	2023-06-03 07:25:17     -- 文档之前已记录   √
+sede_aoi_batch_spark_total	2023-06-03 23:04:37		-- 文档之前已记录，属于高峰  √
+dwd_inc_pis_send_mor_df		2023-06-03 23:14:00		 -- 欢哥反馈无需关注   √
+dwd_inc_pis_arrive31_mor_df	2023-06-03 23:13:42		-- 欢哥反馈无需关注  √
+itp_vs_rel_city_bg_area_mpp	2023-06-03 18:16:45	      -- 反馈李欢	同步不影响
+national_001_predict_result	2023-06-03 20:24:34		  -- 反馈继生
+dws_zone_batch_predict_disa_di	2023-06-03 20:52:28	  -- 文档之前已记录   √
+
+
+-- predict_model 优化
+1、root.predict_model 队列，任务消耗资源过大任务（统计周期2023-05-25~至今）
+438751  -- input/103亿/3.4T    shuffle/1.2亿/2.4G   6w个Task,75%耗时1s内 ,仅有2个Task耗时30min，存在数据倾斜，单个节点负载过大。[spark任务 application_1684325517623_6415488]
+433365   -- application_1684325517623_5809337   小文件太多（最大3.6M，min=60k），task数太多（2w+）
+438749 	 -- application_1684325517623_5700446   输入文件2.5T,运单开窗后,生成4w+Tasks,导致资源使用过高。 优化建议：拆分数据后计算/运单加盐控制Task数。
+438752   -- application_1684325517623_5700444    输入文件1.6T,运单分组后,生成3.8w+Tasks,导致资源使用过高。 优化建议：拆分数据后量计算/运单加盐控制Task数。
+719635-许辉  -- application_1684325517623_5731213	 输入文件40G,生成13.5w+Tasks , 导致资源使用过高 优化建议：上游表合并小文件，减少Task数。
+743871 
+483029-杨志群   -- application_1684325517623_5817050  inputSize=800M,生成2wTasks（最大144k，min=700B）,导致资源使用过高 优化建议：合并小文件
+672385-许辉
+481913-杨志群 	-- application_1684325517623_5817031    inputSize=14G,生成1wTasks（最大28M，平均300k） 优化建议：合并小文件
+
+2、耗时高于均值50%以上
+739511   -- 已冻结
+386009	-- 5min
+742658	-- 22 -> 9 
+688736	-- 37 -> 20
+743871  -- 1.5H 30 30 40 46   【已冻结 application_1684325517623_6107954  http://dr-elephant.sf-express.com/search?id=application_1684325517623_6107954#MapperTime】
+665901
+
+set hive.exec.dynamic.partition.mode=nonstrict; --分区模式，默认nostrict
+set hive.exec.dynamic.partition=true;   --开启动态分区,默认true
+set hive.exec.max.dynamic.partitions=1000;  --最大动态分区数,默认1000
+set hive.fetch.task.conversion=more;
+set hive.cli.print.header=true;
+set hive.exec.compress.output=false;
+set hive.exec.compress.intermediate=true;
+set mapred.max.split.size=256000000;  -- 决定每个map处理的最大的文件大小，单位为B
+set mapred.min.split.size.per.node=1; -- 节点中可以处理的最小的文件大小
+set mapred.min.split.size.per.rack=1; -- 机架中可以处理的最小的文件大小
+set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;
+set hive.ignore.mapjoin.hint=true;
+set hive.auto.convert.join = true;
+set hive.exec.parallel=true;
+
+1、首先，根据两张表的大小，调整spark.sql.shuffle.partitions参数，以便更好地分发数据。
+2、调整spark.sql.autoBroadcastJoinThreshold 参数，以便更好地判断是否应该使用广播连接。
+3、调整spark.sql.join.preferSortMergeJoin参数，以便更好地判断是否应该使用排序合并连接。
+4、调整spark.sql.inMemoryColumnarStorage.compressed参数，以便更好地判断是否应该使用压缩列存储。
+5、调整spark.sql.codegen.wholeStage参数，以便更好地判断是否应该使用整体阶段代码生成。
+6、调整spark.sql.cbo.enabled参数，以便更好地判断是否应该使用代价优化。
+7、调整spark.sql.statistics.histogram.enabled参数，以便更好地判断是否应该使用直方图统计
+————————————————
+版权声明：本文为CSDN博主「abxzq19870214」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/abxzq19870214/article/details/128364529
+
+	 
+20230603 夜间值班
+	-、大件任务执行找不到文件， 可以依赖上游合并小文件任务。 
+	-、如果上游运单快照任务延迟，这两个收派1D的模型任务，438751，438749 也要关注一下，会造成predict_model队列积压，可以跟平台申请临时资源
+		669200		-- 每天22:10执行   【30~100min】  √
+		292890		-- 	每天00:15执行  【25min】  √
+		380889【每天00:20 执行 10min】 	  433635  -- 	 【 每天00:05 执行  ，5min】   √
+			 438765    -- 每天00:00执行   【1h】
+		438751 438749
+	-、平台问题： 579027【间隔一小时】 ，578548 【每天00:15执行】  
+		明细任务依赖快照任务，快照任务这两天都有问题，必要的时候要手动把代码拷出来换临时表名跑数
+ 
+@所有人 资源&调度任务08点播报
+【时间范围】: 2023/06/04 00:00-08:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常;
+2.predict_as队列资源在整点资源使用占比比较高，其中01:05-01:15,03:05-03:20,04:20-04:30,05:00-05:20,06:30-07:20期间使用占比95%以上，最长持续时长接近50min;
+3.predict_model队列资源在01:30,02:30,03:30,05:15,07:15时间点使用占比95%以上，最长持续时长10min;
+【调度任务/看板】9
+1.S/A/B/C级看板任务：
+所有看板正常无异常延迟无失败任务；
+
+
+select
+  a.*,
+  b.owner_code
+from
+  (
+    select
+      app_id,
+      queue_name,
+      started_time,
+      finished_time,
+      unix_timestamp(finished_time, 'yyyy-MM-dd HH:mm:ss') - unix_timestamp(started_time, 'yyyy-MM-dd HH:mm:ss') as exec_time,
+      total_vcore_seconds,
+      total_memory_seconds,
+      task_id,
+      task_instance_id,
+      date
+    from
+      dm_dqc.dm_queue_app_resource_consumption_dtl_di
+    where
+      inc_day >= '20230528'
+      and queue_name in (
+        'root.predict_as'
+     --   'root.gray_pod3_predict_as',
+     --   'root.predict_model'
+      )
+      and task_id <> -1
+  ) a
+  left join (
+    select
+      t_id,
+      owner_code
+    from
+      adl.adl_rel_next_depend_info_df lateral view explode(task_id) subview as t_id
+    where
+      inc_day >= '20230603'
+    group by
+      t_id,
+      owner_code
+  ) b on a.task_id = b.t_id
+  
+  ------ 202300605 值班
+  
+ @所有人 资源&调度任务14点播报
+【时间范围】: 2023/06/05 08:00-14:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+2.predict_as队列资源，08:00-08:45间隔10分左右出现资源使用高峰，最长持续5min左右，使用占比95%以上。
+09:00-09:10,11:00-11:30,12:00-12:25,13:00-13:20时间段，出现资源使用高峰，最长持续30min左右，使用占比95%以上；
+3.predict_model队列资源，自9点10开始，间隔1小时左右出现资源使用高峰，最长持续10min左右，使用占比在95%左右；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+除收派班次到件模型手动调整导致任务超时完成（不影响整体完成时间），
+其他看板正常无异常延迟无失败任务；
+
+
+@所有人 资源&调度任务18点播报
+【时间范围】: 2023/06/05 14:00-18:00
+【资源】
+1.predict队列资源在14:05-14:20，16:05-16:10期间内存使用占比超95%，最长持续时间5min左右。
+2.predict_as队列资源在14:00-14:10，15:00-15:30，16:00-16:30，17:00-17:25期间使用占比95%以上，最长持续时长20min左右；
+3.predict_model队列资源自14:10左右开始，间隔1小时左右出现资源使用高峰，最长持续时长15min左右，使用占比在95%以上；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+收派_长期收派模型手动调整任务延迟（不影响整体完成时间），
+其他看板正常无异常延迟无失败任务；
+
+  
+  ----------------------- 大件看板修改 -----------------------------------
+  
+405031  -- 【底盘任务】
+248838  -- 【底盘任务】
+	-249544   --中转场实时货量预测-历史  晓雯【】
+		--252229 [冻结]
+		--688646 实时预测结果验证及样本生成_1181  【AI】  聂荣华
+	-473276  货量预测_dm_has_send_cargo_dtl_di 【底盘任务】
+473852  -- 【底盘任务】
+	-474273 -- 晓雯
+		-477153 [冻结]
+		-481039 [冻结]
+		-481051 【AI】 聂荣华
+		-756915  -- 亚宁
+	-487986 -- 加木
+451091  -- 【底盘任务】
+	-246197 -- 晓雯
+		--252229 [冻结]
+		--688646 实时预测结果验证及样本生成_1181  【AI】  聂荣华
+	-416809 【底盘任务】
+		--421544  -- 晓雯
+			--252229 [冻结]
+			--688646 实时预测结果验证及样本生成_1181  【AI】
+	-469910【底盘任务】
+		--474273 -- 晓雯
+		
+473836【底盘任务】
+	-474273 -- 晓雯
+	-487986 -- 加木
+			
+
+369240  -- 范浩 / 451091（+256508 子任务） 【底盘任务】  /451091
+	416809【底盘任务】 
+		--421544  -- 晓雯
+
+
+
+469910【底盘任务】
+	--474273 -- 晓雯
+
+223256  -- 01373024 
+	459747【底盘任务】
+		203906 -- 晓雯
+
+472976【底盘任务】
+	-- 474300 -- 晓雯
+		--521835[冻结]
+	-- 478867 [冻结]
+	-- 481050 -- 01393547 聂荣华
+		--481933   -- 晓雯
+	
+460984【底盘任务】
+	-- 474300 -- 晓雯
+		--521835[冻结]
+	-- 478867 [冻结]
+	-- 481050 -- 01393547 聂荣华
+		--481933   -- 晓雯
+470818【底盘任务】
+	-- 474300 -- 晓雯
+		--521835[冻结]
+	-- 478867 [冻结]
+	-- 481050 -- 01393547 聂荣华
+		--481933   -- 晓雯
+553293【底盘任务】
+
+
+
+249544
+688646  【AI】
+474273
+481051 	【AI】
+756915	
+487986
+246197
+421544
+203906
+474300
+481050	【AI】
+481933
+
+1、249544【模型前处理】；474273【模型前处理】；756915【数据分析】；487986【数据分析】；246197【模型前处理】；421544【模型前处理】；203906【模型前处理】；474300【模型前处理】；481933【ETL】
+
+
+
+
+
+---------------------- 第二波 ---------------
+
+2023-06-15~-6-16 
+
+dws_oms_dynamic_order_hi  -- 张长发  【波动检测】待确认浮动是否正常
+dwd_inc_pis_send_mor_df   -- 李欢     sql规则规则未更新，设置异常？
+dm_has_send_cargo_dtl_di 	 -- 王英楠  正常波动
+dws_sp_dynamic_zone_summary_hi  -- 李欢  sql规则未更新？
+zone_code_deliver_model_pre   -- 杨志群  【唯一性检测】检测规则设置异常？【波动检测】波动待确认是否正常    
+dwd_inc_pis_arrive31_mor_df   -- 李欢     sql规则规则未更新，设置异常？
+transit_batch_dynamic_forecast_result  -- 陈晓雯  规则设置异常，待确认
+dws_fc_zzc_predict_collecting_di  -- 申海艳 【唯一性检测】 主键检测设置异常？
+dws_zone_batch_predict_disa_di  -- 张长发 【差异值-aoi拆解异常告警-完整性】  待确定浮动是否正常
+dws_dynamic_cityflow_base_hi   -- 李欢/王英楠
+
+@所有人 资源&调度任务08点播报
+【时间范围】: 2023/06/16 00:00-08:00
+【资源】
+1.predict队列CPU、内存资源，在整点资源使用占比较高，占比95%左右，持续时间较短，整体资源使用比较均衡;
+2.predict_as队列资源在整点资源使用占比比较高，其中06:00-06:15,06:30-06:45,07:00-07:20期间使用占比95%以上，最长持续时长接近20min;
+3.predict_model队列资源在01:20,03:20,05:20,07:00时间点使用占比95%以上，最长持续时长15min;
+【调度任务/看板】9
+1.S/A/B/C级看板任务：
+业务预测_中转场_下一跳陆运场地,AI模型凌晨1点任务手动执行成功，后续任务正常（不影响看板整体完成时间），
+其他看板正常无异常延迟无失败任务；
+
+ 
+755068  --聂荣华 失败
+	下游： 765454  -- 赵金阳
+
+755068AI任务凌晨1点半失败了，反馈赵金阳处理正常，未影响看板进度（欢哥白天关注下）
+
+
+
+---------------------- 20230617  值班 ---------------------------------------------
+
+ @所有人 资源&调度任务14点播报
+【时间范围】: 2023/06/17 08:00-14:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+2.predict_as队列资源，08:00-08:20，08:30-08:40时间段及9/10/13点整点左右出现资源使用高峰，最长持续10min左右，使用占比95%以上。
+3.predict_model队列资源，8:10/9:10/11:30/13:30时间点左右出现短暂资源使用高峰，使用占比在95%左右；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+中转场_下一跳陆运场地/中转场_动态班次重量/收派_短期收派模型1D/流向_城市和航空/流向_航空营运维度，存在任务超时完成（不影响整体完成时间），
+其他看板正常无异常延迟无失败任务；
+
+
+
+ @所有人 资源&调度任务18点播报
+【时间范围】: 2023/06/17 14:00-18:00
+【资源】
+1.predict队列资源，整点资源左右出现短暂资源使用高峰，其他时间队列资源情况正常。
+2.predict_as队列资源，14:00-14:20，17:00-17:30，17:40-17:50 时间段出现资源使用高峰，最长持续20min左右，使用占比95%以上。
+3.predict_model队列资源，自14:20开始，每隔1小时左右出现短暂资源使用高峰，最长持续10min左右，使用占比在95%左右；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+流向_航空动态/中转场_下一跳陆运场地/中转场_下一跳陆运场地/中转场_动态班次重量/收派_班次到件模型_16点/18点，存在任务超时（不影响整体完成时间），
+问题：部分任务执行超时/卡顿
+原因：平台反馈-初步判断因网络问题
+解决：平台做了网络变更修复，卡顿任务重试正常。
+后续：predict/predict_model/predict_as 平台给上述队列申请了加了50%临时资源。
+其他看板正常无异常延迟无失败任务；
+
+
+202306170000-00000477382
+
+
+484086
+	-- 632525   任务 11~13点任务超时完成
+	
+	2023-06-17 13点：
+		202306171300-00000632525
+		application_1684325517623_11489072
+			-、Tasks:112801
+			-、Input Size / Records: 3.3 TiB / 1282261603
+			-、Shuffle Write Size / Records: 12.2 GiB / 150035717
+			-、Task Deserialization Time  ： max 30min  median:4ms
+			
+		
+	2023-06-16 13点：
+		202306161300-00000632525
+		application_1684325517623_11172901
+			-、Tasks:109731
+			-、Input Size / Records: 3.1 TiB / 1209131114
+			-、Shuffle Write Size / Records: 16.7 GiB / 216160625
+			-、Task Deserialization Time  ： max 9s  median:5ms
+			
+477382   -- 超时1h
+	
+	
+492216  -- 发哥任务
+	202306171600-00000492216
+	application_1684325517623_11516798
+	
+	202306161600-00000492216
+	application_1684325517623_11221152
+	
+
+672570 【中转场流向】PIS发件-发出班次&下一跳
+
+591442 【中转场流向】PIS收件-网点中转场班次流向件量
+	669262  -- 重跑
+671469 【中转场流向】Pis到件-场地班次到件  -- 重跑 
+
+492216 【收派-运单打点SPARK】运单打点  -- 发哥任务
+622423【底表-收派】未派运单分布  -- 发哥任务
+
+-- 赵金阳
+754300
+755068
+
+
+484086 	-底盘
+672570	-底盘
+591442	-底盘
+671469	-底盘
+492216	-底盘
+622423	-底盘
+692130  -底盘
+755068 -AI
+754300 -AI
+
+质量监控:
+dwd_inc_pis_send_mor_df
+dwd_inc_pis_arrive31_mor_df
+dws_sp_dynamic_zone_summary_hi
+
+zone_code_deliver_model_pre
+
+
+-------------- 20230618~0619
+
+@所有人 资源&调度任务08点播报
+【时间范围】: 2023/06/19 00:00-08:00
+【资源】
+1.predict队列CPU、内存资源使用较均衡，队列资源情况正常；
+2.predict_as队列资源在1:00/2:00/5:00/6:00/7:00/8:00整点资源使用占比95%以上，最长持续时长接近10min；
+3.predict_model队列资源自1:10分，间隔2h出现资源使用高峰，使用占比在95%左右，最长持续时长接近5min；
+【调度任务/看板】
+1.S/A/B/C级看板任务：
+所有看板正常无异常延迟无失败任务；
+
+
+2023/06/03 21:00:00  ~ 2023/06/04 08:30:00  晚
+2023/06/15 21:00:00  ~ 2023/06/16 08:30:00  晚
+2023/06/18 21:00:00  ~ 2023/06/19 08:30:00  晚

@@ -1,0 +1,54 @@
+CREATE TABLE `dm_ordi_predict.dws_cityflow_dynamic_province_order_hi`(
+  `order_dt` string COMMENT '收件日期',
+  `src_province_name` string COMMENT '始发省份名称',
+  `dest_province_name` string COMMENT '目的省份名称',
+  `all_order_num` double COMMENT '总订单量',
+  `air_order_num` double COMMENT '航空订单量'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '下单日期yyyymmdd',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat' ;
+
+
+CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_province_pro_qty_hi`(
+  `days` string COMMENT '收件日期',
+  `src_province_name` string COMMENT '始发省份名称',
+  `dest_province_name` string COMMENT '目的省份名称',
+  `product_code` string COMMENT '产品代码',
+  `weight_type_code` string COMMENT '重量段',
+  `all_mainwaybill_num` double COMMENT '总票数',
+  `all_quantity_num` double COMMENT '总件量',
+  `air_mainwaybill_num` double COMMENT '航空总票数',
+  `air_quantity_num` double COMMENT '航空总件量',
+  `all_wgt_num` double COMMENT '总重量',
+  `air_wgt_num` double COMMENT '航空重量'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '收件日期yyyymmdd',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+;
+
+
+CREATE TABLE `dm_ordi_predict.dws_air_flow_dynamic_province_income_qty_hi`(
+  `days` string COMMENT '收件日期',
+  `src_province_name` string COMMENT '始发省份名称',
+  `dest_province_name` string COMMENT '目的省份名称',
+  `income_code` string COMMENT '收入版块',
+  `weight_type_code` string COMMENT '重量段',
+  `all_mainwaybill_num` double COMMENT '总票数',
+  `all_quantity_num` double COMMENT '总件量',
+  `air_mainwaybill_num` double COMMENT '航空总票数',
+  `air_quantity_num` double COMMENT '航空总件量',
+  `all_wgt_num` double COMMENT '总重量',
+  `air_wgt_num` double COMMENT '航空重量'
+) PARTITIONED BY (
+  `inc_day` string COMMENT '收件日期yyyymmdd',
+  `inc_dayhour` string COMMENT '打点小时yyyymmddHH'
+) ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe' 
+STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat'
+ OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+ ;

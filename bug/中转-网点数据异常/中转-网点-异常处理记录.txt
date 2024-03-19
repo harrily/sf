@@ -1,0 +1,77 @@
+
+/**
+    中转场-下一跳  网点 异常
+    next_zone_code 在 dim.dim_department表中不存在。
+**/
+
+-- 010Z553  departemnt 存在。
+-- 592RHZ2981 不存在
+select next_zone_code,*
+from dm_ordi_predict.dws_trans_next_zone_static_di_shifapass
+where 
+     next_zone_code 
+='539WHZ3994'
+-- = '937WHZ3653' 
+and
+ inc_day between '20230109' and '20240109'
+
+select  * from dim.dim_department
+where dept_code like  '937VH%'
+
+select * from dim.dim_dept_info_df 
+where inc_day = '20240110'
+and dept_code = '592RHZ2981'
+
+
+-- 查询上游表 1   -- 无
+select 
+    batchdate as batch_dt,
+    zonecode as zone_code,
+    batchcode as batch_code, 
+    nextzonecode as next_zone_code
+from dm_ordi_predict.dwd_pass_trans_waybill_dtl_di
+where  inc_day>='$[time(yyyyMMdd,-30d)]' and inc_day<='$[time(yyyyMMdd,-1d)]'
+    and stattype='5' --精确应发数据
+    and cast(nvl(singleweightqty,0) as double)<=50000 --剔除异常重量运单(>50吨)
+and nextzonecode = '539WHZ3994'
+-- 查询上游表 2   -- 来源于 dm_oia.super_flow_vehicle_tasks_split_info_full_hudi_pro_rt
+    -- rt 表上报问题
+    --1 、反馈上游查找原因 2、分析使用，关联dim_department剔除
+select * from 
+tmp_ordi_predict.tmp_trans_next_zone_static_new_1
+where next_zone_code = '592RHZ2981'
+
+-- 查询快运中转场  -- 无
+select * from dm_ordi_predict.fmsrms_dim_heavy_transit_info_df
+where inc_day = '20240110'
+and dept_code = '%592%'
+
+select * from dm_ordi_predict.dmpdsp_dim_heavy_transit_info_df
+where dept_code = '%592%'
+-- 快运场地
+select  * from ky.dim_freight.dim_heavy_transi_info 
+where
+ dept_code like '%937%'
+-- dept_name like '%厦门%'
+
+-- 查询历史出现频次 是否偶发
+   3、-- 近3个月天累计件量 不足20w
+select 
+    t1.*,
+    if(t2.dept_code is null,1,0) as flag
+ from 
+(
+    select next_zone_code,
+        -- collect_set(inc_day) as collect_day 
+            inc_day,
+            sum(actual_send_votes) as actual_send_votes,
+            sum(actual_send_weight) as actual_send_weight
+    from dm_ordi_predict.dws_trans_next_zone_static_di_shifapass
+    where inc_day >= '20231001'
+    group by next_zone_code ,inc_day
+) t1 
+left join 
+(
+    select dept_code from dim.dim_department
+) t2 
+on t1.next_zone_code = t2.dept_code

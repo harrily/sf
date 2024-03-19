@@ -1,0 +1,27 @@
+248838 任务 ：
+	Caused by: java.lang.NoSuchMethodError: scala.Predef$.refArrayOps([Ljava/lang/Object;)[Ljava/lang/Object;
+解决： sdk和scala版本不一致 
+	查看版本：
+		<scala.version>2.12.15</scala.version>
+		<scala.compat.version>2.12</scala.compat.version>
+	 1、右键工程名称 -> Open Model Settings  -> global libraries 
+		添加 scala-sdk-2.12.15 ，到项目，build ，重新package。
+	 参考资料：https://blog.csdn.net/kiikgu/article/details/77732507
+
+问题； 武哥， 很奇怪zip包（133592）， 用770606测试任务，执行数据正常写入没问题 。 但是替换248838任务上后， 就执行报lang找不到了（这个在打好的包已经处理）。
+解决： 因为调度节点不一样，248838 切换为 bdp_sprak_v3 即可。
+
+ 
+数据验证：
+	inc_day	_col1	weight			tickets
+	20230801	219712	1289852362	61851636
+	20230802	218063	1279892095	61312526
+	20230803	217987	1278075782	61370747
+	20230804	225975	1397065297	65854940
+
+
+剔除maven依赖：
+	Maven: org.scala-lang.modules:scala-java8-compat_2.11:0.7.0
+	Maven: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.2
+	Maven: org.scala-lang.modules:scala-xml_2.11:1.0.2
+	Maven: org.scala-lang:scala-library:2.11.12

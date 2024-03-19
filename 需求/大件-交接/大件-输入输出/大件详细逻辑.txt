@@ -1,0 +1,500 @@
+一、-- 460984 -- 每小时调度接驳车辆 在途+已到 
+	$1	$[time(yyyyMMdd,-3d)]
+	$2	$[time(yyyyMMdd)]
+	$3	$[time(yyyy-MM-dd HH:mm:ss)]
+	
+	1、//取最近3天去重。
+		输入：bdp.dm_freight.op_tp_wl_handover_detail_info  【车辆运输详情信息 kafka to hive】
+		逻辑：1、inc_day 过滤近3天（T-3d,T-0d）
+			  2、partition by eventtype,tripid（行程id）,packageno order by eventtime 去重
+			  3、取所有字段
+		输出：detail_data
+	2、//获取已到达的汇总数据
+		输入：detail_data
+		逻辑：1、过滤eventtype = 'ARRIVE_END'
+			  2、分组eventtype,deptcode,tripid
+			  3、取min(eventtime) as event_time, sum(packageweight) as weight, count(packageno) as ticket
+		输出：rs1
+	3、//获取在途的汇总数据
+		输入：detail_data  left join  rs1
+		逻辑：1、detail_data 过滤eventtype = 'TRANSPORT' , 关联 rs1,且 rs1.trip_id is null， 
+			  2、分组eventtype,deptcode,tripid
+			  3、取min(eventtime) as event_time, sum(packageweight) as weight, count(packageno) as ticket
+		输出：rs2
+		rs1 拼接 rs2 ，输出rs
+		rs添加1列uuid。
+	4、//在途的事件时间+3h	
+		输入：取 rs，eventtime 生成“plan_arrive_time”，“arrTm”（event_type='TRANSPORT',则时间+3h，） ，当前日期生成“count_date”“count_time”。
+		输出：resultNoBatch
+		  	
+	5、//读取中转到达班次信息
+		输入：ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di【中转到达班次信息】
+		输出：batch_info
+		逻辑：过滤T-4d~ T+5d
+	
+	6、// 获取批次编码，批次日期
+		输入：resultNoBatch  关联 batch_info
+		输出：resultAll
+		逻辑：根据网点关联，到达日期介于“上个班次最晚到达日期”与“最晚到达日期”之间，取batch_code，batch_date 。 
+			根据 event_type，生成，depart_time( 在途取)
+				arrive_time（到达时间）
+				pre_arrive_time（），
+				status = 3 = event_type（ARRIVE_END）
+				else status = 2 
+	7、//
+		输入：resultAll
+		输出：ky.dm_heavy_cargo.dm_cargo_quantity_handover_dtl_rt 【货量预测_接驳车辆数据】
+		逻辑：取数写入
+			写入inc_day,inc_hour（当前天&小时）
+			
+二、-- 473852 每天调度_接驳车辆 已到达 --每日计算已到达用于校验预测
+
+	输入：（ky.dm_freight.dm_wl_handover_forecast_dtl_df【（物联接驳货量预测流向明细表）】t1 +  ky.dim_freight.dim_heavy_transi_info【顺丰实时车辆的场地列表】 b ） 
+		left join  （ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di t2  + +  ky.dim_freight.dim_heavy_transi_info【顺丰实时车辆的场地列表】 b）
+		union  ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di【货量预测_接驳到达货量按到达时间分区】 t3
+	输出：ky.dm_heavy_cargo.dm_handover_has_arrive_dtl_di
+	逻辑：
+		1-、t1 关联 b ,过滤T-1d，网点是中转场，按照trip_id（需求id）,zone_code 分组，取  min(depart_time)，max(arrive_time)，weight,计数=ticket，min(inc_day).
+			时间format，生成plan_arrive_time，plan_arr_tm（+3h），arr_tm。
+		2-、t2 关联b,过滤T-2D,T-D ，操作网点是中转场，取班次编码，上个班次最晚到达日期”与“最晚到达日期“，
+		3-、1,2关联，根据网点，根据（plan_arr_tm，arr_tm 介于“上个班次最晚到达日期”与“最晚到达日期”之间）取plan_batch_code，plan_batch_date，batch_code，batch_date，反之取null。
+		4-、3根据dept_code,trip_id开窗，取 max(plan_batch_code)，max(plan_batch_date)， max(batch_code)，max(batch_date)
+		5-、t3过滤inc_day T-2D,T-D. 
+		6-、4,5union， pre_arrive_tim 过滤 T-2D,T-D.  
+		
+三、-- 459747  班次基表-货量预测_中转已到达班次
+	-- 459748 - 货量预测_ 中转到达班次信息
+		输入： bdp.dm_pass_rss.sbsa_tm_transfer_batch_pro【中转班次表】 t1   left Join  bdp.dm_freight.dim_calendar t2 
+		输出：ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+		逻辑 :
+			1-、t1 过滤 T-D，取有效数据 ，根据 （集散类型：1集货，2散货，3集散货）, = 2 取disperse_last_arrive_tm（T2散货最晚到达时间:HH:MM） ，
+			反之取collect_last_arrive_tm（T1集货最晚到达时间:HH:MM） 作为 last_arrive_tmm （T1集货最晚到达时间）、
+			2-、关联日期表，过滤有效时间在T-7D,T+10D 之间的数据，workday在1-7之间。
+			3-、生成一列 last_last_arrive_tm（lag(last_arrive_tm,1) --向前找1条 。根据操作网点分区，last_arrive_tm 正序） ， 兜底处理：班次生效第一天,上个班次的最晚到达时间是本班次的开始时间
+		
+	-- 475426 货量预测_班次 
+		输入：ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+		输出：ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di
+		逻辑: 过滤 T-1D ，T+10D,  根据  。根据操作网点分区，last_arrive_tm 正序  ， lead(plan_begin_tm,1) ,  当天，取下1条，拼接batch_date，plan_begin_tm，，次天，则拼接batch_date+1，plan_begin_tm 
+		生成 next_begin_tm，  同理去掉lead函数拼接 begin_tm
+			再过滤  T-1D ，T+9D, 
+
+四-- 451091  -- 顺丰车辆实时已到达同步离线 (tidb --> hive )
+	-、ETL : 
+		vt_has_arrive_cars --> dm_heavy_cargo.ky_has_arrive_cargo  [$[time(yyyyMMdd)]]
+	-、车标去重 ：
+		输入：ky.dm_heavy_cargo.ky_has_arrive_cargo
+		输出：ky.dm_heavy_cargo.ky_has_arrive_cargo
+		逻辑： 过滤 当天 ，(partition by car_no order by arrive_time) 
+		
+5、-- 247099 -- sf车辆 未发+在途+已到  【HBase】
+		参数1:  $[time(yyyyMMdd,-60d)]
+		参数2:	$[time(yyyyMMdd)]
+		参数3:	$[time(yyyyMMdd,-3d)]
+		
+	1、获取中转场信息 
+		select dept_code as deptCode from dim_heavy_transit_info;  
+			[tidb.cloud2.jdbc.url]{
+					  jdbc.url="jdbc:mysql://fmsrms-tilb.db.sfcloud.local:3306/fmsrms?rewriteBatchedStatements=true"
+					  user="fmsrms"
+					  passwd="CGQMh_Nf^BXS"
+					}
+	2、获取车辆信息前48小时车辆任务
+		输入：bdp.dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【车辆详情 kafka to hive】
+		输出：requireTaskDf
+		逻辑：过滤 参数1,T-60D ， 数据"null"处理为null，取字段。
+			
+	3.取车辆任务的最新状态
+	
+		1-、未发车辆计算
+			-、requireTaskDf 根据 	需求id , partitionBy($"requireId").orderBy($"lastUpdateTm".desc) ， 开窗取最新的数据 --> new_require_task_info  
+			  
+				-、过滤 carStatus in (1,2,3,4,5) ， 	srcactualdeparttm（始发-实际发车时间）is  null
+				-、 途径网点1 ，途径网点2 ，目的网点  分别关联 中转场信息， union 三者，过滤关联字段不为null， 根据 "requireId","srcZoneCode","preArriveZoneCode" 去重 （需求，始发网点，途径1,2&目的网点）  -- > lastResult1
+				
+				-、过滤 carStatus in (1,2,3,4,5) ， 	srcactualdeparttm（始发-实际发车时间）>0 , secondActualDepartTm(途径1-实际发车时间)is null
+				-、途径网点2，目的网点 ， 	分别关联 中转场信息， union 二者，过滤关联字段，以及途径网点1不为null，根据 "requireId","srcZoneCode","preArriveZoneCode" 去重 （需求，途径网点1，途径2&目的网点）  -- > lastResult2
+				
+				-、过滤 carStatus in (1,2,3,4,5) ，and srcActualDepartTm >0 and secondActualDepartTm >0 and thirdActualDepartTm is null
+				-、目的网点，关联中转场信息，过滤关联字段，以及途径网点2不为null ，根据 "requireId","srcZoneCode","preArriveZoneCode" 去重 （需求，途径网点2，目的网点）  -- > lastResult3、
+			
+			-、lastResult1，2，3 union  且，srcZoneCode != preArriveZoneCode  --> lr  --> count1
+			-、mysql更新
+				-、更新mysql 状态（t_monitor_detail_data_process）   更新status = 1  tableName = t_monitor_in_road_cargo_new
+					update t_monitor_detail_data_process set status = 1,start_time = '"+updateTime+"',insertTime = current_timestamp() where table_name = '"+tableName+"'
+				-、lr 覆盖写入mysql 
+					t_monitor_in_road_cargo_new
+					tidb {
+						  jdbc.url="jdbc:mysql://dmpdsp-tilb.db.sfcloud.local:3306/dmpdsp?rewriteBatchedStatements=true"
+						  user="dmpdsp"
+						  passwd="VjFX_HXpA^1y"
+				}
+		2-、开始计算在途
+			-、requireTaskDf ， 过滤T-3D数据，需求id , partitionBy($"requireId").orderBy($"lastUpdateTm".desc) ， 开窗取最新的数据 --> new_require_task_info2
+				2.1-、过滤 carStatus in (1,2,3,4,5) 【车辆状态(1待指派,2已指派,3待执行,4异常,5执行中,6已完成,7取消)】， 	lastUpdateTm（最近更新时间）> T-7D    -->  in_road_cars
+					2.1.1-、srcActualDepartTm（始发-实际发车时间）>0,			--> in_road_cars_first
+						secondZoneCode(途径网点1) is not null ， 
+						secondActualArriveTm(途径网点1-实际到达时间) is null 
+						thirdActualArriveTm(途径网点2-实际到达时间) is null
+						destActualArriveTm(目的网点-实际到达时间) is null 
+						secondJobType <> '1'
+						2.1.1.1-、in_road_cars_first ， 列传行， secondArriveContnrNos 逗号分割 --> carNo 等其他字段 -- > inFirstCarNos
+					同理2.1.1 ,  条件不一样 分别生成，inFirstCarNos，inSecondCarNos，inThirdCarNos，inForthCarNos ， inFivethCarNos ， union 5个df， --> inAllCarNos
+					
+				2.2、
+					2.2.1-、inAllCarNos 关联 中转场信息，过滤carNo is not null / ''，取所有  -->  kyAllCarNos
+						-、carNo 作为rowkey查询hbase表 rt_container_waybill_relation
+							-、匹配上 
+								根据运单，packageMeterageWeightQty字段，获取weight（weight > 1000000D -> 1000000D,） , ticket=1L
+								取出： listRow += Row(requireId,carNo,translevel,carStatus,srcZoneCode,preArriveTm,preArriveZoneCode,waybillNo,ticket,weight)
+							-、未配上 
+								waybillNo,ticket,weight 分别复制 null, 0 ,0 
+						-、输出为 f1Df
+						
+						-、读取mysql -- 获取快管修改车辆预计到达时间 
+							select require_id,zone_code,next_zone_code,prologis_in_tm from t_transportct_info where prologis_in_tm is not null
+							mysql.kg {
+							  jdbc.url="jdbc:mysql://sdmti-tilb.dbdr.sfcloud.local:3306/sdmti?useUnicode=true&characterEncoding=UTF8&autoReconnect=true&zeroDateTimeBehavior=convertToNull"
+							  user="readonly"
+							  passwd="sdmti#65readonly"
+							}
+							输出--> kg_data
+						-、f1Df， 开窗聚合tickets，weight取第一条 --> in_road_total	
+							-、关联 kg_data ， a.requireId = b.require_id and a.srcZoneCode = b.zone_code and a.preArriveZoneCode = b.next_zone_code 
+									生成preArriveTm(优先取 prologis_in_tm然后取 preArriveTm) ,status = 2  
+								输出-- > inTotal
+					2.2.2-、 inAllCarNos 关联 中转场信息  ， 过滤  carNo is null 数据 --> inNotCarNos
+						-、in_not_carno_cars 关联  kg_data   生成preArriveTm(优先取 prologis_in_tm然后取 preArriveTm) ,status = 2   ， weight = 0 ,ticket=0
+							输出-- > inTota2
+					2.2.3 -、 inTotal , 2 union , srcZoneCode != preArriveZoneCode -->   inTotalAll  --> count2 
+							
+					2.2.4-、inTotalAll --> append mysql （t_monitor_in_road_cargo_new）
+					
+		3-、开始计算已到达车辆
+			-、读取mysql   
+				select * from vt_has_arrive_cars   -- > has_arrive_cars_pre  
+				tidb.jdbc.url=url 
+				逻辑 ： 24),1 过滤 分区 ， T-1， 24h
+				-、(partition by carNo order by actualTime） 取第一条 --> has_arrive_cars
+				-、聚合tickets,weight,开窗取第一套 --> has_arrive_total
+				-、取 status = 3 ,countTime，countDate, -- > hasArriveTotal
+			-、补充已到达车辆没有车标的情况
+				-、requireTaskDf=requireTaskDf1 开窗 -->  last_day_car_info
+				-、过滤carNo is null or carNo = ''  ， 根据 起始网点，途径网点1，2，到达网点的实际到达时间不同，生成hasArrive1，2，3,4,5 ， union   --> has_arrive_total_pre2
+				-、has_arrive_total_pre2 关联 中转场信息 inner join ，  --》  hasArriveTotal2
+				
+			-、hasArriveTotal union hasArriveTotal2   --> has_arrive_all
+			-、partition by requireId,preArriveZoneCode order by weight desc  开窗取第一条，srcZoneCode != preArriveZoneCode  --> hasArriveResult  --> count3 
+			-、hasArriveResult --> append mysql  t_monitor_in_road_cargo_new
+			-、count = count1 + count2 + count3 
+				更新 t_monitor_detail_data_process  ，status = 2 
+				count写入 t_monitor_detail_data_row  [tidb.jdbc.url]
+
+-- 449074  -- 每30分钟刷新车标货量信息   【Hbase】
+	参数1:$[time(yyyy-MM-dd HH:mm:ss)]
+	参数2：$[time(yyyyMMdd)]
+	
+	-、读取mysql 
+		select * from vt_has_arrive_cars
+		tidb.jdbc.url=url 
+		逻辑 ： 24),1 过滤 分区 ， T-1， 24h
+	-、读取idKey，requireId，carNo，，transLevel，carStatus，srcZoneCode，destZoneCode，actualTime
+		-、carNo 作为rowkey查询hbase表 rt_container_waybill_relation 
+			-、匹配上
+				根据运单，packageMeterageWeightQty 字段，获取weight（weight > 1000000D -> 1000000D,） , ticket=1L
+				listRow += Row(idKey,requireId, carNo, translevel, carStatus, srcZoneCode,destZoneCode, actualTime,  waybillNo, ticket, weight)
+			-、未匹配上
+				waybillNo,ticket,weight 分别复制 null, 0 ,0 
+		-、输出--> f1Df
+		-、fdDf 根据group by idKey,requireId,carNo,transLevel,carStatus,srcZoneCode,destZoneCode,actualTime  分组，求和 ticket,weight  ,添加插入日期，取所有除了waybillNo  
+		-、输出 --> result 
+	-、写入mysql 
+		replace into vt_has_arrive_cars 
+		
+-- 248838 -- 快运离线已发出货量_场地发出货量 【Hbase】
+	参数1：$[time(yyyyMMdd,-24d)]
+	参数2：$[time(yyyyMMdd)]
+	参数3：$[time(yyyyMMdd)]
+	
+	1-、读取mysql 获取中转场信息 
+		select dept_code as deptCode from dim_heavy_transit_info
+	2-、输入:dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4
+		输出： require_detail
+		逻辑 ： -、过滤 T-24D ~ T-D 
+				-、始发网点，途径网点1,2 -实际发车时间 > 0
+				-、partition by requireId order by lastUpdateTm desc 
+				-、carStatus in (3,4,5,6)
+	3-、require_detail  内关联 中转场信息 
+		根据 始发网点，途径网点1 ，2 ，关联（始发，途径1关联2次，过滤条件不一样） ， 
+			取car_nos 列转行生成 car_no . 
+		输出：hasArrive1 ~ 5 
+	4-、union hasArrive1 ~ 5   --> allArrive
+		-、过滤 car_no 不为空 
+		-、遍历数据，取require_id，translevel（运输等级），car_no，src_zone_code，dest_zone_code，arrive_time，send_time
+		-、carNo 作为rowkey查询hbase表 rt_container_waybill_relation 
+			-、匹配上
+				根据运单，packageMeterageWeightQty 字段，获取weight， ticket=1L
+				取 listRow += Row(requireId,carNo,srcZoneCode,destZoneCode,sendTime,arriveTime,ticket,weight,waybillNo,translevel.toString)
+			-、未匹配上 
+				为null
+		-、输出为： requireCarNoDetail ， 根据 ("waybill_no","dest_zone_code")去重 
+		-、分组聚合 ticket，weight （groupBy("require_id","car_no","translevel","src_zone_code","dest_zone_code","send_time","arrive_time")）
+		-、写入hive表 -->  
+			输出： dm_heavy_cargo.ky_has_send_cargo
+			逻辑 ：src_zone_code" =!= $"dest_zone_code
+				写入 当天分区 。
+				
+-- 470818  -- 每小时调度_sf车辆 未发+在途+已到 加班次
+	-- 470818  -- 每小时调度_sf车辆 未发+在途+已到 加班次
+	参数1：	$[time(yyyyMMdd,-60d)]
+	参数2： $[time(yyyy-MM-dd HH:mm:ss)]
+	参数3:	$[time(yyyyMMdd,-3d)]
+	
+	1-、读取mysql数据 tidb
+		select * from t_monitor_in_road_cargo_new
+		逻辑 ： -3D - 3D (T-6D) , preArriveTm 在 8 ~ 24点，
+		输出： in_road_datil
+		-、读取 in_road_datil 字段format ，输出 in_road_datil_noBatch
+	2-、读取班次信息
+		输入： ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+		输出： batch_info
+		逻辑：过滤  T-3D-4D ,T-3D+5D，（T-7D，T+2D）
+		
+	3-、
+		输入： 1,2
+		输出： resultAll
+		逻辑：1 left join  2 ,1.preArriveZoneCode=2.operate_zone_code  ，
+			1的arrTm，介于“上个班次最晚到达日期”与“最晚到达日期”之间，取batch_code，batch_date,
+			partition by requireId,srcZoneCode,preArriveZoneCode order by preArriveTm 开窗取1条。
+	4-、输入：resultAll
+		输出：ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt
+		逻辑：字段写入指定分区 ，T-3D，hour
+				
+				
+-- 469910   -- 每天调度_sf车辆 已到达(班次信息)--每日计算已到达用于校验预测
+	输入：ky.dm_heavy_cargo.ky_has_arrive_cargo t1  left join （ ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di a + ky.dim_freight.dim_heavy_transi_info  b） t2 
+	输出：ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di
+	逻辑： -、t1   inc_day 过滤当天， arrive_time 过滤 T-15D~ T+7D 
+		   -、a inc_day 过滤 T-17D~T+9D  a.operate_zone_code  in  b  --> t2 
+		   -、t1 left join t2 根据 t1.dest_zone_code = t2.operate_zone_code 
+				-、判断t1.arr_tm 介于“上个班次最晚到达日期”与“最晚到达日期”之间）取plan_batch_code，plan_batch_date，batch_code，batch_date
+				-、partition by require_id,car_no,src_zone_code,dest_zone_code 开窗取第1条 
+				-、arrive_time 作为 inc_day  写入 ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di
+		
+-- 473276  -- 每天调度_sf车辆 已发出归班次 --每日计算sf已发出用于校验sf预测未发
+	输入：( bdp.dm_heavy_cargo.ky_has_send_cargo  a  left ( ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di b + ky.dim_freight.dim_heavy_transi_info c ) ) t1  union ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di  t2 
+	输出： ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di
+	逻辑： -、a 过滤inc_day 当天，send_time 在T-15D~ t+1D   
+		   -、b 过滤inc_day T-16D，T+1D  b.operate_zone_code in C 
+		   -、a left b  on a.src_zone_code= b.operate_zone_code
+		   -、a.send_tm  介于 “本班次规定开始时间” 及 “下个班次规定开始时间” ，取batch_code，batch_date  
+		   -、partition by require_id,car_no,src_zone_code,dest_zone_code 开窗  ， max(batch_code),max(batch_date)   --> t1 
+		   -、t1 union t2 
+			  -、artition by require_id,car_no,src_zone_code,dest_zone_code order by weight desc)  开窗，按照重量倒叙取一条， 写入  ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di
+
+-- 553293
+	-- 555314 -- 货物预测-回刷已到达 【Hbase】  
+		参数1：$[time(yyyyMMdd,-2d)]
+		参数2:	$[time(yyyyMMdd)]
+		1-、读取mysql ，读取中转场信息
+			select dept_code as deptCode from dim_heavy_transit_info  ，去重 
+			输出： transit_info_tmp
+		2-、 输入： dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4
+			输出：require_detail
+			逻辑： 过滤 T-2D，T-D ， 
+				 (secondActualArriveTm >0 or thirdActualArriveTm>0 or destActualArriveTm >0 ） 途径网点1 ，2 ，目的网点-实际到达时间 > 0 
+				 carStatus in (3,4,5,6)
+				 partition by requireId order by lastUpdateTm desc  开窗取1条 
+		3-、1,2关联inner join ,
+			途径网点1,2 分别关联，列转行生成 car_no ,输出 hasArrive1，hasArrive2
+			目的网点分别关联 ， 列转行生成 car_no  ， 根据途径网点1为null ， 不为null但途径网点2为null ，途径网点2不为null，生成 hasArrive3 ~ 5 
+			union hasArrive1~ 5  输出 --> allArrive, 过滤 car_no 空值
+		4-、-、carNo 作为rowkey查询hbase表 rt_container_waybill_relation 
+			-、匹配上
+				根据运单，packageMeterageWeightQty字段，获取weight（weight > 1000000D -> 1000000D,） , ticket=1L
+				取  listRow += Row(requireId, carNo, srcZoneCode, destZoneCode, sendTime, arriveTime, ticket, weight, waybillNo, translevel.toString, carStatus.toString)
+			-、未匹配上 
+				ticket, weight, waybillNo 置为 0 ，0 ， null 
+			-、去重 "waybill_no","dest_zone_code" 
+				求和 tickets,weight (分组 "require_id","car_no","translevel","src_zone_code","dest_zone_code","send_time","arrive_time","car_status" )
+				输出：result_pre --> 添加创建日期 写入 result
+		5-、输入： result
+			输出: dm_heavy_cargo.ky_has_arrive_cargo_rb
+			逻辑： 覆盖写入，分区inc_day = 当天日期
+	-- 553366 -- hive -- 已到达补刷idkey
+		输入： bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb
+		输出： bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb
+		逻辑： 重新生成id，取当天数据覆盖写入inc_day='$[time(yyyyMMdd)]'
+		
+		输出： bdp.tmp_dm_predict.ky_has_arrive_cargo_huishua_tmp_20221025
+			写入临时表，为etl使用
+		
+	-- 553379  补数etl任务 
+		输入： bdp.tmp_dm_predict.ky_has_arrive_cargo_huishua_tmp_20221025
+		输出： vt_has_arrive_cars
+		
+
+-- 405031  etl (顺丰实时车辆的场地列表同步hive)
+	-、输入: dim_heavy_transit_info （tidb ~ mysql ）
+	   输出：ky.dim_freight.dim_heavy_transi_info
+	   逻辑： 按天，
+			dept_code 中转场编码
+			dept_name 中转场名称
+			hq_code	分拨区编码
+			hq_name	分拨区名称
+			is_mix_ground	是否融合场站
+			max_process_weight	最大处理货量
+
+<--------------------------------------------------------------------------------------------  顺心 -------------------------------------------------------------------------------------->
+
+-- 416809  -- sx_已到达数据(旧版) --每日计算已到达用于校验预测   （顺心白名单场站到货量） 
+	输入： ( ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_sum_di a  + ky.dim_freight.dim_heavy_transi_info  b) t1   left ky.dm_heavy_cargo.ky_has_arrive_cargo t2 
+	输出：  ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_distinct_sum_di 
+	逻辑： -、a 过滤inc_day T-60D~ T-D,  a.destzonecode in  b -> t1   ， 根据 partition by shiftno,ewbslistno,srczonecode,destzonecode order by createtime desc  开窗 创建时间倒叙取1条
+		   -、t2 过滤 inc_day  T-60D~ T-D  ， 去重取 require_id
+		   -、t1.shiftno = t2.require_id  ， 取 t2.require_id （班次号） is null and t1.shiftno is not null  , 写入结果表 
+	
+-- 430625 -- 顺心大件场地 - 近实时计算顺心车辆基础数据_需求id去重_聚合
+	-- 431213 -- zip 大件ky场地顺心货量聚合
+		参数1：$[time(yyyy-MM-dd HH:mm:ss)]
+		参数2：dws_sx_vehicle_sum
+		
+		1、读取SX车辆实时进港明细
+			-、输入： ky.dm_freight.dwd_sx_vehicle_dtl_di
+			   输出： cargoInfoDf
+			   逻辑： 过滤 T-14D ~ T-D ,  按照 shift_no(班次号) "site_code"（当前网点代码）, "next_site_code"（下一个网点编码） 分组 
+					聚合 total_out_weight	总重量
+					min 开始 卸车时间
+					max 标准计划到达时间
+					.. 其余都取最大。
+					in_confirm_time	点到时间
+					transport_level	运输等级
+					ewblist_send_time	交接单发车时间
+					vehicle_status	车辆状态
+					total_out_ewbcount	交接票数
+					total_out_piece	交接件数
+					total_out_vol	交接体积
+		2、场地过滤  快运/小件场地
+			读取mysql select dept_code as deptCode from dim_heavy_transit_info ， dept_code去重
+		3、顺丰车辆数据过滤
+			读取mysql 
+				select * from vt_has_arrive_cars
+				逻辑 ：过滤最近8*24小时， actualTime 在8~ 24 h  ，取 requireId 去重 
+			输出： hasArriveTaskDf
+			
+		4、 1 left join 2     2.deptCode = 1.next_site_code   -- ,过滤场地，
+				left join 3  , 1.shift_no = 3.requireId  , requireId is null   -- 过滤顺丰数据
+			取1字段。
+			输出： resultBatch
+		
+		5、 写入tidb - dws_sx_vehicle_sum
+			- 读取版本配置表 ： mysql  pub_table_sync_version （tidb） , where table_name = dws_sx_vehicle_sum  , 取versionId
+			-	如果当前版本是1,  删除版本为2的数据 则写入数据为version=2 
+				DELETE FROM dmpdsp.dws_sx_vehicle_sum where version_id = 
+			-、resultBatch 按照"shift_no", "site_code", "next_site_code","version_id" 去重 ，写入表 dws_sx_vehicle_sum
+			- 更新版本
+			
+	-- 432978  小件场地顺心车辆数据into同步hive  (etl)
+		输入： dws_sx_vehicle_sum
+		输出： ky.dm_freight.dm_sx_vehicle_his_sum_di  inc_day = $[time(yyyyMMdd)]
+		
+-- 472969 -- 近实时计算顺心车辆基础数据
+	-- 472962 聚合顺心车辆数据_dm_dwd_sx_vehicle_mid 
+		输入：  ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di
+		输出： ky.dm_heavy_cargo.dm_dwd_sx_vehicle_mid 
+		逻辑： -、过滤 inc_day T-7D，T-D 
+			   -、按照 group by shift_no, site_code, next_site_code 分组 
+				  聚合 
+				    sum(out_weight) as total_out_weight, --总交接重量
+					min(first_unlaod_time) as first_unlaod_time, --开始卸车时间
+					max(standard_plan_arrival_time) standard_plan_arrival_time, --标准预计到达时间
+					max(in_confirm_time) in_confirm_time,  --交接单点到时间
+					max(ewblist_send_time) ewblist_send_time, --交接单发车时间
+					max(vehicle_status) vehicle_status,  --车辆状态0未发 1在途 2待卸 3卸车中 4卸车完成
+					max(updated_time) updated_time,
+					max(inc_day) inc_day1
+	
+	-- 472963 聚合顺心交接单数体积dm_sx_vehicle_rt_jd_mid
+		输入:  ky.dm_heavy_cargo.sx_rt_jd_sink
+		输出： ky.dm_heavy_cargo.dm_sx_vehicle_rt_jd_mid 
+		逻辑： -、 inc_day 过滤  T-7D，T-D  and  ewbliststatus>='1'  
+			   -、 	partition by ewbslistno,shiftno order by dataversion desc 开窗取1条 
+			   -、按照shiftno 分组， 聚合
+			    sum(cast (outewbcount as bigint)) total_out_ewbcount, --交接票数
+				sum(cast (outpiece as bigint)) total_out_piece,--交接件数
+				sum(cast (outvol as decimal(32,2))) total_out_vol,--交接体积
+				shiftno
+		逻辑： 
+			-、 b过滤 inc_day T-7D，T-D   and requirevendor in ('SX','SF') and transoportlevel in('1','2','3')  ， requireid,transoportlevel 去重取数
+			-、a left b on a.shift_no = b.requireid ,过滤 shift_no is not null
+				取所有字段，case when (b.transoportlevel is null or b.transoportlevel =999) then 3 else b.transoportlevel end as transport_level  -> t1 
+			-、t1 left t2  on t2.shiftno=t1.shift_no , 过滤 t2.shiftno is not null and shiftno <>'';
+				取inc_day及其他字段写入分区inc_day结果表 。
+	
+-- 472976  -- 每小时调度sx车辆 在途+已到
+	参数1：$[time(yyyy-MM-dd HH:mm:ss)]
+			1、读取SX车辆实时进港明细
+				-、输入： ky.dm_freight.dwd_sx_vehicle_dtl_di
+				   输出： cargoInfoDf
+				   逻辑： 过滤 T-14D ~ T-D ,  按照 shift_no(班次号) "site_code"（当前网点代码）, "next_site_code"（下一个网点编码） 分组 
+						聚合 total_out_weight	总重量
+						min 开始 卸车时间
+						max 标准计划到达时间
+						.. 其余都取最大。
+						in_confirm_time	点到时间
+						transport_level	运输等级
+						ewblist_send_time	交接单发车时间
+						vehicle_status	车辆状态
+						total_out_ewbcount	交接票数
+						total_out_piece	交接件数
+						total_out_vol	交接体积
+			2、场地过滤  快运/小件场地
+				读取mysql select dept_code as deptCode from dim_heavy_transit_info ， dept_code去重
+			3、顺丰车辆数据过滤
+				读取mysql 
+					select * from vt_has_arrive_cars_batch
+					逻辑 ：过滤最近T-30D， actualTime   ，取 requireId 去重 
+				输出： hasArriveTaskDf
+				
+			4、 1 left join 2     2.deptCode = 1.next_site_code   -- ,过滤场地，
+				left join 3  , 1.shift_no = 3.requireId  , requireId is null   -- 过滤顺丰数据
+					取1字段，格式化 pre_arrive_time 
+				过滤pre_arrive_time between T-3D~ T+5D,  日期处理：
+				if( datediff(first_unlaod_time,FROM_UNIXTIME(UNIX_TIMESTAMP()))>365,if(datediff(in_confirm_time,FROM_UNIXTIME(UNIX_TIMESTAMP()))<-365,standard_plan_arrival_time,in_confirm_time),first_unlaod_time ) as pre_arrive_time",
+				date_format(if( datediff(first_unlaod_time,FROM_UNIXTIME(UNIX_TIMESTAMP()))>365,if(datediff(in_confirm_time,FROM_UNIXTIME(UNIX_TIMESTAMP()))<-365,standard_plan_arrival_time,in_confirm_time),first_unlaod_time ),'yyyy-MM-dd HH:mm') as arrTm
+				
+				根据 卸车时间（与当前日期对比<365 取），（点到时间（与当前日期对比，>-365 ,取），标准计划到达时间 ） ，  作为 pre_arrive_time
+				输出： sxNoBatch   	
+			5-、读取班次信息
+				输入： ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+				输出： batch_info
+				逻辑： 过滤inc_day ， T-4D~ T+5D
+				
+			6-、sxNoBatch left join batch_info
+					- sxNoBatch的 arrTm ，介于“上个班次最晚到达日期”与“最晚到达日期”之间，取batch_code，batch_date,
+					- 开窗 partition by shift_no,site_code,next_site_code order by pre_arrive_time 
+					vehicle_status （0->1 , 1->2 ,else  3 ） --> status
+					按照 "shift_no", "site_code", "next_site_code" 去重 
+				写入： ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt  【货量预测_顺心车辆数据】
+					 inc_day = incDay ，inc_hour = inc_hour  ，写入当天日期，当天小时
+					 
+-- 473836  -- 每天调度_sx车辆 已到达  --每日计算已到达用于校验预测
+	输入：（ ky.dm_freight.dm_sx_vehicle_his_sum_di b +  (ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di a1 + ky.dim_freight.dim_heavy_transi_info a2) c  ） t1  union ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di  t2 
+	输出 ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di
+	逻辑：
+		-、b 过滤inc_day当天，modify_time当天8:20,8:00 ,vehicle_status in('2','3','4') ,
+			-、根据partition by shift_no,site_code,next_site_code order by total_out_weight desc 开窗取1条 
+			-、生成 arrive_time ，arrTm ， 
+				根据 （first_unlaod_time）卸车时间（与当前日期对比<365 取），反之（点到时间[in_confirm_time]（与当前日期对比，>-365 ,取），标准计划到达时间[standard_plan_arrival_time] ） ，  作为 arrive_time
+				format 作为 arrTm
+			-、过滤 arrive_time in T-15D，T-D
+			-、输出 b 
+		-、 a1 过滤 inc_day ，T-16D,T+2D , operate_zone_code in  a2   --> c 
+		-、 b left c on  b.next_site_code=c.operate_zone_code
+		-、  b.arrTm  介于“c.上个班次最晚到达日期”与“c.最晚到达日期”之间，取batch_code，batch_date
+			partition by shift_no,site_code,next_site_code order by total_out_weight desc  开窗 
+			-、输出t1 
+		-、 t1 union  t2 (过滤 inc_day ，T-15D~T-D) 
+			-、 row_number() over(partition by shift_no,src_zone_code,dest_zone_code order by weight desc  开窗 
+			-、输出结果表 arrive_time = inc_day 写入 。 ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di
+		

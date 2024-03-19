@@ -1,0 +1,85 @@
+1、ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di --  ID:469910(469851)
+ 来源表：ky.dm_heavy_cargo.ky_has_arrive_cargo   +   ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di
+  --查询已到达的车辆， 根据arrive_time作为分区，每次刷新T-15D ~ T+7d ，因为 2023-12-09 / 10 没有arriveTime，故对应分区无数据。
+ -、 ky.dm_heavy_cargo.ky_has_arrive_cargo    
+  数据来源：
+    451091 ( vt_has_arrive_cars  ->  ky.dm_heavy_cargo.ky_has_arrive_cargo (按天 ))  ， 
+    449073  每30分钟刷新车标货量信息同步数据到 vt_has_arrive_cars -> vt_has_arrive_cars （449074 ） 【KyHasArriveCargoYZ 类】   
+	553293  -- 货量预测数据_补数任务 (回刷已到达)
+     -- 、vt_has_arrive_cars 最近一条记录 actualTime = 1702005705000  insertTime =  2023-12-10 11:01:59  , 即arriveTime最大为 2023-12-08 ，故结果表最新数据只到2023-12-08 
+	 -- 、查看上游表 dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【实时任务： 2134227】， 从2023-12-08 数据开始减少，09~11没数据。
+  数据条数 inc_day=20231210 4883728
+     inc_day=20231209 4883728
+     inc_day=20231208 4883046
+	 
+	 修复数据：
+		1-、重跑 451091-   每天08:30执行    -- <重跑 2023-12-11 15:30 >
+			-、vt_has_arrive_cars：
+				-、新数据：
+				2023-12-11 当天实例任务 （因553293/449073 每小时/半小时 刷新近T-2D ~ T-0D数据，写入 vt_has_arrive_cars，  刷新 vt_has_arrive_cars 数据。
+				-、历史数据：vt_has_arrive_cars， -- 不需要回刷，每次重复覆盖。 （若需回刷，需要上游修复 08~ 11分区，按顺序跑实例。）
+			-、ky.dm_heavy_cargo.ky_has_arrive_cargo：
+						inc_day=20231211	4883728	-- 来自mysql，未更新故3天数据一样，
+						inc_day=20231210	4883728
+						inc_day=20231209	4883728
+				-、新数据：重跑当天实例。
+				-、历史数据：同vt_has_arrive_cars，若可以
+		2-、469910 （每天08:30执行）   <重跑 2023-12-11 15:57 >
+			-、ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di
+				-、新数据/历史数据 - 跑当天实例即可，因为arrive_time作为分区。
+ 
+2、ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di   -- ID:473276
+ 来源表：bdp.dm_heavy_cargo.ky_has_send_cargo    +  ky.dm_heavy_cargo.dm_transfer_batch_info_dtl_di   + ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di
+ --查询已发出的车辆， 根据send_time作为分区，每次刷新T-15D ~ T+1d ，因为 2023-12-09 / 10 没有arriveTime，故对应分区无数据。
+ -- 、bdp.dm_heavy_cargo.ky_has_send_cargo   来源于  dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4（过滤 T-24D ~ T-D ）
+ 
+	修复数据：
+		-、bdp.dm_heavy_cargo.ky_has_send_cargo  -- 248838  -- 每天06:15执行    <重跑 2023-12-11 15:30 >
+					inc_day=20231211	240576		--因为取T-24 ~ T-0  故有数据
+					inc_day=20231210	253261
+					inc_day=20231209	265787
+			新数据：执行最新数据即可。（）
+			历史数据：需要修复 rt_vehicle_task_monitor_for_not_send_detail4 分区， （2023-12-08 ~ 10）  
+		-、ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di  -- 473276 -- 每天07:30执行    <重跑 2023-12-11 16:20 >
+			-、新数据/历史数据 - 跑当天实例即可，因为send_time作为分区。
+ 
+3、dm_heavy_cargo.ky_has_arrive_cargo_rb  -- inc_day = '20231211' 当前检测值为【0】条
+	数据来源： 
+		553293   -- 每小时，刷新回刷到达数据。
+				inc_day=20231211	53747  -- 后续每小时执行即可
+				inc_day=20231210	24356	-- 历史数据 -暂不能修复
+				inc_day=20231209	41668	-- 历史数据 -暂不能修复
+			-、新数据： 每小时执行即可
+			-、历史数据： 需要上游detail4，修复分区，限制时间。
+
+4、470818 -- 因依赖 rt_vehicle_task_monitor_for_not_send_detail4 【场地到件】，每小时
+	-、ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt
+		-、新数据： 最新数据按小时跑即可。
+		-、历史数据： rt_vehicle_task_monitor_for_not_send_detail4 若可以确认，写入小时时间，就可以，否则不能回刷 
+		
+		
+5-、416809 -- 顺心- 依赖辅表 ky.dm_heavy_cargo.ky_has_arrive_cargo（T-60D~T-0D），
+			-、新数据：不用处理
+			-、历史数据，需要重跑对应实例（08~10）暂时未执行。
+			
+			
+	
+
+上游kafka数据源已恢复（历史数据消费中，预计今天晚点消费完毕），恢复后会影响小时任务历史数据完整性。如下是数据修复详情，请知悉！
+1、离线任务：
+	-、数据：已回刷历史数据（待数据消费完，历史数据可自动补全）
+	-、影响范围：无
+2、小时任务： 
+	-、数据：2023-12-11 16 点后数据，已恢复正常。
+	-、影响范围：2023-12-09 00:00 ~ 2023-12-11 16:00 （恢复数据无生成日期，时点历史数据不能修复）
+3、涉及具体底盘表：
+	1-、离线-输出表：
+		ky.dm_heavy_cargo.dm_has_arrive_cargo_dtl_di 	-- 车辆已到达明细
+		ky.dm_heavy_cargo.ky_has_arrive_cargo			-- 已到达车辆
+		vt_has_arrive_cars								-- 已到达车辆（mysql）
+		ky.dm_heavy_cargo.dm_has_send_cargo_dtl_di 		-- 已发车辆数据明细
+		bdp.dm_heavy_cargo.ky_has_send_cargo  			-- 已发出车辆
+	2-、小时-输出表：
+		ky.dm_heavy_cargo.dm_cargo_quantity_prediction_dtl_rt			 	-- 未发/在途/已到达车辆数据
+		bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb			-- 已到达车辆
+	

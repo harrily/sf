@@ -1,0 +1,206 @@
+-- 423700
+表权限申请： 
+	dm_oia.dm_flight_execute_condition_no_land_dtl_di （航班执行情况无陆运填仓重量）【读】   -- 加管理员
+	dm_oia.dm_data_holiday_festival_info_dtl						【读】
+	dim.dim_city_info_df											【读】
+	dm_pass_rss.aira_ti_air_flight_times_info						【读】
+	dm_oia.dm_wjx_city_area_name_info_df 							【读写】				 -- 加管理员
+	dm_oia.dm_quanhuoji_flight_flow_huoliang_predict_sum_di			【读写】				 -- 加管理员
+	dm_oia.dm_flight_flow_send_predict_longtime_sum_di	 	 		【读写】				 -- 加管理员
+	dm_oia.dm_flight_no_send_weight_predict_dtl_di					【读写】				 -- 加管理员
+	dm_oia.dm_flight_send_weight_predict_longtime_dtl_di			【读写】				 -- 加管理员
+	dm_oia.dm_predict_target_calculate_dabiao_sum_di				【读写】				 -- 加管理员
+	dm_oia.dm_predict_target_calculate_group_sum_di					【读写】				 -- 加管理员
+
+输入： 
+	-- 423699
+	dm_oia.dm_flight_execute_condition_no_land_dtl_di （航班执行情况无陆运填仓重量）【读】  -> wjx_fq_history_send_waybill_info_tmp1_${verson}  [dm_oia.dm_data_holiday_festival_info_dtl 【读】]
+		-- 423719 
+		wjx_fq_history_send_waybill_info_tmp1_${verson}  L+  dm_predict.xss_data_holiday_festival_info_dtl (日期剧本)  -> wjx_fq_history_send_waybill_info_tmp2_${verson}   -- 历史装载率统计
+		wjx_fq_history_send_waybill_info_tmp2_${verson}  -> wjx_fq_history_send_waybill_info_tmp3_${verson}  		--  历史装载率统计-聚合
+		
+		-- 423849
+		wjx_fq_history_send_waybill_info_tmp3_${verson} -> wjx_fq_feature_send_waybill_info_tmp1_v3_${verson}	-> wjx_fq_feature_send_waybill_info_tmp2_v3_${verson}																-- 阈值计算
+														-> wjx_fq_feature_send_waybill_info_tmp1_v3_${verson}  L+  wjx_fq_feature_send_waybill_info_tmp2_v3_${verson} 		-> wjx_fq_feature_send_waybill_info_tmp3_v3_${verson} 	-- 异常值过滤
+															wjx_fq_feature_send_waybill_info_tmp3_v3_${verson}  -> wjx_fq_feature_send_waybill_info_tmp4_v3_${verson}    		 													-- 选取均值的时间范围
+														-> wjx_fq_feature_send_waybill_info_tmp1_v3_${verson} -> wjx_fq_feature_send_waybill_info_trend_tmp1_v3_${verson}  		 													-- 计算每周的件量均值 来计算趋势
+																wjx_fq_feature_send_waybill_info_trend_tmp1_v3_${verson} 自关联 ->  wjx_fq_feature_send_waybill_info_trend_tmp2_v3_${verson}
+																	wjx_fq_feature_send_waybill_info_trend_tmp2_v3_${verson} 合并自身 ->  wjx_fq_feature_send_waybill_info_trend_tmp3_v3_${verson}
+		
+		-- 425869
+		wjx_fq_history_send_waybill_info_tmp2_${verson}	-> wjx_fq_plan_flight_schdule_info_tmp1_${verson} -> wjx_fq_plan_flight_schdule_info_tmp2_${verson}  -> wjx_fq_plan_flight_schdule_info_tmp3_${verson}
+		
+		-- 423846	-- 获取航班计划数据获取  - 补全节假日
+		dm_pass_rss.aira_ti_air_flight_times_info【读】 ->  wjx_fq_plan_flight_schdule_future_info_${verson}  -- 航空计划表 -> wjx_fq_plan_flight_schdule_future_info_tmp1_${verson} 	 L+  dm_predict.xss_data_holiday_festival_info_dtl  -> wjx_fq_plan_flight_schdule_future_info_tmp2_${verson}  ->  wjx_fq_plan_flight_schdule_future_info_tmp3_${verson}
+		
+		-- 428587	-- 城市维表维护
+		wjx_fq_history_send_waybill_info_tmp1_${verson}  -> wjx_city_dim_tmp1_${verson}
+														 -> wjx_city_dim_tmp2_${verson}
+												wjx_city_dim_tmp1_${verson} + wjx_city_dim_tmp2_${verson} -> wjx_city_dim_tmp3_${verson}
+												wjx_city_dim_tmp3_${verson} -> dm_oia.dm_wjx_city_area_name_info_df 【读写】
+		-- 428597
+		wjx_fq_history_send_waybill_info_tmp1_${verson}  -> wjx_qhj_mean_predict_tmp1_${verson}  -> wjx_qhj_mean_predict_tmp2_${verson}
+		
+			-- 425877 
+			wjx_fq_plan_flight_schdule_future_info_tmp3_${verson} +  wjx_fq_feature_send_waybill_info_tmp4_v3_${verson} + wjx_fq_feature_send_waybill_info_trend_tmp3_v3_${verson}  -> wjx_fq_feature_send_waybill_info_tmp5_${verson}
+				wjx_fq_feature_send_waybill_info_tmp5_${verson} -> dm_oia.dm_quanhuoji_flight_flow_huoliang_predict_sum_di 【读写】
+				wjx_fq_feature_send_waybill_info_tmp5_${verson} -> dm_oia.dm_flight_flow_send_predict_longtime_sum_di	   【读写】
+			
+			wjx_fq_plan_flight_schdule_future_info_tmp1_${verson} + tmp_dm_oia.wjx_fq_plan_flight_schdule_info_tmp3_${verson} +  wjx_fq_feature_send_waybill_info_tmp5_${verson}  -> wjx_fq_flight_no_predict_result_tmp1_${verson}
+				wjx_fq_flight_no_predict_result_tmp1_${verson} + dim.dim_city_info_df 【读】 + wjx_qhj_mean_predict_tmp2_${verson}  -> wjx_fq_flight_no_predict_result_tmp2_${verson}
+					  wjx_fq_flight_no_predict_result_tmp2_${verson} -> wjx_fq_flight_no_predict_result_tmp3_${verson}
+			
+			wjx_fq_flight_no_predict_result_tmp2_${verson}  + wjx_fq_flight_no_predict_result_tmp3_${verson} ->  wjx_fq_flight_no_predict_result_tmp4_${verson}
+			
+				 wjx_fq_flight_no_predict_result_tmp4_${verson} -> dm_oia.dm_flight_no_send_weight_predict_dtl_di			【读写】
+				wjx_fq_flight_no_predict_result_tmp4_${verson}  -> dm_oia.dm_flight_send_weight_predict_longtime_dtl_di		【读写】
+					
+				-- 429031
+				dm_oia.dm_quanhuoji_flight_flow_huoliang_predict_sum_di  -> wjx_predict_result_tmp1_${verson}
+				dm_oia.dm_flight_flow_send_predict_longtime_sum_di		 -> wjx_predict_result_longtime_tmp1_${verson}
+				dm_oia.dm_flight_no_send_weight_predict_dtl_di			 -> wjx_predict_result_tmp2_${verson} 
+				dm_oia.dm_flight_send_weight_predict_longtime_dtl_di	 -> wjx_predict_result_longtime_tmp2_${verson}	
+				dm_oia.dm_flight_execute_condition_no_land_dtl_di 		 -> wjx_true_send_hl_tmp1_${verson}  				
+					wjx_true_send_hl_tmp1_${verson} 	-> wjx_true_send_hl_tmp2_${verson}
+					wjx_true_send_hl_tmp1_${verson}	 i+ wjx_predict_result_tmp2_${verson}	-> wjx_predict_target_calculate_tmp1_${verson}
+						wjx_predict_target_calculate_tmp1_${verson} -> wjx_predict_target_calculate_tmp2_${verson}
+						
+						wjx_predict_target_calculate_tmp1_${verson} L+  wjx_predict_target_calculate_tmp2_${verson} -> wjx_predict_target_calculate_tmp3_${verson}
+						
+					wjx_true_send_hl_tmp1_${verson} i+ wjx_predict_result_longtime_tmp2_${verson} ->  wjx_predict_target_calculate_longtime_tmp1_${verson} 
+						wjx_predict_target_calculate_longtime_tmp1_${verson}  -> wjx_predict_target_calculate_longtime_tmp2_${verson} 
+						
+					wjx_predict_target_calculate_longtime_tmp1_${verson} L+ wjx_predict_target_calculate_longtime_tmp2_${verson} -> wjx_predict_target_calculate_longtime_tmp3_${verson}
+					
+					wjx_true_send_hl_tmp2_${verson} i+ wjx_predict_result_tmp1_${verson} -> wjx_predict_target_flight_flow_calculate_tmp1_${verson}
+						wjx_predict_target_flight_flow_calculate_tmp1_${verson} -> wjx_predict_target_flight_flow_calculate_tmp2_${verson} 
+						
+					wjx_predict_target_flight_flow_calculate_tmp1_${verson} L+  wjx_predict_target_flight_flow_calculate_tmp2_${verson} -> wjx_predict_target_flight_flow_calculate_tmp3_${verson}
+					
+					wjx_true_send_hl_tmp2_${verson}  i+ wjx_predict_result_longtime_tmp1_${verson} -> wjx_predict_target_flight_flow_calculate_longtime_tmp1_${verson}
+						wjx_predict_target_flight_flow_calculate_longtime_tmp1_${verson} -> wjx_predict_target_flight_flow_calculate_longtime_tmp2_${verson}
+						
+					wjx_predict_target_flight_flow_calculate_longtime_tmp1_${verson} L+  wjx_predict_target_flight_flow_calculate_longtime_tmp2_${verson}  -> wjx_predict_target_flight_flow_calculate_longtime_tmp3_${verson}
+					
+				wjx_predict_target_calculate_tmp2_${verson} + wjx_predict_target_calculate_longtime_tmp2_${verson} + wjx_predict_target_flight_flow_calculate_tmp2_${verson} + wjx_predict_target_flight_flow_calculate_longtime_tmp2_${verson}  ->  dm_oia.dm_predict_target_calculate_dabiao_sum_di【读写】
+				
+				
+				wjx_predict_target_calculate_tmp3_${verson} + wjx_predict_target_calculate_longtime_tmp3_${verson}  + wjx_predict_target_flight_flow_calculate_tmp3_${verson} + wjx_predict_target_flight_flow_calculate_longtime_tmp3_${verson}  -> dm_oia.dm_predict_target_calculate_group_sum_di【读写】
+
+
+-- 428533
+	ods_ares.tt_flight_execute_condition 【读】
+	dm_ops.pass_r_airline_waybill_carno_dtl 【读】
+	dm_oia.dm_wjx_flight_sale_longtime_account_dtl【读】
+	dm_oia.dm_flight_execute_condition_no_land_dtl_di 【读写】
+
+	428554 
+		ods_ares.tt_flight_execute_condition 【读】 -> wjx_fq_history_send_waybill_info_orz
+	428555
+		dm_ops.pass_r_airline_waybill_carno_dtl 【读】 -> wjx_hangkong_flow_schdule_hangkong_pl
+		wjx_hangkong_flow_schdule_hangkong_pl L+ dm_oia.dm_wjx_flight_sale_longtime_account_dtl【读】 ->  wjx_hangkong_flow_schdule_hangkong_pl_already 
+		wjx_hangkong_flow_schdule_hangkong_pl_already  -> wjx_hangkong_flow_schdule_hangkong_pl_tmp1	-> wjx_hangkong_flow_schdule_hangkong_pl_tmp2  -> wjx_hangkong_flow_schdule_hangkong_pl_tmp3	-- 城市流向计划航空件
+	428556
+		wjx_fq_history_send_waybill_info_orz L+ wjx_hangkong_flow_schdule_hangkong_pl_tmp3 -> wjx_fq_history_send_waybill_info_without_tiancang_tmp1  -> wjx_flight_weight_coefficient
+		wjx_fq_history_send_waybill_info_without_tiancang_tmp1 L+ wjx_flight_weight_coefficient -> wjx_fq_history_send_waybill_info_without_tiancang_tmp2
+		wjx_fq_history_send_waybill_info_without_tiancang_tmp2 -> dm_oia.dm_flight_execute_condition_no_land_dtl_di 【读写】
+		
+-- 430380
+	dm_ops.pass_r_airline_waybill_carno_dtl 【读】 
+	dm_oia.dm_flight_execute_condition_no_land_dtl_di
+	dm_pass_rss.aira_tm_air_transport_batch_pro【读】
+	ods_kafka_fvp.fvp_core_fact_route_op  【读】 		-- 99 转寄/退回
+	dm_oia.dm_tt_flight_stowage_city_info_df 【读写】	-- 航空配载输出-剔除转寄/退回
+	
+	430303 
+		dm_ops.pass_r_airline_waybill_carno_dtl 【读】 -> wjx_hangkong_flow_schdule_hangkong_other_tmp1
+	430382
+		ods_kafka_fvp.fvp_core_fact_route_op  【读】-> wjx_waybill_return_info 
+	430404
+		wjx_hangkong_flow_schdule_hangkong_other_tmp1 L+ wjx_waybill_return_info -> wjx_hangkong_flow_schdule_hangkong_other_out_return
+		wjx_hangkong_flow_schdule_hangkong_other_out_return -> wjx_hangkong_flow_schdule_hangkong_other_tmp2		-- 计算流向-散航/全货机/-票量
+		wjx_hangkong_flow_schdule_hangkong_other_tmp2 -> wjx_hangkong_flow_schdule_hangkong_other_tmp3				-- 计算流向+航空-散航/全货机/-票量
+		dm_pass_rss.aira_tm_air_transport_batch_pro【读】	-> wjx_fq_flow_set_city_flow_tmp1 -> wjx_fq_flow_set_city_flow_tmp2 -> wjx_fq_flow_set_city_flow_tmp3		-- 航管运输班次 - 过滤发出日期&配载-城市不为空 ，拆配载-城市，取运力名称
+		dm_oia.dm_flight_execute_condition_no_land_dtl_di【读写】 ->  wjx_hangban_src_tar_city_code					-- 取航班流向
+		wjx_hangkong_flow_schdule_hangkong_other_tmp3 L+ wjx_hangban_src_tar_city_code  L+  dim.dim_city_info_df  ->  wjx_hangkong_flow_schdule_hangkong_other_tmp4
+		wjx_hangkong_flow_schdule_hangkong_other_tmp4 L+ wjx_fq_flow_set_city_flow_tmp2 L+ wjx_fq_flow_set_city_flow_tmp3	-> wjx_hangkong_flow_schdule_hangkong_other_tmp5 -> wjx_hangkong_flow_schdule_hangkong_other_tmp6  -- 取航班运力为空
+		wjx_hangkong_flow_schdule_hangkong_other_tmp5 -> wjx_fq_flow_sale_city_flow_tmp1
+		wjx_fq_flow_sale_city_flow_tmp1 union  wjx_hangkong_flow_schdule_hangkong_other_tmp6 -> wjx_fq_flow_sale_city_flow_tmp2
+		wjx_fq_flow_sale_city_flow_tmp2 ->  dm_oia.dm_tt_flight_stowage_city_info_df 【读写】
+		
+		
+		
+-- 
+	1、输出主数据表 
+		-、字段/表名
+		-、上有负责人
+	2、底盘
+		dm_oia.dm_flight_execute_condition_no_land_dtl_di		-- 航班执行情况-无陆运填仓重量
+		dm_oia.dm_wjx_city_area_name_info_df --跟单 城市维表维护    -- 是否可以合并？
+		日期维表  -- 分析维护
+	3、上游表 
+		-、上游表 -> 底盘
+		-、字段梳理，含义解析。 分析可用性。（当前在用标识）
+		
+		
+		
+ods_ares.tt_flight_execute_condition 【读】				-- 航班执行情况			-- 734619/蒋雨青			[数据来源：stg_ares.tt_flight_execute_condition  id：117531]
+dm_ops.pass_r_airline_waybill_carno_dtl 【读】			-- pass-航班车标解析	-- 01412576/赵哲宸			[数据来源：dwd_o.dwd_plan_pass_airline_waybill_cvy_di - 实时表？  id：346764]
+dm_oia.dm_wjx_flight_sale_longtime_account_dtl【读】	-- 空舱销售月结卡号
+dm_pass_rss.aira_tm_air_transport_batch_pro【读】		-- pass-航管运输班次	-- 01412520/肖焯夫			[数据来源： mysql etl  id:223284]
+ods_kafka_fvp.fvp_core_fact_route_op  【读】			-- fvp巴枪路由数据表		√
+dm_oia.dm_data_holiday_festival_info_dtl				-- 节假日维表
+dm_pass_rss.aira_ti_air_flight_times_info				-- pass-航空计划表		-- 01412520/肖焯夫			[数据来源： mysql etl  id:228710]
+dim.dim_city_info_df 									-- 城市维表 				√  已有权限
+
+
+数据源:
+	PASS-MYSQL-ARS-DR
+表:
+	tm_air_transport_batch_pro
+	ti_air_flight_times_info
+
+
+
+【dm_oia.dm_flight_execute_condition_no_land_dtl_di
+航班执行情况-无陆运填仓重量】这个表里面的几个字段意思：
+1.【实际仓位量】和【实际发货量】区别
+2.【实际发货量】是实际重量还是计费重量
+3.@刘允 
+actual_send_weight（实际发货量）:航空主提单开单重量，单位：KG
+car_no（车标号）: 始发发货的车标集合
+flight_load（航班业载）：指的是航班理论上可以装货物的容量
+actual_space（实际舱位量）：指的是航班实际上可以装货物的容量（按航班计划板箱的业载类型，也是理论值）
+actual_send_weight（实际发货量）：指的是航班实际发出的货物容量（一般我们使用实际发货量不含空舱，也是航空主提单开单重量）
+plan_load_rate（计划装载率） : ( 计划发货量/航班业载) * 100 【计划业载/航班业载】
+actual_load_rate（实际装载率） :  ( 实际发货量/航班业载)* 100
+box_load_rate（板重装载率）:  ( 实际舱位量/航班业载)* 100   【打板重量/航班业载】
+
+
+1、-、actual_space  和 业载 关系，
+   举例： 
+		30%    -- 怎么得来的
+		110%   -- 怎么得s来的
+	-、确认这个  noland 表计算 actual_space 逻辑。
+	-、no_land表 actual_space 和 pass.航空计划表 的 ，available_cabin_space  , 含义是否一样。
+		ods_ares.tt_flight_execute_condition - 航班执行情况   - actual_space	--蒋雨青
+			area库 - actual_space	-- 林志敏
+		dm_pass_rss.aira_ti_air_flight_times_info - 航空计划表	- available_cabin_space	--肖焯夫
+			
+	-、pass表 actual_weight ， 对应pass-航班车标解析 的总meterage_weight
+	
+
+-- 后续问题跟踪
+1、是否有规划数据？ 规划多久？
+	-、ods_ares.tt_flight_execute_condition 				-- 航班执行情况
+		1、每天规划T+2D航班日期数据。
+		2、分析使用，仅取截止T-1D当天航班日期数据。
+	-、dm_pass_rss.aira_tm_air_transport_batch_pro			-- pass-航管运输班次
+		1、未来近1个月，规划班次信息。
+	-、dm_ops.pass_r_airline_waybill_carno_dtl				-- pass-航班车标解析
+		1、每天无规划航班数据。
+	-、dm_pass_rss.aira_ti_air_flight_times_info   			-- pass-航空计划表 
+		1、每天全量，包含未来2个月的规划航班数据，不含真实重量（分析用来预测重量)
+2、是否可接入实时？
+	-、pass-航管运输班次 / pass-航空计划表 ,数据源是mysql，可实时接入（接入需与mysql库负责人沟通01412520/肖焯夫）。 
+	-、航班执行情况 及pass-航班车标解析 -- 无实时数据 

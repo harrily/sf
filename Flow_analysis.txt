@@ -1,0 +1,1078 @@
+<>-、484086 -底表-航空-航空动态打点 
+			1-、484086-632525 - 航空动态获取运单
+				-、step1
+					输入: dm_kafka_rdmp.rmdp_waybill_basedata[数据实时中台运单宽表明细-生产  /Day] 
+						1-、实时表， 取inc_day = 1H前日期 
+									 取consignedtm寄件日期/pickuptm收件日期 = 前一个H的日期数据。
+									 取母单数据 waybillStatus='1'--   去除子单  1为母单 2为子单 3为废单
+						2-、rownumber取第一条[运单号分组，processversiontm（版本时间戳） 倒序]  + 运单状态+时间 过滤）
+							判断is_air_waybill ， format inc_dayhour
+					输出：tmp_dm_predict.tmp_dws_hk_dynamic_waybill_1
+						（1- 字段：运单号，产品号，重量相关，收件网点/城市/业务区+时间相关，派件网点/城市/业务区+时间相关，）
+				-、step2			
+					输入：dm_ordi_predict.cf_air_list +  tmp_dm_predict.tmp_dws_hk_dynamic_waybill_1  内关联
+						（1、关联：cityflow（收派城市） 2、分组：时间+重量，
+						cityflow[ concat(t2.pickupcitycode,'-',t2.delivercitycode)=t1.cityflow],
+						按照 pickuptm-收件日期，
+							pickupcitycode --收件城市
+							delivercitycode -- 派件城市
+							productcode  -- 产品code
+							重量段，
+							inc_dayhour 分组。
+						聚合：母单计数，件汇总，航空单计数，航空件汇总，计费重量汇总，航空计费总量汇总。
+						
+					输出：tmp_dm_predict.tmp_dws_hk_dynamic_waybill_2 
+						（日期，quantity[数量]聚合，航空计费重量，总重量，）
+			2-、632525-484058 - 写入产品维度结果
+						-- 航空流向+产品小时打点表 -- 数据刷入分区表
+					输入： tmp_dm_predict.tmp_dws_hk_dynamic_waybill_2 
+					输出： dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi  (inc_day,inc_dayhour)  [30~50W/hour]
+			3-、632525-484083 - 写入板块结果（income产品分类）
+				-、step1 
+					输入：dim.dim_prod_base_info_df [产品三要素表] + tmp_dm_predict.tmp_dws_hk_dynamic_waybill_2 ，关联
+						   (1-、表关联，根据product_code获取产品分类income_code
+						   （	'1' then '时效' ， '2' then '电商'，'3' then '国际'， '4' then '大件'，'5' then '医药'，'6' then '其他'，
+								'8' then '冷运'， '9' then '丰网' ）
+							2-、分组：根据 cityflow（收派城市）+ 产品分类+重量段+inc_dayhour  ，
+								聚合：计算相关数值（母单汇总，件汇总，航空单汇总，航空件汇总，计费重量汇总，航空计费总量汇总）)
+					输出：tmp_dm_predict.tmp_dws_hk_dynamic_waybill_3 
+				-、step2   -- 刷入income模块结果
+					数据刷入分区表 (inc_day,inc_dayhour)
+					输入： tmp_dm_predict.tmp_dws_hk_dynamic_waybill_3
+					输出：dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi
+					
+			备注：1- all_wgt_num等计算数量， 建议保留小数点
+				  2- 血缘关系，tmp_dws_hk_dynamic_waybill_2 怎么多出来了个？
+		
+<>-、473722 - 补录-航空静态打点-1018版 【已冻结】
+			1、473722-492946 - 运单获取
+				-、step1 
+					输入: dm_ordi_predict.dm_date_last_hour_dtl + dwd.dwd_waybill_info_dtl_di（主）
+					输出：tmp_dm_predict.tmp_bl2_dws_hk_dynamic_waybill_1 
+					逻辑:（1-、表join,根据t1.inc_day=date_dt)
+						（1- 字段：运单号，产品号，重量相关，收件地点+时间相关，派件地点相关，是否是空运等）
+				-、step2
+					输入：dm_ordi_predict.cf_air_list + tmp_dm_predict.tmp_bl2_dws_hk_dynamic_waybill_1 
+						（1、关联：cityflow（收派城市） 2、分组：时间+重量，cityflow,productcode，分区inc_dayhour）
+					输出:tmp_dm_predict.tmp_bl_dws_hk_dynamic_waybill_2
+			2、492946-473721
+				数据刷入分区表
+				输入：tmp_dm_predict.tmp_bl_dws_hk_dynamic_waybill_2
+				输出：dm_ordi_predict.dws_air_flow_dynamic_pro_qty_hi_bl (inc_day,inc_dayhour）
+			3、492946-492954 - 写入模板
+				-、step1 (关联辅表获取 income_code)
+					输入：tmp_dm_predict.tmp_bl_dws_hk_dynamic_waybill_2 + ods_bdus.psds_product_base_config + dm_ordi_predict.income_prod_class_cfg
+					输出：tmp_dm_predict.tmp_bl_dws_hk_dynamic_waybill_3
+					逻辑：关联辅表获取income_code，根据 cityflow（收派城市），income_code等分区，输出聚合相关值)
+				-、step2
+					数据刷入分区表
+					输入：tmp_dm_predict.tmp_bl_dws_hk_dynamic_waybill_3
+					输出： dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi_bl_v1009 (inc_day,inc_dayhour)
+			
+<>-、448434 - 航空五维度
+	1、448409 [A/B] 	-- 取运单信息
+		-、输入：dwd.dwd_waybill_info_dtl_di [3000W/day]
+		   输出： 临时表 tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1
+		   逻辑： 根据inc_day过滤（T-45~T-1d，inc_day>=20210401），取运单，源zone_coe,目的地zone_cde,cityflow[src_dist_code,'-',dest_dist_code , 
+			源寄地区域代码->目的地区域代码],cons_name托寄物名称,cons_name_concat托寄物拼接,重量，体积，product_code等信息
+				备注 :【 
+						运单宽表介绍：
+						1、运单宽表是以寄件时间为分区运单号（母单号）为主键的离线数据，包含了大网、丰网、大件、国际、同城（非外卖单）的运单数据；
+						2、每天增量更新一次（T-1），会刷新寄件时间120天内变化的运单数据，运单号（母单号）T-120天内唯一；
+						3、下游任务配依赖id:238377
+					   】
+	2、470197 [A1]   -- 托寄物去重
+		-、输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1
+		   输出： 临时表 tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp2
+		   逻辑： 根据inc_day过滤，按照cons_name_concat大小写分组，取cons_name_concat大小写，最小inc_day。
+	3、496536 [A2]   -- 拖寄物 - 关联配置表new
+		-、输入：tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp2 + dm_bie.tm_consign_info
+		   输出： 临时表 tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp3
+		   逻辑： 表关联，根据配置表的fetch_type类别，以及托寄物属于/等于fetch_data。取 cons_name_concat,fetch_data,优先级，类别等字段。
+	4、470204 [A3]  -- 插入中间明细表
+		-、step1  -- 过滤fetch_data
+		   输入：tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp3
+		   输出： 临时表 tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp4  
+		   逻辑： 过滤fetch_data , cons_name_concat拖寄物
+		-、step2  -- 运单表 关联拖寄物，获取 优先级，fetchdata等信息。
+		   输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1(主) + tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp4 b
+		   输出： 临时表 tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp5_0
+		   逻辑： 表join，根据cons_name_concat关联，inc_day过滤（T-10d,T-1d），取运单，产品号，源寄件网点，目的地网点，拖寄物，b.优先级，重量，总件数，等。
+		-、step3  -- 写入dws
+		   输入： tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp5_0
+		   输出： dm_ordi_predict.dws_spec_consign_waybill_day (inc_day)
+		   逻辑： 输入过滤subdivision is not null ，写入dws表
+	5、470206 [A4]-- 特色经济，关联项目信息
+		输入：dm_bie.special_eco_pro + dm_ordi_predict.dws_spec_consign_waybill_day
+		输出： 临时表 tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp6
+		逻辑： 	表inner join，special_eco_pro（取2022年，按区域code,pro_name，优先级 等分组），
+			两表关联字段（area_code，subdivision=LEVEL_2_TYPE，），+ inc_day过滤（T-10d,T-1d）。
+			取special_eco_pro，项目优先级，pro_name等字段+ dws_spec_consign_waybill_day字段。
+	6、470207 [A5] -- 取优先级高的，取字段至 结果表
+		-、step1  -- 分区rank取1条
+		   输入：tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp6
+		   输出：tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp7 
+		   逻辑： rank开窗取第一条。按照运单号分组，项目-优先级 正序。
+		-、step2  -- tmp - > dws 运单表 关联拖寄物，获取 项目-优先级，fetchdata等信息。
+		   输入： tmp_ordi_predict.tmp_shenhy_special_eco_waybill_ref_tmp7
+		   输出： dm_ordi_predict.dws_spec_eco_pro_waybill_day （partition (inc_day)）
+		   逻辑： 取运单号，源寄件网点，pro_name,LEVEL_1_TYPE,LEVEL_2_TYPE,LEVEL_3_TYPE,inc_day直接写入。
+	7、448419 [A6]-- 判断航空和特色经济
+		-、step1  -- 只取航空流向、判断是否为航空件
+		   输入：dm_ordi_predict.cf_air_list + tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1
+		   输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp2 
+		   逻辑： 根据cityflow关联。inner join 取..tmp1全字段 + is_air 标识（根据产品，limit_tag ）。
+		-、step2  -- 判断是否特色经济
+		   输入： tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp2（主 t1） left join
+		   (dm_bie.bie_fact_special_econ_dely_dtl 合并 dm_ordi_predict.dws_spec_eco_pro_waybill_day)t2  left join
+		   dm_ordi_predict.dm_special_econ_dely_fresh_dtl （t3） 
+		   输出： tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp3
+		   逻辑： t1 和 t2 根据运单号关联left join，辅助表inc_day过滤。 t2和 t3根据pro_name关联且  t1.is_air='1';
+					取t1.* ,t2.pro_name,t2.level_1_type，t2.level_2_type， t3.pro_name is not null then '1' else '0' 。 
+	
+	8、448704 [A6-1] -- 判断是否是大客户中的鞋服客户
+		   输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp3[主 t1] + dm_kadm.kadm_dim_cust_mapping [t2] + dm_ordi_predict.dm_shoes_clothing_cust_name_dtl
+		   输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp4
+		   逻辑： t2根据 status 和 custtypename 过滤，按照 companyabbr,companycustno,custtypename 分组 。
+				t1和t2根据  nvl(t1.freight_monthly_acct_code,'a') =t2.companycustno [nvl null值转换]
+				t2和t3根据	t2.companyabbr =t3.cust_name; 
+				取：t1.*,t2.companyabbr,t2.custtypename,case when t3.cust_name is not null then '1' else '0' end as if_shoes_cust
+	
+	9、472795 [C0] -- 统计件均重-来自归调
+			输入：dm_ops.dm_zz_air_waybill_avg_weight[主 t1] +  dim.dim_department[t2]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp9
+			逻辑：  t1和t2 根据t1.zone_code = t2.dept_code 关联，inc_day 过滤， 
+						取 plan_send_dt，到/发省份，operation_type，zone_code，real_weight，avg_weight，t2.dist_code 。
+					按照plan_send_dt，到/发省份,operation_type,dist_code,inc_day分组，聚合计算 real_weight,waybill_cnt ,avg_weight
+
+	10、448431 [A6-2 = C0+ A6-1] -- 汇总写入
+		-、step1  --  tmp - > dws  关联dep,获取city_name
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp4[主 t1] + dim.dim_department [t2,t3]
+			输出：dm_ordi_predict.dws_air_flow_six_dims_waybill_dtl(inc_day)
+			逻辑：t1 和 t2 根据 split(city_flow,'-')[0]=t2.dept_code 关联，
+				取t1基本数据 + t2.dept_name AS src_city_name + t3.dept_name as dest_city_name         
+		-、step2  -- 关联dep,获取city_name,且聚合计算
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp4[主 t1] + dim.dim_department [t2,t3]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp5
+			逻辑：t1 和 t2 根据 split(t1.city_flow,'-')[0]=t2.dept_code 关联，
+				按照to_date(consigned_tm),city_flow,t2.dept_name,t3.dept_name,
+						,case when product_code in ('SE0089','SE0146') and limit_type_code ='T4'  then '顺丰空配'
+							   when product_code='SE0107' and limit_type_code ='T4'  then '特快包裹'
+							   when product_code='SE0152'  then '特快包裹'  --20230403 新增航空产品
+							   when product_code='SE0004'  and limit_type_code ='T6' and limit_tag='SP6' then '陆升航'
+							   when if_shoes_cust='1' then '鞋服大客户'
+							   when if_econ_fresh='1' then '特色经济'
+							  else '特快'
+						end  分组 。。
+			取	count(waybill_no) as air_waybill_num
+				,sum(quantity)  as air_quantity_num
+				,sum(meterage_weight_qty) as air_sum_weight
+				,avg(meterage_weight_qty) as air_avg_weight
+				,percentile_approx(meterage_weight_qty,0.5) as air_mid_weight -- 取5分位数
+				,type
+		-、step3  --  tmp - > dws  step2输出，写入dws表 
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp5
+			输出：dm_ordi_predict.dws_air_flow_six_dims_day(inc_day)
+		-、step4  -- step2输出，按照新的type聚合计算。
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp5[t1]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6
+			逻辑： t1表，新加入type规则，分组（参考 step2 ），重新聚合计算。取值（参考 step2 ）
+				group by consigned_dt            
+					,city_flow        
+					,src_city_name    
+					,dest_city_name   
+					,case when type in ('特快包裹','顺丰空配')
+						  then '新空配'
+						  else type
+						end
+		
+		-、step5  -- 关联获取省份
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6 [主 t1] + dm_ops.dim_city_area_distribution [t2,t3]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_0
+			逻辑： t1 和t2,t3 关联，按照split(t1.city_flow,'-')[0]=t2.city_code ，
+				取t1基础字段+t2，t3.province
+				
+		-、step6  -- 关联均重表，计算sum_avg_weight
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_0[主 t1] + tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp9 [t2]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_1
+			逻辑： t1 和t2关联，按照cityflow,src_province,dest_province,consigned_dt,type关联。
+				取t1基础字段+t2.avg_weight ， t1.air_quantity_num*t2.avg_weight as sum_avg_weight
+		-、step7  --  tmp - > dws  tmp写入dws
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_1
+			输出：dm_ordi_predict.dws_air_flow_six_dims_day_newhb (inc_day)
+			逻辑： 	tmp写入dws ,regexp_replace(consigned_dt,'-','') as inc_day
+	11、471306[B1] -- 特色经济-判断运单航空件 
+		关联取航空流向、判断是否为航空件
+		输入：dm_ordi_predict.cf_air_list[t1] + tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp1 [主 t2]
+		输出：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp2
+		逻辑： t1 ,t2关联 ，on t1.cityflow=t2.city_flow; 
+			取t2.*,is null判断is_air， t2.product_code + t1.cityflow + t2.limit_tag 判断is_air_waybill
+	12、452259[B2] <- [B1+A6] -- 特色经济判断
+		-、step1  -- 关联获取pro_name，level_1_type，level_2_type
+			输入： tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp2[主 t1] + 
+				(dm_bie.bie_fact_special_econ_dely_dtl 合并 dm_ordi_predict.dws_spec_eco_pro_waybill_day) [t2]
+			输出： tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp3
+			逻辑：t1和t2关联，t1.waybill_no=t2.waybill_no，取
+				t1.*,t2.pro_name,t2.level_1_type,t2.level_2_type
+		-、step2  -- 关联获取 src_city_name,dest_city_name
+			输入：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp3[主 t1] + dim.dim_department [t2,t3]
+			输出： tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4
+			逻辑：t1和t2，t3关联， split(t1.city_flow,'-')[1]=t3/t2.dept_code，
+				取	t1.*,t2.dept_name as src_city_name,t3.dept_name as dest_city_name
+	13、452264[B3] -- 特色经济统计插入结果表
+		-、step1  -- 总的分组聚合至tmp表。
+			输入：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4
+			输出：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp5
+			逻辑： 分组合并计算 运单数，数量sum,all_weigth,avg_weight,mid_weight,volume_num,avg_volume.
+			 group by
+				 to_date(consigned_tm)  ,city_flow,src_city_name,dest_city_name,is_air,pro_name,level_1_type,level_2_type;
+		-、step2  -- 计算航空的分组聚合数据
+			输入：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp4
+			输出：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp6 
+			逻辑： 分组合并计算 运单数，数量sum,all_weigth,avg_weight,mid_weight,volume_num,avg_volume.
+				参考step1,添加过滤is_air_waybill='1'
+		
+		-、step3  -- 总的join航空，追加航空统计值。
+			输入：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp5[主 t1] + tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp6[t2]
+			输出：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp7 
+			逻辑： t1，t2关联，
+			on   t1.consigned_dt=t2.consigned_dt and t1.city_flow=t2.city_flow and  nvl(t1.pro_name,'a')=nvl(t2.pro_name,'a')
+				and t1.level_1_type=t2.level_1_type and t1.level_2_type=t2.level_2_type; 
+				取出t1.*,及t2的air聚合数值。
+		
+		-、step4 --  tmp - > dws  tmp写入dws 
+			输入：tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp7
+			输出： dm_ordi_predict.dws_static_cityflow_special_econ_day(inc_day)
+			逻辑： tmp写入dws  ， regexp_replace(consigned_dt,'-','') as inc_day。
+	14、465148  [A6-2 + B3]  -- 航空维度减特色经济
+		-、step1  -- 航空维度数据减去特色经济数据
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp6_1 [主 t1  ] + 
+				（dm_ordi_predict.dm_spec_eco_pro_dtl[t11 特色经济项目表]+ tmp_ordi_predict.tmp_shenhy_air_special_econ_tmp7[t22] + dm_ordi_predict.xss_special_air_rate[t33]）  [t2]
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp7
+			逻辑: 内层： 
+					特色经济项目表 join 特色经济表 join 大闸蟹xss_special_air_rate。
+					根据t11.pre_month=substr(t22.consigned_dt,6,2) and t11.pro_name = t22.pro_name 
+						 and t22.city_flow=t33.cityflow [过滤大宅蟹流向] and  t2.is_air='1'
+					按照 group by consigned_dt ,t22.city_flow 分组
+					聚合计算相关值，all_waybill_num，all_quantity_num，all_weight，avg_weight,air相关等。
+				外层： t1.consigned_dt=t2.days and t1.city_flow=t2.city_flow;
+						case when  t2.city_flow is not null and type='特色经济'
+						  then  t1.air_waybill_num-t2.air_waybill_num
+						  else t1.air_waybill_num
+		-、step2  -- tmp8添加指标 air_quantity_num * avg_weight as sum_avg_weight
+			输入：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp7
+			输出：tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp8 
+		-、step3  -- tmp -> dws  format : ,regexp_replace(days,'-','') as inc_day
+			输入:tmp_ordi_predict.tmp_shenhy_air_six_weidu_tmp8
+			输出: dm_ordi_predict.dws_air_flow_five_dims_day_sub 
+				
+				
+<>-、663166 - 城市流向预测 【底表-流向】oms订单流向打点  
+	-、step1 -- 订单实时表 开创rank,判断is_air_order
+		输入：dm_kafka_rdmp.dm_full_order_dtl_df   -- 订单实时表
+		输出：tmp_ordi_predict.tmp_oms_cityflow_dynamic_order_1
+		逻辑： 
+			过滤： 订单实时表 ,取1h前的日期 = inc_day
+			    开窗后: 过滤 to_date(ordertm)=1h前的日期 and ordertm <= 当前日期整点小时的数据[2023-05-09 13:00:00]
+			逻辑： 根据(partition by a.orderid order by a.processversiontm desc) as rank    取一条，
+				判断is_air_order，拼接city_flow（根据product_code,limittag）,format字段 inc_dayhour (H=00，替换为前一天H24)
+			取：取订单实时表订单号，运单号，ordertm等。
+	-、step2 -- count 小时总订单数，air订单数
+		输入：tmp_ordi_predict.tmp_oms_cityflow_dynamic_order_1     
+		输出：tmp_ordi_predict.tmp_oms_cityflow_dynamic_order_2
+		逻辑： 根据 to_date(t.ordertm)  ,inc_dayhour,city_flow 分组， 求 订单数=count(orderid) as all_order_num
+			,count(case when is_air_order='1' then orderid end) as air_order_num 
+			
+	-、step3 -- format  写入 城市流向动态小时表。
+		输入：tmp_ordi_predict.tmp_oms_cityflow_dynamic_order_2     
+		输出：dm_ordi_predict.dws_cityflow_dynamic_order_hi (inc_day,inc_dayhour)
+		逻辑： 日期format ，regexp_replace(order_dt,'-','') as inc_day
+
+<>-、490824  -- 城市流向特快件 【航空静态】
+	-、step1   
+		输入：dm_ordi_predict.dws_static_his_cityflow（主） + dm_ordi_predict.cf_air_list t2 + dm_ops.dim_city_area_distribution  t3/t4
+		输出：tmp_ordi_predict.tmp_allflow_shenhy_air_kuaiman_tmp1
+		逻辑： 
+			过滤： 时间过滤45天至今，取航空件
+			主：operation_type（快/慢产品 +  is_hangkong_waybill ）
+				t2 判断 is_air_flow
+				t3 -> src_province,src_distribution_name  , t4 -> dest_province,dest_distribution_name [起始/目的 分拨区]
+			分区，求和,
+			sum(all_waybill_num)  as tekuai_waybill_num
+			,sum(all_quantity) as tekuai_quantity         
+			,sum(weight) as tekuai_weight           
+			,sum(volume) as tekuai_volume 
+	-、step2   -- format 日期
+		输入：tmp_ordi_predict.tmp_allflow_shenhy_air_kuaiman_tmp1
+		输出：dm_ordi_predict.dws_static_cityflow_tekuai_base
+		逻辑：regexp_replace(days,'-','') as inc_day
+		
+<>-、479048  -- 城市/航空流向  -- new 下午回追任务 【逻辑同432125类似，不同点->时间周期不一样】
+	-、479026 -- 运单拆开收件/派件 汇总
+		 inc_day >= '${yyyyMMdd45}' AND inc_day <= '${yyyyMMdd1}' AND substr(consigned_tm, 0, 10) BETWEEN '${yyyy_MM_dd45}' AND '${yyyy_MM_dd1}' 
+		 inc_day >= '${yyyyMMdd62}' AND inc_day <= '${yyyyMMdd1}' AND substr(a.signin_tm, 1, 10) BETWEEN '${yyyy_MM_dd45}' AND '${yyyy_MM_dd1}'
+	-、479028[A/B/C/D] -- 收派重汇总
+		-、step1 
+		-、step2
+	-、479727[A-1] -- 网点真实数据
+		step1:
+			逻辑：inc_day过滤【inc_day between '${yyyyMMdd45}' and '${yyyyMMdd1}'】，
+		step2: -- format
+	-、441971[A-2] -- 网点真实数据
+	....
+<>-、432125  -- 城市/航空流向 -- new 	
+	-、432128 -- 运单拆开收件/派件 轻度汇总
+		输入：dm_ordi_predict.dwd_waybill_weight_kg_info_df 
+		输出：tmp_dm_predict.dws_static_zone_2022_mid_v2
+		逻辑： 收件（consigned_tm）/派件（signin_tm） 分组，
+			求SUM(volume) ,,COUNT(waybill_no) ,SUM(quantity)  -- 件量 ，SUM(round(weight,3)) weight     ，union 收&派两者  
+			inc_day >= '${yyyyMMdd7}' AND inc_day <= '${yyyyMMdd1}' AND substr(consigned_tm, 0, 10) BETWEEN '${yyyy_MM_dd7}' AND '${yyyy_MM_dd1}'
+			 inc_day >= '${yyyyMMdd24}' AND inc_day <= '${yyyyMMdd1}' AND substr(a.signin_tm, 1, 10) BETWEEN '${yyyy_MM_dd7}' AND '${yyyy_MM_dd1}'
+	-、432132[A/B/C/D] -- 收派重汇总  -- 关联获取 经管区域code,网点，分部， 分拨区信息。
+		-、step1  
+			输入：tmp_dm_predict.dws_static_zone_2022_mid_v2 + dm_fin_itp.itp_vs_rel_city_bg_area_mpp  B + 
+			dim.dim_department C  +  dm_ordi_predict.fbq_code_name_list_20220421 D
+			输出：tmp_dm_predict.dws_static_his_zone_2022_tmp_v2
+			逻辑： 关联 表获取 B.area_code_jg，  C. 网点类型(营业点, 营业站)，网点类型代码(DB05-DB)，分部代码，分部名称，本部代码，本部名称 .
+				D.fbq_code 分拨区代码，D.fbq_name分拨区名称
+		-、step2
+			输入：tmp_dm_predict.dws_static_his_zone_2022_tmp_v2
+			输出：dm_ordi_predict.dws_static_his_zone   partition(inc_day)
+			逻辑：判断income_code，format inc_day = regexp_replace(days,'-','') 。
+	
+	-、432138[A-1] -- 网点真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_his_zone  
+			输出： tmp_ordi_predict.dws_static_zone_base_2022_tmp_v1 
+			逻辑：inc_day过滤【between '${yyyyMMdd7}' and '${yyyyMMdd1}'】
+				，days，type,zone_code,income_code,weight_type_code,inc_day 分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入：tmp_ordi_predict.dws_static_zone_base_2022_tmp_v1
+			输出：dm_ordi_predict.dws_static_zone_base  partition(inc_day)
+			逻辑：format inc_day, income去null
+	-、441971[A-2] -- 网点真实数据
+		step1:    -- 按照 weight_type再分组
+			输入： dm_ordi_predict.dws_static_zone_base 
+			输出： tmp_ordi_predict.ads_static_zone_base
+			逻辑：分组，days,type,zone_code,if(weight_type_code in ('>=20KG','[15KG,20KG)'),'大于15KG','小于15KG')  ,求和 
+			 ,sum(all_waybill_num) as all_waybill_num
+			,sum(all_quantity) as all_quantity
+			,sum(weight) as weight
+			,sum(volume) as volume
+		step2: -- format
+			输入：tmp_ordi_predict.ads_static_zone_base;
+			输出：dm_ordi_predict.ads_static_zone_base partition(inc_day)
+			逻辑：format inc_day
+			
+	-、432139[B-1] -- 001真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_his_zone 
+			输出：  tmp_ordi_predict.dws_static_001_base_2022_tmp_v1
+			逻辑：inc_day过滤，days，type,income_code,weight_type_code,inc_day 分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入： tmp_ordi_predict.dws_static_001_base_2022_tmp_v1
+			输出：dm_ordi_predict.dws_static_001_base   partition(inc_day)
+			逻辑：format inc_day, income去null
+	-、441951[B-2] -- 001真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_001_base
+			输出： tmp_ordi_predict.ads_static_001_base
+			逻辑：inc_day过滤，days，type,income_code,if(weight_type_code in ('>=20KG','[15KG,20KG)'),'大于15KG','小于15KG')分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入：  tmp_ordi_predict.ads_static_001_base
+			输出：dm_ordi_predict.ads_static_001_base  partition(inc_day)
+			逻辑：format inc_day
+			
+	-、432140[C-1] -- 城市真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_his_zone
+			输出：  tmp_ordi_predict.static_dist_base_2022_tmp_v1
+			逻辑：inc_day过滤，days，type,dist_code,income_code,weight_type_code,inc_day分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入： tmp_ordi_predict.static_dist_base_2022_tmp_v1
+			输出：dm_ordi_predict.dws_static_dist_base   partition(inc_day)
+			逻辑：format inc_day, income去null
+	-、498216[C-2] -- 城市真实数据
+		step1:
+			输入：dm_ordi_predict.dws_static_dist_base
+			输出：tmp_ordi_predict.ads_static_dist_base
+			逻辑：inc_day过滤，days，type,dist_code,if(weight_type_code in ('>=20KG','[15KG,20KG)'),'大于15KG','小于15KG')分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入： tmp_ordi_predict.ads_static_dist_base
+			输出：dm_ordi_predict.ads_static_dist_base partition(inc_day)
+			逻辑：format inc_day
+			
+	
+	-、432141[D-1] -- area真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_his_zone 
+			输出： tmp_ordi_predict.dws_static_area_base_2022_tmp_v1
+			逻辑：inc_day过滤，days，type,area_code_jg,income_code,weight_type_code,inc_day分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入： tmp_ordi_predict.dws_static_area_base_2022_tmp_v1
+			输出： dm_ordi_predict.dws_static_area_base   partition(inc_day)
+			逻辑：format inc_day, income去null
+	-、441960[D-2] -- area真实数据
+		step1:
+			输入： dm_ordi_predict.dws_static_area_base
+			输出：tmp_ordi_predict.ads_static_area_base
+			逻辑：inc_day过滤，days，type,area_code,income_code,if(weight_type_code in ('>=20KG','[15KG,20KG)'),'大于15KG','小于15KG')分组，，
+				计算,sum(all_waybill_num) as all_waybill_num
+					,sum(all_quantity) as all_quantity
+					,sum(weight) as weight 
+					,sum(volume) as volume
+		step2: -- format
+			输入： tmp_ordi_predict.ads_static_area_base
+			输出：dm_ordi_predict.ads_static_area_base partition(inc_day)
+			逻辑：format inc_day
+			
+	
+	-、 432370  -- 城市流向轻度汇总 【已注释】
+		432373 -- 城市流向重汇总 【已注释】
+		432377 	-- cityflow 真实数据【已注释】
+		
+<>-、730590 -- 流向静态预测地盘 [每天2点0分执行]  【航空/城市-流向静态】
+	-、730650 -- 城市流向轻度汇总 新 (汇总城市/航空数据)  -- 【收件】
+			日期过滤 =   【这个写法和between区别？】
+			[a.inc_day>='${yyyyMMdd7}' and inc_day<='${yyyyMMdd1}' and substr(a.consigned_tm,0,10) between '${yyyy_MM_dd7}' and '${yyyy_MM_dd1}' ) ]
+		输入: dwd.dwd_waybill_info_dtl_di [运单宽表]（主） + tmp_dm_predict.dm_fact_air_waybill_no
+		输出：tmp_dm_predict.dws_static_city_flow_2022_tmp_v2
+		逻辑：
+			1、过滤：
+				主从表join，根据waybill关联，inc_day过滤（最近7天），consigned_tm过滤（最近7天），
+			2、分区计数：
+				按照 
+					concat(nvl(a.src_dist_code,'#'),'-',nvl(a.dest_dist_code,'#'))  , -- 原寄地区域代码 + 目的地区域代码
+					substr(a.consigned_tm,1,10),--	寄件时间
+					product_code,
+					weight_type_code, -- 根据meterage_weight_qty_kg	计费总重量（kg） 生成重量段。
+					,src_dist_code   -- 原寄地区域代码  --  -城市代码
+					,src_area_code   -- 源寄地区部
+					,src_hq_code   -- 源寄地经营本部
+					,limit_type_code  -- 时效类型
+					,cargo_type_code   -- 快件内容
+					,limit_tag 分组   -- 时效标签(T1:即日;T4:特快;T6:标快;SP6:标快+;T801:特快+;T36:陆运填仓;T40:航空填仓)	
+				求，,sum(volume) as volume
+					,count(waybill_no) as all_waybill_num  
+					,sum(quantity) as all_quantity  --件量
+					,sum(meterage_weight_qty) weight
+					,sum(fact_air_waybill) as fact_air_waybill_num
+					,sum(fact_air_quantity) as fact_air_quantity
+					,sum(fact_air_weight) as fact_air_weight
+					,sum(fact_air_volume) as fact_air_volume
+			3、标记 - 收件
+				concat(nvl(a.src_dist_code,'#'),'-',nvl(a.dest_dist_code,'#')) as city_flow
+				,substr(a.consigned_tm,1,10) as days  
+				,'pickup' as type   
+				
+	-、730678 -- 城市流向重汇总 新 
+		-、step1  -- 关联获取income_code,area_code_jg , 标记is_air
+			输入：tmp_dm_predict.dws_static_city_flow_2022_tmp_v2（主） +  dim.dim_prod_base_info_df z  + dm_fin_itp.itp_vs_rel_city_bg_area_mpp b  + dm_ordi_predict.cf_air_list  C
+			输出：tmp_dm_predict.dws_static_his_cityflow_2022_tmp_v2
+			逻辑：
+				关联 z 根据product_code关联获取income_code 产品名称 ,
+				关联 b 根据dist_code关联获取area_code_jg --经管业务区 ， 
+				关联 c 根据 a.product_code & city_flow 标记 is_air (1) ,is_air_flow, is_air_waybill
+				取主表cityflow，type，income,product_code 等..
+				备注： income_code 枚举类型 -- 
+					'1' then '时效' ， '2' then '电商'，'3' then '国际'， '4' then '大件'，'5' then '医药'，'6' then '其他'，
+					'8' then '冷运'， '9' then '丰网'
+					 
+		-、step2  -- 重汇总（加上新的维度再汇总 ）
+			输入：tmp_dm_predict.dws_static_his_cityflow_2022_tmp_v2
+			输出：dm_ordi_predict.dws_static_his_cityflow partition(inc_day)  
+			逻辑： 输入表分组求和。
+				 a.days  -- (寄件日期)
+				,a.cityflow 
+			,a.type  
+				,CASE WHEN product_code = 'SE0088' AND weight_type_code = '>=20KG' THEN '大件'
+					  WHEN product_code = 'SE0088' AND weight_type_code != '>=20KG' THEN '电商'  ELSE income_code END
+			,a.product_code
+				,a.weight_type_code 
+			,a.dist_code 
+			,a.area_code_jg
+			,a.hq_code
+			,a.limit_type_code
+			,a.limit_tag
+			,a.is_air_flow
+				,a.is_air
+			,a.is_air_waybill;
+	-、730695 -- cityflow 真实数据 新
+		-、step1   -- cityflow -- (去掉product_code,dist_code,area_code_jg，hq_code等在聚合)
+			输入：dm_ordi_predict.dws_static_his_cityflow 
+			输出：tmp_ordi_predict.dws_static_cityflow_base_2022_tmp_v1
+			逻辑：inc_day过滤between '${yyyyMMdd7}' and '${yyyyMMdd1}',
+				分组：group by 
+							days 
+							,type  -- 
+							,cityflow
+							,income_code
+							,weight_type_code
+							,is_air
+							,inc_day
+					求：,sum(all_waybill_num) as all_waybill_num
+						,sum(all_quantity) as all_quantity
+						,sum(if(is_air='1',all_waybill_num,0)) as all_waybill_num_air
+						,sum(if(is_air='1',all_quantity,0)) as all_quantity_air
+						,sum(weight) as weight 
+						,sum(volume) as volume
+						,sum(fact_air_waybill_num) as fact_air_waybill_num
+						,sum(fact_air_quantity) as fact_air_quantity
+						,sum(fact_air_weight) as fact_air_weight
+						,sum(fact_air_volume) as fact_air_volume
+		-、step2  -- 关联获取省份
+			输入：tmp_ordi_predict.dws_static_cityflow_base_2022_tmp_v1 + dm_ops.dim_city_area_distribution +  dim.dim_department
+			输出：dm_ordi_predict.dws_static_cityflow_base
+			逻辑： 关联获取 src_province，src_distribution_name，dest_province，dest_distribution_name + 主表原字段。
+		
+		
+<>-、731274 -- 流向静态预测地盘 -- 下午回追任务[每天21点7分执行]   【类似730590 ，日期范围不一样】
+	-、731541 -- 流向汇总 新	[日期范围不一样， 输出表不一样]   
+			-- a.inc_day>='${yyyyMMdd55}' and inc_day<='${yyyyMMdd1}'
+	and substr(a.consigned_tm,0,10) between '${yyyy_MM_dd45}' and '${yyyy_MM_dd1}' ) a
+	-、731550 -- 流向重汇总 新  [输入表不一样，输出表一样=dm_ordi_predict.dws_static_his_cityflow]
+	-、731588 -- 流向结果汇总 新  [只有日期范围不一样 ，输入输出表一样]
+
+ 
+<>-、468144  -- 动态城市流向预测（0D） （动态收件流向数据打点表）     -- consignor_date	查询时间 
+	输入：dm_oewm.oewm_receive_flow_ez[收件流向对比分析数据 50W/H]（主）+ dm_ordi_predict.itp_vs_rel_city_bg_area_mpp
+	输出：dm_ordi_predict.dws_dynamic_cityflow_base_hi partition(inc_day='${YYYYMMDD}',hour='${H}')
+	逻辑：关联获取 pickup_area_code_jg ，deliver_area_code_jg ，拼接city_flow
+					concat(nvl(a.pickup_city_code,'#'),'-',nvl(a.deliver_city_code,'#')) as cityflow
+<>-、468146  -- 动态城市流向预测（0D）（动态收件流向数据打点表24点）
+	输入：dm_oewm.oewm_receive_flow_ez （主）+ dm_ordi_predict.itp_vs_rel_city_bg_area_mpp
+	输出：dm_ordi_predict.dws_dynamic_cityflow_base_hi partition(inc_day='${YYYYMMDD}',hour='${H}')
+	逻辑：与468144一致/
+	
+<>-、471403  -- 【收派-真实航空数量】真实航空件数任务  【每天】
+	step1 ：  -- FVP取真实航空件 105/106
+		输入： ods_kafka_fvp.fvp_core_fact_route_op -- fvp巴枪路由数据表_opcode分区 
+		输出： dm_ordi_predict.dm_fact_air_waybill_no partition(inc_day)   
+		逻辑： 过滤航空件，取前两天数据，按照真实运单，inc_day分组，取真实运单，inc_day数据。
+	
+	step2:  -- 取近45天 - 真实航空件运单号，去重写入tmp表
+		输入： dm_ordi_predict.dm_fact_air_waybill_no 
+		输出： tmp_dm_predict.dm_fact_air_waybill_no   
+		逻辑： 取近45天数据，按照运单分组去重，取运单。
+
+<>-、682306  -- 流向底盘-大客户分仓 新
+	-、682298  -- oms系统仓库货主数据
+		-、step1: -- 关联获取仓库其他信息
+			输入：ods_oms.wom_tb_warehouse[淘宝仓]（主）wa + ods_oms.wom_tb_warehouse_label[仓库扩展信息表] label +
+			ods_oms.wom_tb_lookup_code[基础配置表] lc + dim.dim_department part
+			输出：tmp_dm_predict.dim_company_warehouse_tmp1
+			逻辑：关联获取part获取网点，城市代码等信息，关联label获取承租/营运面积，建筑类型信息，关联lc获取仓库类型名称。
+				日期= 
+				label.inc_day='$[time(yyyyMMdd,-1d)]'
+				wa.inc_day='${l1d_yyyymmdd}'
+				lc.inc_day='${l1d_yyyymmdd}' 
+		-、step2: -- 处理货主信息
+			输入：ods_oms.wom_tb_company[淘宝货主信息]（主） + ods_oms.wom_tb_lookup_code lc + 
+			输出： tmp_dm_predict.dim_company_warehouse_tmp2
+			逻辑：关联获取货主 行业类型名称
+			
+		-、step3: -- 合并仓库货主数据
+			输入：ods_oms.wom_tb_company_warehouse[货主仓库表] a （主） +  tmp_dm_predict.dim_company_warehouse_tmp1（主）t1 + tmp_dm_predict.dim_company_warehouse_tmp2（主） t2 + 
+			ods_oms.wom_tb_company_account[货主月结账号信息] + dm_elog_dwh.dim_company_warehouse_account[仓库货主月结卡号]
+			输出： tmp_dm_predict.dim_company_warehouse_tmp3
+			逻辑：a join t1 ，t2, 关联次表，获取默认月结卡号&结算卡号
+			
+	-、682299 --  -- noms系统仓库货主数据
+		-、step1: -- 关联-处理仓库信息
+			输入：ods_noms.basic_warehouse(主) +  ods_oms.wom_tb_warehouse_label label + ods_noms.basic_configuration lc +  dim.dim_department 
+			输出： tmp_dm_predict.dim_company_warehouse_tmp1_noms 
+			逻辑：关联获取part获取网点，城市代码等信息，关联label获取承租/营运面积，建筑类型信息，关联lc获取仓库类型名称。
+		-、step2: -- -处理货主数据
+			输入：ods_noms.basic_company (主)+ ods_noms.basic_configuration
+			输出： tmp_dm_predict.dim_company_warehouse_tmp2_noms
+			逻辑：关联获取货主 行业类型名称 
+		-、step3: -- -合并仓库货主数据
+			输入：ods_noms.basic_company_warehouse a + tmp_dm_predict.dim_company_warehouse_tmp1_noms + tmp_dm_predict.dim_company_warehouse_tmp2_noms
+			+  ods_noms.basic_company_monthly_account[货主月结账户表] + dm_elog_dwh.dim_company_warehouse_account
+			输出： tmp_dm_predict.dim_company_warehouse_tmp3_noms
+			逻辑：a join t1 ，t2, 关联次表，获取默认月结卡号&结算卡号
+	
+	-、682300  -- 两个仓库数据合并
+		输入：tmp_dm_predict.dim_company_warehouse_tmp3  + tmp_dm_predict.dim_company_warehouse_tmp3_noms
+		输出：dm_ordi_predict.dim_all_company_warehouse_df partition(inc_day = '${l1d_yyyymmdd}')
+		逻辑：表union all ，按照company_code，warehouse_code 开窗，如果有重复的，取oms系统数据。
+		仓库类型名称为null，分区warehouse_type_code ，取max
+	-、682329  -- 大客户分仓数据
+		输入：dm_ordi_predict.dim_all_company_warehouse_df + dm_kadm.kadm_dim_cust_mapping[kadm大客户客户池表]  
+		输出：dm_ordi_predict.dim_ka_company_warehouse_df partition(inc_day = '${l1d_yyyymmdd}')
+		逻辑：筛选出大客户的仓库货主对应关系[按照companycustno	月结卡号]
+	-、			----筛选仓库sku盘点明细数据写入结果表
+		输入：dwd.dwd_wh_inv_inventory_sku_info_df [（库存明细表）] +  dm_ordi_predict.dim_ka_company_warehouse_df
+		输出：dm_predict.ka_warehouse_inventory_sku_detail partition(inc_day = '${l1d_yyyymmdd}')
+		逻辑：筛选仓库sku盘点明细数据写入结果表
+	
+<>、499690  -- 【预测归集-航空】营运维度0至75D归集
+	-、499682[A]-- 营运归集-摸底-获取数据及占比
+		-、step1	-- 摸底数据过滤
+			输入：dm_predict.hk_cityflow_qty_predict_gaofeng [摸底结果] [三分区，14W+/day]
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp1 
+			逻辑： 过滤 inc_day>= 相对业务日期  ，object_type='航空流向营运维度'  的 摸底数据。
+				取 拆分出流向code/name, 写入tmp表
+		-、step2   	-- 获取各维度占比
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp1
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp2
+			逻辑：摸底数据 1 取未来2天的数据，   2按照预测日期，流向分组，求和预测值，
+			 1&2 join, 计算 预测值/求和预测值。 计算占比。
+	-、646891[B] --营运维度长期模型写入
+		输入: dm_predict.hk_cityflow_qty_predict_day_long_period
+		输出: tmp_dm_predict.tmp_shenhy_hk_dims_fixed_long_tmp1
+		逻辑: 过滤未来4-74天数据， object_type ='航空流向营运维度'， 筛选origin_code,dest_code等字段。
+		
+	-、646249[C] --  营运维度归集表的当日数据改为用【摸底结果和航空城市流向动态时点预测结果】配平后写入
+		-、step1  -- 获取航空流向当天动态结果
+			输入：dm_predict.dws_airflow_hour_pred_qty_hi t +  tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_1  t1 
+				+ dim.dim_department  + dm_ops.dim_city_area_distribution
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp_0_1
+			逻辑： t和t1 ， exists 对齐流向归集中航空流向的动态小时 ， 关联辅表， 获取 object_name ，src_province，dest_provice.
+			
+		-、step2 -- 当天结果与短期模型合并
+			输入：dm_predict.hk_cityflow_qty_predict_day_short_period a   + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp_0_1 b
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp_0_2 
+				a过滤 当天 +  object_type='航空城市流向'  + task_type='pickup'  + 预测日期大于当前业务时间，
+				合并 b （,'航空城市流向' as object_type）
+				
+	-、511459[A1=A+B]  -- 营运归集-长期-拼接
+		-、step1  -- 长期获取时，如果有摸底，则使用摸底；如果无摸底，则使用长期拆解结果
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_long_tmp1[长期拆解] t1 + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp1[摸底] t2 
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp3
+			逻辑： t1过滤未来4-74天数据 ， t2按照predicted_datetime分组取 predicted_datetime， 
+			  t1 （主） join t2 ,on predicted_datetime ，按照predicted_datetime分组  , predicted_datetime取t1 ,  标记if_mod (0,1).
+		-、step2 
+			输入：（tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp3  + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_long_tmp1  ）
+				+ （tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp3 + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp1）
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp4 
+			逻辑：根据tmp3 ,if_modi ，拼接长期拆解和摸底数据。
+	
+	-、528698[B1 = A+C]  -- 营运归集-短期-配平
+		-、step1 -- -- 摸底结果和短期结果配平
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp2 t1+  tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp_0_2  t2 +
+			dm_ops.dim_city_area_distribution t3/t4
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3
+			逻辑：t1 摸底结果 和 t2 当天动态+短期模型结果 根据predict_datetime，object_code关联， 取t2.predict_period,predict_value[航空流向预测值],
+				具体输出预测值（,t1.type_qty_ratio*nvl(t2.predict_value,0) as  predict_value）
+				关联t3,t4 获取 src_province,dest_province.
+		-、step2 -- 对于摸底无，（当天动态+短期）模型结果有的部分，填充到特快产品中
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp_0_2 t1 + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp2 t2  + 
+			   dm_ops.dim_city_area_distribution t3/t4
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_0
+			逻辑： 关联关系类似step1，添加过滤条件	where t2.origin_code is null; -- 摸底无得  ， 取赋值 ,'特快' as operation_type
+			
+		-、step3 -- 合并两部分
+			输入： tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3 + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_0
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_1
+			逻辑 ： union all
+			
+		-、step4 -- 
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_1;
+			输出：dm_predict.hk_cityflow_qty_predict_day_short_period partition(task_type,object_type_code,inc_day)
+			逻辑：  写入动态分区 
+	
+	-、511457[B2]  -- 营运归集-短期-拼接	
+		-、step1 -- 短期拼接 -- 确定日期
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_1
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp1 
+			逻辑：按照predicted_datetime，if_modi分区
+		-、step2 -- 短期拼接 -- 确定日期
+			输入：(tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp1 + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp3_1  短期模型与摸底配平 ) A
+			+ （tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp1  + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_tmp1 摸底值） B
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp2 
+			逻辑：A = where if_modi='0' ，按照predicted_datetime关联，
+			B  = where if_modi='1'按照predicted_datetime关联， 
+			 union all 两者。
+			 
+	-、511460[C1=A1+B2]  -- 营运归集-整合-长期短期
+		-、输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp2  + tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp4
+		-、输出： tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp5
+		-、逻辑： 两表union all
+	-、528771[C2]  -- 营运维度-整合-获取重量和层级字段
+		-、step1  -- 获取省份字段
+			-、输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp5  + dm_ops.dim_city_area_distribution
+			-、输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp6
+			-、逻辑： 关联获取 src_province ， dest_province 
+		-、step2   -- 获取预测重量
+			-、输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp6 + 
+				tmp_ordi_predict.tmp_shenhy_air_five_weidu_actualW_1[-来自规调的件均重 近30天件均重]
+			-、输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp7
+			-、逻辑： 计算 predict_weight ，avg_qty_weight.
+		-、step3 -- 获取分拨区等信息
+			输入： tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp7  +  tmp_dm_predict.tmp_dm_fc_city_2_hq_df_1
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp8 
+			逻辑：关联获取 dest_area_code ，dest_fbq_code,dest_hq_code.
+		-、step4 -- 
+			输入：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp8
+			输出：tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp9
+			逻辑： 原tmp8+ tmp8按照
+						predict_datetime            
+						,weight_level  
+						,operation_type     
+						,product_type       
+						,src_province    -- 20221219增加省份字段
+						,dest_province   -- 20221219增加省份字段
+				聚合 union all 
+	-、511463[C3]  -- 营运归集-写入结果
+			输入： tmp_dm_predict.tmp_shenhy_hk_dims_fixed_concat_tmp9
+			输出：dm_predict.dws_fc_hk_six_dims_predict_collecting_di partition(partition_key)
+			逻辑：format partition_key,数字。
+			
+<>、528211  -- 【预测归集-流向】城市&航空0至75D归集new
+	-、528080[A1]  -- 流向归集-短期-航空流向
+		-、step1  -- 当天动态航空流向
+			-、输入：dm_predict.dws_airflow_hour_pred_qty_hi t/t1 + dim.dim_department + dm_ops.dim_city_area_distribution
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_1
+			-、逻辑： t和t1 ,exists 自过滤，取最大的小时结果 。  关联辅表，取Origin_name，Dest_name，src_province，dest_province。
+		-、step2  -- 当天动态航空流向省到省
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_1
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_2
+			-、逻辑： 输入表分组group by     data_version,feature_version,model_version ,predict_datetime,src_province,dest_province ;
+					求 ,sum(predict_quantity) as predict_quantity    ，
+					   ,'2' as object_type_code               -- 为了和原短期保持一致，便于后续统一调整
+					,'航空流向省到省' as object_type_name    -- 为了和原短期保持一致，便于后续统一调整
+		
+		-、step3 -- 当天动态航空总量结果
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_2
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_3
+			-、逻辑： 输入表按照data_version，feature_version，model_version，predict_datetime 分组，
+					计算 	,'全部' as Origin_code ,..   ,'1' as object_type_code  	,'航空总量' as object_type_name ,
+					sum(predict_quantity) as predict_quantity           
+
+		-、step4 -- 整合当天航空流向预测（含航空流向 航空流向省到省 航空总量）
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_1 +tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_2 
+				+  tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_3
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_4 
+			-、逻辑：union all三个输入表
+		-、step5 -- 取短期模型航空结果，从T+1到T+74	
+			-、输入：dm_predict.hk_cityflow_qty_predict_day_short_period
+			-、输出： tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_5 
+			-、逻辑： 过滤 inc_day  =  '$[time(yyyyMMdd)]'
+							and predicted_datetime>='$[time(yyyy-MM-dd,1d)]'    -- 取T+2D及以后的预测结果
+							and object_type in ('航空总量','航空流向省到省','航空城市流向')，
+					判断dest_name，	,'all' as weight_level
+		-、step6 --  整合当天及短期模型结果
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_4 + tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1_5
+			-、输出： tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_2
+			-、逻辑： 	union all 两者 
+			
+	-、528061[B1] -- 流向归集-摸底-航空流向   -- 航空-摸底写入
+		输入：dm_predict.hk_cityflow_qty_predict_gaofeng
+		输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_1 
+		逻辑：inc_day >=  '$[time(yyyyMMdd)]' ， and inc_day between  '$[time(yyyyMMdd)]' and  '$[time(yyyyMMdd,74d)]'
+		，  and object_type in ('航空总量','航空流向省到省','航空城市流向')and object_code is not null; 
+			取 判断dest_name，,'all' as weight_level	,'' as product_type  -- 待确认 不区分产品时，product_type为空
+	-、528098[C1] -- 流向归集-长期-航空流向  -- -- 长期模型写入
+		输入：dm_predict.hk_cityflow_qty_predict_day_long_period
+		输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_3 
+		逻辑：inc_day =  '$[time(yyyyMMdd)]'
+			and predicted_datetime between  '$[time(yyyy-MM-dd,3d)]' and '$[time(yyyy-MM-dd,74d)]'
+			and object_type in ('航空总量','航空流向省到省','航空城市流向');
+			取 判断dest_name，,'all' as weight_level	,'' as product_type  -- 待确认 不区分产品时，product_type为空
+			
+	-、660602[D1] -- 流向归集-城市流向-摸底
+		输入：dm_predict.cityflow_qty_predict_gaofeng
+		输出：tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_1
+		逻辑： ((inc_day between  '$[time(yyyyMMdd,3d)]' and  '$[time(yyyyMMdd,74d)]'
+				) or inc_day in ('20230429','20230430'))
+				and object_type ='城市流向'
+				and all_detail='0'
+			取	,'1' as object_type_code,'城市流向' as object_type_name ，判断weight_level
+	-、528034[E1] -- 流向归集-城市流向
+		-、step1 --  取城市流向归集  -- 城市流向动态结果
+			-、输入： dm_ordi_predict.cityflow_dynamic_resultz_online t + dim.dim_department
+			-、输出： tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_1
+			-、逻辑： t表取max max(cast(hour as int)) ，inc_day = '$[time(yyyy-MM-dd)]' and  cast(hour as int)>=7   -- 模型从7点开始才有当天预测数据 
+				自过滤 exists  ，取,'all' as weight_level ，Origin_code，dest_code流向
+				  关联辅表获取Origin_name，dest_name， 	取,'城市流向' as object_type_name，	,'1' as object_type_code，
+				  判断weight_level，is_weekend
+		-、step2 -- 生成城市流向含产品、重量段的调整结果表
+			-、输入： dm_ordi_predict.dws_static_cityflow_base 
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_2
+			-、逻辑：过滤29天前-昨天，cityflow regexp '(\\d{3})-(\\d{3})'  的数据，
+				按照日期分类（0,6,7 ~ 1,2,3,4,5）  is_weekend，cityflow,income_code,重量段分类 分组， 
+				计算 sum(cast(all_waybill_num as double)) as cn 。
+				外层按照 cn/sum(cn) over (partition by is_weekend,cityflow) as pct  ， 按照 is_weekend,cityflow 开窗，计算pct。
+		-、step3 -- 拆分重量段和产品版块
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_1 a + tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_2 b
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_3_1
+			-、逻辑： a和b 按照city_flow, is_weekend JOIN，输出a，b.weight_type_code，,b.income_code as product_type ,b.pct
+		-、step4 --  历史未匹配到的流向进行兜底处理
+			-、输入： tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_3_1 t1 +  
+				tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_2 t2
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_3_2
+			-、逻辑： t2按照，is_weekend,income_code,weight_type_code 分组，求和cn as cn_week, 
+					使用开窗   cn_week/sum(cn_week)over(partition by is_weekend) as pct_1 计算pct_1。 
+					t1 和上述结果关联， 按照t1.is_weekend=t2.is_weekend; 
+				输出t1,判断t2.weight_type_code，输出t2.income_code as product_type，计算 t1.predict_waybill，
+		-、step5 -- 城市流向动态结果拆分重量段和产品版块
+			-、输入： dm_predict.city_cityflow_predict_result
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_4
+			-、逻辑：  过滤 1d-74d， and all_detail = 0 的数据 ， 输出,'1' as object_type_code，,'城市流向' as object_type_name
+			判断weight_level
+		-、step6 -- 整合当天和未来预测结果
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_3_1 +  tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_3_2 + tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_0_4 
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1
+			-、逻辑： union all 三张表
+			
+	-、528126[A2 = A1 +B1 ] -- 流向归集-短期-航空拼接
+		-、step1 -- --- 航空拼接合并 - 短期拼接
+			-、输入：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_2 [ 航空流向短期]
+			-、输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_4
+			-、逻辑： 输入表按照predict_datetime,if_modi分组，取predict_datetime,if_modi
+			
+		-、step2 -- --- 航空拼接合并 - 短期拼接
+			-、输入：（tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_4 + tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_2 ） a 
+			+ （tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_4  + tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_1） b 
+			-、输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_5
+			-、逻辑： A 中 ，过滤if_modi ='0' join 根据predict_datetime , B中，过滤 if_modi ='1'  ，join 根据 predict_datetime。
+				A & B union all 
+	-、528174[C2= B1 + C1] -- 流向归集-长期-航空拼接
+		-、step1 --长期拼接
+			-、输入：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_3 t1[长期模型] +  
+			tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_1 t2 [摸底结果]
+			-、输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_6
+			-、逻辑： t2 去重predict_datetime取，t1 JOIN t2 , 按照predict_datetime，if_modi 分组取值。
+			
+		-、step2 --长期拼接
+			-、输入：（tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_6 +  tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_3） A
+			 + (tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_6 +  tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_1)B
+			-、输出：tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_7 
+			-、逻辑：A 中 ，过滤if_modi ='0' join 根据predict_datetime , B中，过滤 if_modi ='1'  ，join 根据 predict_datetime。
+				A & B union all 
+	-、660604[D2= D1 + E1] -- 流向归集-城市流向-拼接			
+		-、step1 --城市流向摸底和模型结果拼接
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1 [-- 长期模型]
+			tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_1 [摸底结果]
+			-、输出： tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_2
+			-、逻辑： t2 去重predict_datetime取，t1 JOIN t2 , 按照predict_datetime，if_modi 分组取值。
+			
+		-、step2 --- 合并摸底和模型结果
+			-、输入：（tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_2 +  tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_1） A
+			 + (tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_2 +  tmp_dm_predict.tmp_dm_fc_flow_predict_citymodi_1)B
+			-、输出：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_2
+			-、逻辑：A 中 ，过滤if_modi ='0' join 根据predict_datetime , B中，过滤 if_modi ='1'  ，join 根据 predict_datetime。
+				A & B union all 	
+				
+	-、528183 -- 流向归集-整合
+		-、step1 --
+			-、输入：tmp_dm_predict.tmp_dm_fc_city_flow_predict_collecting_di_2   -- 城市流向
+				+ tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_5  -- 短期模型+摸底 
+			 + tmp_dm_predict.tmp_dm_fc_hk_flow_predict_collecting_di_7   -- 长期模型+摸底
+			-、输出： tmp_dm_predict.tmp_dm_fc_flow_predict_collecting_di_1 
+			-、逻辑：  union all  三张表， 判断object_type_name
+		-、step2 --
+			-、输入：tmp_dm_predict.tmp_dm_fc_flow_predict_collecting_di_1  + tmp_dm_predict.tmp_dm_fc_city_2_hq_df_1 t2   ☆☆☆☆☆
+			-、输出： tmp_dm_predict.tmp_dm_fc_flow_predict_collecting_di_2 
+			-、逻辑：  关联t2.city_code，追加字段src_area_code，src_fbq_code，src_hq_code ，dest..
+			
+	-、528201 -- 流向归集-写入结果
+			输入：tmp_dm_predict.tmp_dm_fc_flow_predict_collecting_di_2;
+			输出：dm_predict.dws_fc_flow_predict_collecting_di partition(partition_key)
+			逻辑：format partition_key ,写入动态分区
+	
+	-、433621 --【预测归集-流向】-旧版（废弃）
+			
+-------------------------------------------------------------底表释义--------------------------------------------------------------
+
+流向底表：
+		1-、数据处理形式：静态/动态 
+		2-、数据业务分类：
+			1-、航空流向
+				1-、基础数据income-底表【dm_ordi_predict.dws_air_flow_dynamic_income_qty_hi】
+					（cityflow,收/派城市，income模块[电商/..]，重量段，航空票数，航空件数，航空重量,总票数，总件数等）
+				2-、维度数据-底表【dm_ordi_predict.dws_air_flow_six_dims_day_newhb】
+						（cityflow,起始/目的城市 ，维度[特色经济/特快/鞋服大客户/新空配],
+							，指标[重量段，航空运单量，航空件数，航空总重量，航空平均重量，航空中位数重量，起始/目的省份]等）
+					1-、航空特色经济维度-底表 （dm_ordi_predict.dws_static_cityflow_special_econ_day）
+					2-、航空特快维度-底表 （dm_ordi_predict.dws_static_cityflow_tekuai_base）
+				3-、航空与流向对-对照表（dm_ordi_predict.dim_hk_city_flow_dtl）
+				4-、airlist-底表（dm_ordi_predict.cf_air_list）？
+			2-、城市流向
+				-、预测表（dm_ordi_predict.dws_cityflow_dynamic_order_hi 描述：城市流向预测）
+					收件日期，city_flow,总订单，航空订单数
+				-、静态base表（dm_ordi_predict.dws_static_cityflow_base）
+					731588,730695,432377[已注释],479720[已注释]
+				-、动态base表（dm_ordi_predict.dws_dynamic_cityflow_base_hi）
+	中转底表：
+		基础底表：
+			一、中转场到件：
+				1-、
+					1.1 中转场班次-到件表-静态
+						1.1.1  -v1 【dm_ordi_predict.dws_static_zzc_base】 zzc_code
+						1.1.2  -v2 【dm_ordi_predict.dws_static_zzc_base_new】
+					1.2 中转场班次-到件表-动态	【dm_ordi_predict.dws_dynamic_zzc_base_di】
+				2-、城市板块到件信息【dm_ordi_predict.dws_static_dist_base】 city_code
+				3-、
+					3.1 中转场预测范围 - 静态 -v1（zone网点场地预测）【dm_ordi_predict.dws_zone_predict_range_di】
+					3.2 中转场预测范围 - 动态 -v1（zone网点场地预测）【dm_ordi_predict.dws_dynamic_zone_predict_range_di】
+					
+					3.3 中转场预测范围 - 静态 -v2 【dm_ordi_predict.dws_trans_predict_range_new_static_di】
+					3.4 中转场预测范围 - 动态 -v2 【dm_ordi_predict.dws_trans_predict_range_new_dynamic_di】
+					
+				4-、中转场在途件量重量表v2 (zone网点,在途应到/预测)【dm_ordi_predict.dws_trans_estimate_static_di】 
+				
+				5-、新中转场班次实到-在途-预计到件半小时打点表【dm_ordi_predict.dwd_zcc_batch_actual_intransit_estimate_hour_new_dtl_di】
+						说明：zone_code，batch_code ，实到，在途，预计，计划开始/最晚到达/计划结束时间
+				
+				6-、近30天粒度中位数相关
+					6.1.1、新中转场重量-班次-近30天班次粒度中位数表【dm_ordi_predict.dws_trans_batch_median_weight_wf】
+						分区表：分区	inc_day ，更新周期：7天
+						说明：batch_code，近30天班次件均重中位数，班次件均重上限，班次重量上限
+					6.1.2、班次-粒度件均重【dm_ordi_predict.dws_trans_batch_median_weight_wf_last】
+						说明：batch_code，近30天班次件均重中位数，班次件均重上限，班次重量上限
+				
+					6.2.1、新中转场重量-场地-近30天中转场粒度中位数表 【dm_ordi_predict.dws_trans_dept_median_weight_wf】
+						分区表：分区	inc_day ，更新周期：7天
+						说明：	zone_code 	网点代码，近30天场地件均重中位数，场地件均重上限，场地重量上限
+					6.2.2、场地-粒度件均重 【dm_ordi_predict.dws_trans_dept_median_weight_wf_last】
+						说明：	zone_code 	网点代码，近30天场地件均重中位数，场地件均重上限，场地重量上限
+						
+					6.3.1、新中转场重量-场地类型-近30天场地类型粒度中位数表 【dm_ordi_predict.dws_trans_dept_type_median_weight_wf】
+						分区表：分区	inc_day ，更新周期：7天
+						说明：dept_type_code	场地类型，	近30天场地类型件均重中位数，场地类型件均重上限，场地类型重量上限
+					6.3.2、场地类型-粒度件均重 【dm_ordi_predict.dws_trans_dept_type_median_weight_wf_last】
+						说明：dept_type_code	场地类型，	近30天场地类型件均重中位数，场地类型件均重上限，场地类型重量上限
+					
+				7-、新中转场到件-网点+班次-件量/重量平均值表【dm_ordi_predict.dws_trans_votes_weight_avg_static_new_di】
+					说明：zone_code	网点代码，	batch_code	班次代码，指标=件量30天平均值，重量30天平均值
+						分区：inc_day 按天
+				8-、
+					8.1 中转场班次到件表(运力汇总-静态)【dm_ordi_predict.dws_trans_batch_arrive_static_dtl_di】
+						说明：trans_code网点代码，batch_code班次代码,应到/实到/在途件数，重量,计划开始/最晚到达/计划结束时间 等
+						分区：inc_day 按天
+					8.2 中转场班次到件表(运力汇总-动态)【dm_ordi_predict.dws_trans_batch_arrive_dynamic2_dtl_di】
+						分区：按小时
+				9-、
+					9.1 中转场-静态-预测范围表(运力汇总)【dm_ordi_predict.dws_trans_batch_arrive_static_predict_range_dtl_di】
+						说明： 预测场地类型代码 1-中转场 3-分拨区-场地	，zone_code	预测场地代码，dept_name	网点或分拨区名称，	is_cn36	是否快运
+						分区：inc_day 按天
+					9.2 中转场-班次到件-静态预测范围表 【dm_ordi_predict.dws_trans_batch_arrive_static_predict_new_range_dtl_di】
+						说明：zone_code	预测场地代码，	batch_code	班次代码，dept_name	预测场地名称，	is_cn36		
+							是否快运，计划开始/最晚到达/计划结束时间 等
+						分区：	inc_day 按天
+						
+					
+			5-、zone网点eta_votes推演值【dm_predict.Hya_eta_zzc_votes_V2_child_qty】
+				6-、规划任务数（中转场到件拆解规划表）	【dm_ordi_predict.dws_trans_arrive_split_plan_df】 
+					trans_code=目的网点，任务数拆分
+			
+				7-、静态班次到件（中转场班次实际结果表）【dm_ordi_predict.ads_zcc_batch_real_result_dtl_df 】
+						zone_code=预测场地代码，batch_code	班次代码，batch_level	班次等级，	dstr_type	1集 2散 3集散，等详情相关。
+				8-、动态班次到件（中转场班次动态预测范围实际结果表_小时打点）【dm_ordi_predict.ads_dynamic_zcc_batch_real_result_dtl_di 】
+				
+			9-、场地属性表【dm_predict.zzc_batch_static_info】
+					zone_code 相关城市省份信息。
+			10、网点推演预测表by2hour【dm_predict.eta_zzc_batch_nums_byhour_feature_1】
+					zone_code ， batch_code ，eta提前2/3/4/5/6小时eta推演件量,预测时间/周期等。
+			11、中转场预测归集表【dm_predict.dws_fc_zzc_predict_collecting_di 】
+					说明：中转场/分拨区-场地/全网-场地 ，票数/件数/重量/体积等预测。
+			
+				12、下一跳-静态V1【dm_ordi_predict.dws_zzc_next_zone_base_dtl_di】
+						说明：始发zone地，目的zone地，actual_send_batch， 发件量/重量/应发件量数据
+				13、下一跳-动态V1【dm_ordi_predict.dws_zzc_next_zone_base_dynamic_dtl_di】
+				
+			14、下一跳-静态V2（中转预测预警明细）【dm_ordi_predict.dwd_pass_trans_waybill_dtl_di】
+				说明： 运单号，zonecode，batchcode，异常状态等
+			
+				15、下一跳-静态V2（中转场下一跳-静态表） 【dm_ordi_predict.dws_trans_next_zone_static_di】
+					说明： zone_code ，batch_code，next_zone_code，实发件量/重量信息等。
+				16、下一跳-静态V2（中转场下一跳-动态表） 【dm_ordi_predict.dws_trans_next_zone_dynamic_di】
+			
+			17、中转场下一跳近30天平均件均重 【dm_ordi_predict.dws_trans_next_zone_vote_weight_avg_di】
+				说明：zone_code	中转网点代码，batch_code 中转班次编码，next_zone_code 下一环节网点
+						近30天实发平均件均重/精确值
+			18、动态-规划任务【dm_ordi_predict.dws_plan_batch_nextzone_dtl_hf】
+				说明： src_zone_code	始发网点,plan_send_batch	计划发出班次编码,dest_zone_code	目的网点,  指标：任务数，线路编码数
+			19、班次发件（中转场班次发件pis规划结果） 【dm_ordi_predict.dws_trans_sendbatch_nextcode_quantity_hi】
+				说明： trans_code，trans_batch_code，next_zone_code，send_quantity	发出件量
+			
+			20、中转场流向- 首个中转场/网点  【dm_ordi_predict.dws_first_zone_trans_quantity_di】
+				说明： zone_code	首个网点，zone_batch	首个网点班次，trans_code	首个中转场网点，trans_batch	首个中转场班次
+					指标，件量,重量。
+			21、中转场流向- 首个中转场/网点 + 运单号 【dm_ordi_predict.dwd_waybill_first_zone_trans_pis_dtl_di】
+			
+				22、特征（运力推导中转场网点关系-收件）【dm_ordi_predict.dws_cvy_pickup_trans_zone_relation_dtl_di】
+					说明： 
+						trans_code中转场代码 ， 
+						trans_arrive_batch 中转场到件班次,
+						zone_code 网点,    网点发出班次，
+						zone_depart_batch，	网点发出班次
+						relation_types	关系类型（1-0，2-0）
+						指标，运力裁量,任务数
+				23、特征（运力推导中转场网点关系-派件）【dm_ordi_predict.dws_cvy_delivery_trans_zone_relation_dtl_di】
+						trans_code中转场代码 ， 
+						trans_depart_batch 中转场派件班次,
+						zone_code 网点,
+						zone_arrive_batch，	网点到达班次
+						relation_types	关系类型（1-0，2-0）
+						指标，运力裁量,任务数
+			
+				24、中转场流向 - 中转场班次流向-收件预测票数【dm_ordi_predict.dws_trans_batch_flow_pickup_predict_dtl_di】
+					说明： 	trans_code，trans_arrive_batch，zone_code，zone_depart_batch。
+							指标，收件票数预测，拆分后预测，任务数。
+				25、中转场流向 - 中转班次流向-派件预测票数（3，18，20点每天）【dm_ordi_predict.dws_trans_batch_flow_delivery_predict_dtl_di】
+					说明： 	trans_code，trans_depart_batch，zone_code，zone_arrive_dt。
+							指标，收件票数预测，拆分后预测，任务数。		
+				
+				26、中转场特征-中转场每日最早最晚班次维表 【dm_ordi_predict.dim_trans_first_last_batch_info_df】
+					说明：dept_code	操作网点，first_batch_code	最早班次代码，ast_batch_code	最晚班次代码
+						指标，最早/最晚 - 计划开始/最晚到达/计划结束时间。
+				
+			二、中转场-特征 
+				1-、网点收派预测快照【dm_ordi_predict.dws_zone_pickup_deliver_predict_snapshot_df】
+						说明：object_code	网点代码，	task_type	收派类型（收件/派件），预测件数/票量/重量/体积
+				2-、
+					2.1-、中转场到件拆解件量-规划表 【dm_ordi_predict.dws_trans_arrive_split_plan_df】
+						说明:trans_code	目的网点, 指标-按任务数拆解票数，网点数，	线路编码数，任务数，小于1.5T任务数
+						分区：按天
+					2.2-、中转场到件拆解件量-实际表 【dm_ordi_predict.dws_trans_arrive_split_real_di】
+						说明:trans_code	目的网点, 指标-按任务数拆解票数，网点数，	线路编码数，任务数，小于1.5T任务数
+						分区：按天
+				3-、网点收件最早最晚班次【dm_ordi_predict.dim_zone_pickup_first_last_batch_info_df】
+					说明: dept_code	网点代码,第一个班次代码,最后一个班次代码,(开始/最晚到达/结束时间)
+					
+				4-、
+					4.1-、 中转场真实45天快照表 【dm_ordi_predict.dws_zone_real_snapshot_45day_di】
+						说明：zzc_code	中转场代码，batch_code	班次代码，件数/票数/重量/体积 
+						分区：按天 inc_day
+					4.2-、历史差异对比表 【dm_ordi_predict.dws_zone_real_change_45day_di】
+						说明：zzc_code	中转场代码，batch_code	班次代码，当天/1/2/3/4/5/../45天后数据。
+						分区：按天 inc_day
+				5-、城市中转场件量映射一对多【dm_ordi_predict.dim_city_trans_mapping_multi_eta_wf】
+					说明：city_code	城市编码，transit_code	中转场编码， 指标，waybill_num	运单量，waybill_rate	城市对应不同中转场件量比例
+						city_code[1] -> transit_code[多]
+					分区： 	inc_week 按周
+				6-、中转场新旧班次编码拉链表 【dm_ordi_predict.dws_trans_zipper_static_di】
+					说明：	batch_code	班次编码，new_batch_code	新班次编码，start_time,end_time					
+				
+				7-、城市中转场映射-eta合并近30天(不同路由代码城市与代表网点的映射关系)【dm_ordi_predict.dim_city_trans_mapping_eta_dtl_df】
+					说明：route_code	路由代码，	city_code	城市代码，transit_code	中转场代码，
+					分区： 	按天
+		工具表：
+			1、节假日工具表【dm_predict.wds_holiday_peak_calendar】

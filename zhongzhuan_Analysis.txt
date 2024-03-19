@@ -1,0 +1,238 @@
+1、dm_ordi_predict.dws_static_zzc_base --中转场班次到件v1 
+	分区：	inc_day	
+	数据量：3000/day
+	核心字段：
+		zzc_code	中转场代码，
+		batch_code	班次代码，
+		all_waybill_num	票数，
+		batch_level	班次等级，
+		班次开始时间/结束时间等
+2、dm_ordi_predict.dws_static_dist_base  -- 城市信息
+	分区：	inc_day	
+	数据量：1W+/day
+	核心字段：
+		type	收派类型，
+		dist_code	城市代码,
+		income_code	产品板块,
+		weight_type_code	重量段,
+		all_waybill_num	票数
+		weight	重量
+		volume	体积
+3、dm_ordi_predict.dws_zone_predict_range_di -中转预测范围v1（中转主数据表）
+	分区：	inc_day	
+	数据量：600+/day
+	核心字段：
+		object_type_code	预测场地类型代码 1-中转场 3-分拨区
+		object_type_name	预测场地类型名称 1-中转场 3-分拨区
+		zone_code	预测场地代码 	010CC006
+		is_cn36	是否CN36
+		dept_name	网点或分拨区名称	
+		col2	是否中转场
+4、dm_ordi_predict.dws_trans_estimate_static_di --中转场在途件量重量表v2
+	分区：	inc_day	
+	数据量：3000+/day
+	核心字段：
+		zone_code	网点代码
+		batch_date	日期
+		should_arrive_vehicle_votes	应到车辆总件数
+		unloaded_bill_cnt	已卸车辆总件数
+		on_the_way_vehicle_votes	正常在途车辆总件数
+		estimate_count	预计票数
+		should_arrive_vehicle_weight	精确应到重量(kg)
+		new_unload_vehicle_weight	已卸重量(kg)
+		on_the_way_vehicle_weight	在途重量(kg)
+		estimate_weight	预计重量
+5、dm_predict.Hya_eta_zzc_votes_V2_child_qty  --eta
+	分区：	inc_day	
+	数据量：1W+/day
+	核心字段：
+		zone_code	zone_code	010CC006
+		pred_date	pred_date	2022-01-02
+		eta_votes	eta_votes	117
+		dayhour	dayhour			2022010119
+		predict_period	推演窗口/天		0D
+6、dm_ordi_predict.dws_trans_arrive_split_plan_df --规划任务数（中转场到件拆解规划表）	
+	分区：	inc_day	
+	数据量：3000+/day
+	核心字段：
+		trans_arrive_dt	到达日期
+		trans_code	目的网点
+		trans_type_code	目的网点类型
+		zone_cnt	网点数
+		line_cnt	线路编码数
+		task_cnt	任务数
+		capacity_load_1500	小于1.5T任务数
+		capacity_load_3000	1.5~3T任务数
+		split_waybill_cnt	按任务数拆解票数
+7、dm_ordi_predict.ads_zcc_batch_real_result_dtl_df  --静态班次到件（中转场班次实际结果表）	
+	分区：	inc_day	
+	数据量：2000+/day
+	核心字段：
+		zone_code	预测场地代码
+		batch_level	班次等级
+		dstr_type	1集 2散 3集散
+		...
+8、dm_ordi_predict.ads_dynamic_zcc_batch_real_result_dtl_di  -- 动态班次到件（中转场班次动态预测范围实际结果表_小时打点）
+	分区：	inc_day（yyyyMMddHH）
+	数据量：9000+/hour
+	核心字段：
+		zone_code	中转场代码
+		batch_code	班次代码
+		actual_quantity_cnt	到件量
+		begin_tm	班次开始时间
+		...
+9、dm_predict.wds_holiday_peak_calendar --节假日工具表
+10、dm_predict.eta_zzc_batch_nums_byhour_feature_1  --  eta
+	分区：		inc_day,inc_dayhour
+	数据量：6000+/2hour
+	核心字段：
+		zone_code	zone_code
+		batch_code	batch_code
+		predict_period	预测周期
+		predict_time	预测时间
+		lag1_eta_nums	提前2小时eta推演件量
+11、dm_predict.zzc_batch_static_info  --场地属性表
+	分区：		
+	数据量：
+	核心字段：
+		zone_code,is_cn36,area_code,city_code,province_code,country_code
+
+12、dm_predict.dws_fc_zzc_predict_collecting_di （中转场预测归集表）
+	分区：	partition_key
+	数据量：600+/day
+	核心字段：
+		data_version	数据版本
+		feature_version	特征版本
+		predict_classtime	预测班次
+		product_type	产品类型
+		predict_quantity	预测件量
+		predict_waybill	预测票量
+		predict_weight	预测重量
+		predict_volume	预测体积
+		hq_code	大区代码
+		fbq_code	分拨区代码
+		
+13、dm_ordi_predict.dws_zzc_next_zone_base_dtl_di	 -- 下一跳-静态V1（中转场下一跳）	
+	分区：		实际发出班次日期	inc_day
+	数据量：10W/day
+	核心字段：
+		src_zone_code	始发地
+		dest_zone_code	目的地
+		actual_send_batch	实际发出班次
+		load_all_count_sum	发件量
+		meterage_weight_qty_sum	计费重量
+		real_weight_qty_sum	实际重量
+		col_1	精确应发件量
+
+14、dm_ordi_predict.dws_zzc_next_zone_base_dynamic_dtl_di -- 下一跳-动态V1
+	分区：		打点时分-半小时打点	inc_day
+	数据量： 30W+/half hour
+	核心字段：参考13下一跳-静态V1
+
+15、dm_ordi_predict.dwd_pass_trans_waybill_dtl_di -- 下一跳-静态V2（中转预测预警明细）
+	分区：		班次日期	inc_day	，	统计类型	stattype
+	数据量：1亿+ /day+type
+	核心字段：
+		waybillno	运单号
+		zonecode	中转网点代码
+		batchcode	中转班次编码
+		batchdate	中转班次日期
+		exceptionstate	异常状态
+		....
+15、dm_ordi_predict.dws_trans_next_zone_static_di -- 下一跳-静态V2（中转场下一跳静态表）
+	分区：	inc_day
+	数据量：11W+/day
+	核心字段：
+		batch_dt	班次日期
+		zone_code	网点代码
+		batch_code	网点发出班次
+		next_zone_code	下环节网点
+		actual_send_votes	实发件量
+		actual_send_weight	实发重量
+		should_send_votes	精确应发票数
+		...
+
+16、dm_ordi_predict.dws_trans_next_zone_dynamic_di -- 下一跳-动态V2（中转场下一跳动态表）
+	分区：	inc_day
+	数据量：30W+/half hour
+	核心字段：参考15 
+	
+17、dm_ordi_predict.dws_trans_next_zone_vote_weight_avg_di -- （中转场下一跳近30天平均件均重）
+	分区：	inc_day
+	数据量：12W+/day
+	核心字段：
+		zone_code	中转网点代码
+		batch_code	中转班次编码
+		next_zone_code	下一环节网点
+		avg_actual_vote_weight_30	近30天实发平均件均重
+		avg_should_vote_weight_30	近30天精确应发平均件均重
+		
+18、dm_ordi_predict.dws_plan_batch_nextzone_dtl_hf -- （动态-规划任务）
+	分区：	inc_day
+	数据量：22W+/hour
+	核心字段：
+		plan_send_batch_dt	计划发出班次日期
+		src_zone_code	始发网点
+		plan_send_batch	计划发出班次编码
+		dest_zone_code	目的网点
+		task_cnt	任务数
+		line_cnt	线路编码数
+		
+19、dm_ordi_predict.dws_trans_sendbatch_nextcode_quantity_hi -- 班次发件（下一站）（中转场班次发件pis规划结果）
+	分区：	inc_day
+	数据量：20W+/2hour
+	核心字段：
+		trans_code	中转场代码
+		trans_batch_code	中转场班次代码
+		next_zone_code	下一跳场地代码
+		..
+		send_quantity	发出件量	int
+		
+20、dm_ordi_predict.dws_first_zone_trans_quantity_di  -- 中转场流向
+	分区：	inc_day
+	数据量：2W/hour
+	核心字段：
+		zone_code	首个网点
+		zone_batch	首个网点班次
+		trans_code		首个中转场网点
+		trans_batch 	首个中转场班次
+		waybill_cnt	件量
+		flow_weight	重量
+
+21、dm_ordi_predict.dwd_waybill_first_zone_trans_pis_dtl_di -- 中转场流向 + 运单号
+	分区：	inc_day
+	数据量：3000W+/day
+	核心字段：
+		waybillno	运单号
+		zone_code	首个网点
+		zone_batch	首个网点班次
+		trans_code	首个中转场网点
+		trans_batch	首个中转场班次
+		meterage_weight_qty	上报重量
+		...
+
+22、dm_ordi_predict.dws_cvy_pickup_trans_zone_relation_dtl_di -- 特征（运力推导中转场网点关系-收件）
+	分区：	inc_day
+	数据量：35W+/2hour
+	核心字段：
+		trans_code	中转场代码
+		trans_arrive_dt	中转场到件日期
+		trans_arrive_batch	中转场到件班次	
+		zone_code	网点
+		zone_depart_dt	网点发出日期
+		relation_types	关系类型
+		capacity_load_type	计划运力载量
+		task_cnt	任务数
+
+23、dm_ordi_predict.dws_cvy_delivery_trans_zone_relation_dtl_di -- 特征（运力推导中转场网点关系-派件）
+	分区：	inc_day
+	数据量：35W+/2hour
+	核心字段：
+		trans_code	中转场代码
+		trans_depart_dt	中转场派件日期
+		trans_depart_batch	中转场派件班次
+		zone_code	网点
+		zone_depart_dt	网点发出日期
+		relation_types	关系类型
+		capacity_load_type	计划运力载量
+		task_cnt	任务数

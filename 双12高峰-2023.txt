@@ -1,0 +1,71 @@
+@所有人 资源&调度任务8点播报
+【时间范围】: 2023/12/13 00:00-08:30
+【资源】
+1、predict队列资源,整点资源使用率较高,CPU占比90%,内存占比超过95%,最长持续时间20min,其他时段CPU、内存资源使用均衡；
+2、predict_as队列资源,05:00~05:30,06:30~06:50资源使用率较高,,最长持续时间10min，其余时段CPU、内存资源使用均衡;
+3、predict_model队列资源,CPU、内存资源使用均衡；
+4、ordi_predict队列资源,整点资源使用率较高,占比在95%左右,最长持续时间10min,其余时段CPU、内存资源使用均衡;
+【调度任务/看板】
+1、S/A/B级看板任务：
+流向-航空动态0点任务超时，不影响看板整体时效。
+收派/中转无异常延迟无失败任务。
+
+
+
+@所有人 资源&调度任务14点播报
+【时间范围】: 2023/12/13 8:00-14:00
+【资源】
+1、predict队列资源,整点资源使用率较高,占比在95%左右,08:00 ~ 08:30 之间最长持续时间10min,其他时段CPU、内存资源使用均衡；
+2、predict_as队列资源,08:00~09:00资源使用率较高,占比在95%左右，最长持续时间10min，其余时段CPU、内存资源使用均衡;
+3、predict_model队列资源,CPU、内存资源使用均衡；
+4、ordi_predict队列资源,整点资源使用率较高,占比在95%左右,08:00,08:30最长持续时间5min,其余时段CPU、内存资源使用均衡;
+【调度任务/看板】
+1、S/A/B级看板任务：
+流向-航空动态08点任务，因资源调度紧张超时15min启动，以及AI耗时波动，导致看板超时5分钟，不影响看板整体时效。
+收派/中转无异常延迟无失败任务。
+
+
+@所有人 资源&调度任务18点播报
+【时间范围】: 2023/12/13 14:00-18:00
+【资源】
+1、predict队列资源,整点资源使用率较高,占比在95%左右,16:00 ~ 16:15之间最长持续时间5min,其他时段CPU、内存资源使用均衡；
+2、predict_as队列资源,08:00~09:00资源使用率较高,占比在95%左右，其余时段CPU、内存资源使用均衡;
+3、predict_model队列资源,CPU、内存资源使用均衡；
+4、ordi_predict队列资源,整点资源使用率较高,占比在95%左右,最长持续时间5min,其余时段CPU、内存资源使用均衡;
+【调度任务/看板】
+1、S/A/B级看板任务：
+收派/中转/流向无异常延迟无失败任务。
+
+
+466176 		  ->	487391
+134963/576764 ->	466406 
+167471		  ->	466415 ->	466997  -> 467012   
+247889		  ->	466421		  
+
+487391		
+	1、根据运力类型计算运单类型 （by-运单路由信息表[dwd.dwd_waybill_route_info_di]）  -> dm_ordi_predict.dwd_waybill_cvy_type_dtl_di
+	2、动态路由中筛选中转场的路由(by-网点类型代码)，并且根据rank_no[途径中转环节排名]倒序取最后一个中转场（by-运单路由信息表[dwd.dwd_waybill_route_info_di]）  -> tmp_ordi_predict.tmp_dwd_waybill_dynimic_dest_trans_dtl_di
+	3、筛选opcode in ('106','571','303')，根据主运单号，操作网点分组，巴枪扫描时间倒叙，取第一条。（by-巴枪路由信息表[ods_kafka_fvp.fvp_core_fact_route_op]）   ->  tmp_ordi_predict.tmp_yc_fvp_dtl_di
+	
+	
+1. 到件还是发件	 
+	-- 到件
+2. 起始和目的中转场的定义是什么
+	-- 根据运单路由信息表（途径中转环节排名）
+3. 是否都是二级中转场
+	-- 查看上游表近1年，中转场级别都为null.
+
+
+technology leaders have shown major support for laws to govern AI use .  -- 科技领导者 对AI使用进行管理的法律 表示了大力支持。
+govern -- v.管理;治理;影响;
+favor [ˈfeɪvər] --  n.赞成;喜爱，宠爱  v.赞同;喜爱
+work in their favor -- 对他们有利
+they are seeking to guarantee that any future rules 
+The xx is increasingly divided about how to govern AI .  -- 在如何管理AI这个问题上，xx分歧越来越大。
+recently launched a new group called the AI Alliance . -- 最近成立了一个名为AI联盟的新组织。
+The term ‘open-source’ comes from a common method of building software in which the code is widely available at no cost . -- '开源'一次来源于一种构建软件的通用方法，即代码免费广泛使用。
+AI involves more than just code -- 开源AI涉及的不仅仅是代码
+xx differ on how to define 'open source' -- 对如何定义‘开源’存在分歧
+The identifications are dependent on which parts of the technology are publicly available and if they are restrictions on use . -- 这个界定取决于哪些计数是公开的，以及是否有使用限制。
+identifications -- 鉴定;确定;确认;身份证明;辨认
+affair -- 美[əˈfer]事件;事情;公共事务;政治事
