@@ -1,0 +1,504 @@
+
+待优化：
+	1、快管表etl to hive   ，分区去掉？  √
+		-、etl每半小时，数据存在差异，保持每半小时抽取
+		-、暂时还使用分区。
+	2、247099改造时间优化。
+		-、增加资源，并行度跟不上。
+			-、//开启反压
+			  conf.set("spark.streaming.backpressure.enabled","true")
+			  //启用反压机制时每个接收器接收第一批数据的初始最大速率
+			  conf.set("spark.streaming.backpressure.initialRate", "5000")
+			  //设定对目标topic每个partition每秒钟拉取的数据条数
+			  conf.set("spark.streaming.kafka.maxRatePerPartition", "5000")
+			  //提高shuffle并行度
+			  conf.set("spark.sql.shuffle.partitions", "500")
+			  //RDD任务的默认并行度
+			  conf.set("spark.default.parallelism", "500")
+			  //设置字段长度最大值
+			  conf.set("spark.debug.maxToStringFields", "100")
+			  conf.set("hive.exec.dynamici.partition", "true")
+			  conf.set("hive.exec.dynamic.partition.mode", "nonstrict")
+		-、counttime 改为时分秒 
+		   countdate 改为天
+	3、470818（每小时），430625（每20min） ，完善依赖 tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 表，
+	4、其他任务，是）否有共联的需要优化。
+		vt_has_arrive_cars
+			451091  -- 写入表修改  vt_has_arrive_cars --> dm_heavy_cargo.ky_has_arrive_cargo 
+					--、469910 -- 输入表数据-修改   -- 依赖 dm_heavy_cargo.ky_has_arrive_cargo 
+					--、416809 -- 输入表数据-修改   -- 依赖 dm_heavy_cargo.ky_has_arrive_cargo 
+			473276 -- 输入表修改 dm_heavy_cargo.ky_has_send_cargo -- >   tmp_ordi_predict.ky_has_send_cargo  （后续看情况，直接替换为原表  dm_heavy_cargo.ky_has_send_cargo）
+	5、数据对比。
+		553293-改造: flow，和原任务读取上游数据时点保持一致。（因为时点不一致，会导致结果表  vt_has_arrive_cars 数据和之前有差异。）
+	6、临时表切换为正式表？
+	7、tmp_ordi_predict.sdmti_t_transportct_info_hf  【快管车辆】    √
+		-、分区inc_hour bug  ，  inc_hour = 400  $[time(HHmm)] $[time(HHmm)]
+		解决： inc_hour  = '$[time(HHmm)]'   -- 加引号
+		-、后续完善 470818 & 247099 -改造 核对
+			-、247099 【 改造任务 - 839696 -> 857534 】使用次表
+			-、470818 【 改造任务 - 840236 -> 840229 】使用次表
+	8、430625【改造任务 -- 841467】  √  -- 每20min
+		 -、inc_hour 参数 ，改为动态。  -- 去掉小时分区，统一按天更新append   √ 
+		 -、写入hive结果表，参考  原任务的 etl处理的过滤。 【不需要，实际上就是取最新数据写入结果表】  √ 
+		 -、后续 复制原结果表历史天的数据，写入新的结果表，且切换为正式表。
+
+
+-------------------------------------------------------------------------247099 ----------------------------------------------------------------------------
+countDate:2023-09-13
+countTime:2023-09-13 15:40:14.004
+
+Question:
+1、dm_ordi_predict.fmsrms_dim_heavy_transit_info_df ETL频次 ，半小时抽取一次？   【目前已按天抽取】  【807593】
+2、countTime 格式  -- 精确到时/分/秒即可
+3、def =!=(other : scala.Any) 什么意思？ -- 强不等于，类型也不相等
+
+
+1-、mysql 表 写入频次
+2-、脚本中：目前采用临时表,要改为正式表
+3-、脚本中：$[time(yyyyMMdd)] ，inc_hour 分区 要指定为${inchour1} = $[time(HHmm)]
+4-、脚本中： 写死日期的mysql表要 ，要动态指定inc_day,inc_hour. 
+5-、脚本中：涉及到时分秒的，需要传参，统一指定？
+
+新任务ID: 839696 【已发布】
+	-、依赖 ： 839528， tmp_ordi_predict.sdmti_t_transportct_info_hf  【快管车辆】
+	-、直接使用 tmp_ordi_predict.dmpdsp_vt_has_arrive_cars   【已到达车辆信息】
+		-、不需依赖mysql->hive  ： 839574,  tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf？ 
+		修改后：不需要依赖 839574，直接用 tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 
+	-、449074-改造的任务 ,将其添加到当前839696 任务中 (每半小时刷新车标数据)，后续，将半小时刷新的车标数据，更新至表tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 
+		
+数据核对：
+	1-、对比 t_monitor_in_road_cargo_new 【mysql 结果表】	和 dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf 【hive】
+		-、存在差异 ， 300条左右
+			-- 20231026 1630 540096  -- 【hive】
+			-- 20230924 2300 540372 -- 【mysql ,etl同步】
+			
+		
+	2-、对比 t_monitor_detail_data_process 【mysql 状态】	
+	3-、对比 t_monitor_detail_data_row 【mysql count结果】
+		
+
+BUG:  839695  -- 参数空格bug  异常 
+$[time(HHmm)]
+ $[time(HHmm)]
+dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf
+ 
+839691
+ '1330' as inc_hour
+839695  -- 参数空格bug
+ ' 1330' as inc_hour
+ ' 1330' as inc_hour
+ 
+ tmp_ordi_predict.dmpdsp_t_monitor_detail_data_row_hf      -- 写入异常
+ dm_ordi_predict.dmpdsp_t_monitor_detail_data_process_hf   -- 写入异常
+ dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf  -- 写入异常
+ 
+ tmp_ordi_predict.sdmti_t_transportct_info_hf    -- 读取异常
+ tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf_tmp1  -- 读取异常
+
+解决： 
+	删除历史异常数据，重新补录
+	alter table dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf drop partition(inc_day = '20230926')
+	
+	
+	输入：bdp.dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4  【车辆详情 kafka to hive】  -- 上游表
+		  select dept_code as deptCode from dim_heavy_transit_info; 【mysql 中转场信息】  -- 上游表
+		  vt_has_arrive_cars  【mysql 已到达车辆信息】-- 上游表      --【tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf】
+		  rt_container_waybill_relation 【hbase 】  -- 上游表 车标运单关系维表
+		  t_transportct_info     			   -->【tmp_ordi_predict.sdmti_t_transportct_info_hf  任务iD: 839528【已发布】 (每半小时抽取：实例：inc_hour = 1130) 】
+	输出： t_monitor_detail_data_process 【mysql 状态】	   -->  dm_ordi_predict.dmpdsp_t_monitor_detail_data_process_hf
+		   t_monitor_in_road_cargo_new 【mysql 结果表】	   -->  s
+		   t_monitor_detail_data_row 【mysql count结果】   -->  tmp_ordi_predict.dmpdsp_t_monitor_detail_data_row_hf
+
+
+1、mysql -> hive    t_monitor_in_road_cargo_new  【819123】
+	CREATE TABLE `t_monitor_in_road_cargo_new` (
+	  \ n `requireId` varchar(36) DEFAULT NULL COMMENT '需求id',
+	  \ n `carNo` varchar(2560) DEFAULT NULL COMMENT '车标号',
+	  \ n `transLevel` int(2) DEFAULT NULL COMMENT '运输等级',
+	  \ n `carStatus` int(2) DEFAULT NULL COMMENT '车辆状态',
+	  \ n `srcZoneCode` varchar(20) DEFAULT NULL COMMENT '出发网点',
+	  \ n `preArriveTm` bigint(20) DEFAULT NULL COMMENT '预计到达时间',
+	  \ n `preArriveZoneCode` varchar(20) DEFAULT NULL COMMENT '预计到达的网点',
+	  \ n `tickets` bigint(20) DEFAULT NULL COMMENT '票数',
+	  \ n `weight` double DEFAULT NULL COMMENT '计费重量',
+	  \ n `status` int(2) DEFAULT NULL COMMENT '状态:1未发,2在途,3已到达',
+	  \ n `countTime` timestamp NULL DEFAULT NULL COMMENT '统计时间',
+	  \ n `countDate` varchar(20) DEFAULT NULL COMMENT '统计日期',
+	  \ n KEY `requireId_index` (`requireId`),
+	  \ n KEY `preArriveZoneCode_index` (`preArriveZoneCode`),
+	  \ n KEY `status_index` (`status`),
+	  \ n KEY `countTime_index` (`countTime`),
+	  \ n KEY `countDate_index` (`countDate`) \ n
+	) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_bin COMMENT = '中转实时在途车辆信息表'
+
+/**
+	-- inc_day=20230913 inc_hour=1730
+	-- 没半小时存储
+	-- 临时抽取test 【819123】
+
+	select * from dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf
+	where inc_day = '20230913'
+	and inc_hour = '1700'
+**/
+	CREATE EXTERNAL TABLE `dm_ordi_predict.dmpdsp_t_monitor_in_road_cargo_new_hf`(
+	  `requireId` string COMMENT '需求id',
+	  `carNo` string COMMENT '车标号',
+	  `transLevel` string COMMENT '运输等级',
+	  `carStatus` string COMMENT '车辆状态',
+	  `srcZoneCode` string COMMENT '出发网点',
+	  `preArriveTm` string COMMENT '预计到达时间',
+	  `preArriveZoneCode` string COMMENT '预计到达的网点',
+	  `tickets` string COMMENT '票数',
+	  `weight` string COMMENT '计费重量',
+	  `status` string COMMENT '状态:1未发,2在途,3已到达',
+	  `countTime` string COMMENT '统计时间',
+	  `countDate` string COMMENT '统计日期'
+	) COMMENT '中转实时在途车辆信息表-dmpdsp库' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+	 
+2、mysql -> hive  t_monitor_detail_data_process    【819210】
+
+CREATE TABLE `t_monitor_detail_data_process` (
+  \ n `id` varchar(64) NOT NULL COMMENT '主键',
+  \ n `table_name` varchar(256) DEFAULT NULL COMMENT '表明',
+  \ n `statues` int(2) DEFAULT NULL COMMENT '当前状态:1,正在写入;2,写入完毕',
+  \ n `start_time` timestamp NULL DEFAULT NULL COMMENT '开始写入的时间',
+  \ n `end_time` timestamp NULL DEFAULT NULL COMMENT '写入结束的时间',
+  \ n `insertTime` timestamp NULL DEFAULT NULL COMMENT '数据写入时间',
+  \ n PRIMARY KEY (`id`) \ n
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_bin COMMENT = '明细数据写入监控表'
+
+	CREATE EXTERNAL TABLE `dm_ordi_predict.dmpdsp_t_monitor_detail_data_process_hf`(
+	  `id` string COMMENT '主键',
+	  `table_name` string COMMENT '表名',
+	  `statues` string COMMENT '当前状态:1,正在写入;2,写入完毕',
+	  `start_time` string COMMENT '开始写入的时间',
+	  `end_time` string COMMENT '写入结束的时间',
+	  `insertTime` string COMMENT '数据写入时间'
+	) COMMENT '中转实时在途车辆信息表-dmpdsp库' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+	 
+3、mysql -> t_transportct_info     【sdmtransit-m.dbdr.sfcloud.local:3306】 sdmti    【839528】  tmp 表
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.sdmti_t_transportct_info_hf`(
+	  `require_id` string COMMENT '需求Id',
+	  `zone_code` string COMMENT '当前网点编码',
+	  `next_zone_code` string COMMENT '下一网点编码',
+	  `prologis_in_tm` string COMMENT '普洛斯进闸时间'
+	) COMMENT '中转实时在途车辆信息表-dmpdsp库' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+	 
+4、创建 hbase处理后的表    【 tmp 表】
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.tmp_ky_all_car_nos_behind_hbase`(
+	  `requireId` string COMMENT '需求Id',
+	  `carNo` string COMMENT '车辆编码',
+	  `transLevel` string COMMENT '运输登记',
+	  `carStatus` string COMMENT '车辆状态',
+	  `srcZoneCode` string COMMENT '始发网点',
+	  `preArriveTm` string COMMENT '预计到达时间',
+	  `preArriveZoneCode` string COMMENT '预计到达网点编码',
+	  `waybillNo` string COMMENT '运单号',
+	  `tickets` string COMMENT '票数',
+	  `weight` string COMMENT '重量'
+	) COMMENT '在途-关联hbase获取运单重量' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat' 
+	;
+	 
+5、mysql -> hive  vt_has_arrive_cars    【839574】  与 449074 重复， 对比确认
+	dmpdsp-tilb.db.sfcloud.local:3306/dmpdsp?rewriteBatchedStatements=true
+	
+	/**
+		表 唯一键： `requireId`, `carNo`, `destZoneCode`
+	**/
+	
+	CREATE TABLE `vt_has_arrive_cars` (
+  \ n `idKey` varchar(128) NOT NULL COMMENT '主键',
+  \ n `requireId` varchar(36) DEFAULT NULL COMMENT '需求id',
+  \ n `carNo` varchar(36) DEFAULT NULL COMMENT '车标号',
+  \ n `transLevel` int(2) DEFAULT NULL COMMENT '运输等级',
+  \ n `carStatus` int(2) DEFAULT NULL COMMENT '车辆状态',
+  \ n `srcZoneCode` varchar(128) DEFAULT NULL COMMENT '车标起始网点',
+  \ n `destZoneCode` varchar(128) DEFAULT NULL COMMENT '车标卸车网点',
+  \ n `ticket` bigint(20) DEFAULT NULL COMMENT '票数',
+  \ n `weight` double DEFAULT NULL COMMENT '计费重量',
+  \ n `actualTime` bigint(20) DEFAULT NULL COMMENT '实际到车时间',
+  \ n `insertTime` timestamp NULL DEFAULT NULL COMMENT '数据写入时间'
+  \ n PRIMARY KEY (`idKey`),
+  \ n KEY `requireId_index` (`requireId`),
+  \ n KEY `carNo_index` (`carNo`),
+  \ n KEY `actualTime_index` (`actualTime`),
+  \ n UNIQUE KEY `requireId_carNo_destZoneCode_index` (`requireId`, `carNo`, `destZoneCode`) \ n
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_bin COMMENT = '场地到车统计信息表'
+
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf`(
+	  `idKey` string COMMENT '主键',
+	  `requireId` string COMMENT '需求Id',
+	  `carNo` string COMMENT '车辆编码',
+	  `transLevel` int COMMENT '运输等级',
+	  `carStatus` int COMMENT '车辆状态',
+	  `srcZoneCode` string COMMENT '始发网点',
+	  `destZoneCode` string COMMENT '车标卸车网点',
+	  `ticket` string COMMENT '票数',
+	  `weight` string COMMENT '计费重量',
+	  `actualTime` string COMMENT '实际到车时间',
+	  `insertTime` string COMMENT '数据写入时间'
+	) COMMENT '场地到车统计信息表' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat' 
+	 
+6、mysql -> hive  t_monitor_detail_data_row
+
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.dmpdsp_t_monitor_detail_data_row_hf`(
+	  `table_name` string COMMENT '主键',
+	  `table_rows` string COMMENT '需求Id',
+	  `create_time` string COMMENT '车辆编码'
+	) COMMENT '场地到车统计信息表' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat' 
+
+
+
+
+
+------------------------------------------------------------------------- 470818 ----------------------------------------------------------------------------
+$1	$[time(yyyyMMdd,-60d)]
+$2	$[time(yyyy-MM-dd HH:mm:ss)]
+$3	$[time(yyyyMMdd,-3d)]
+
+
+incDay:20230926
+incHour:1400
+countTimeStamp:1695708000000
+next7DaytTimeStamp:1696003200000    【+4D】
+last7DayTimeStamp:1695398400000     【-3D】
+last8Day:20230922
+next8Day:20231001
+countDate:2023-09-26
+countTime:2023-09-26 14:00:00
+
+countDate_else:2023-09-26
+countTime_els:2023-09-26 14:38:01.891
+
+
+last7DayTimeStamp,next7DaytTimeStamp
+
+
+1-、依赖快管任务  【839528】
+2-、依赖表tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 【目前小时开始执行，暂不做依赖】
+
+
+-------------------------------------------------------------------  449074  -----------------------------------------------------------------------
+
+原参数：
+1	$1	$[time(yyyy-MM-dd HH:mm:ss)]   --  insertTime  [553293是根据代码执行时间-> create_time-> insertTime ]
+2	$2	$[time(yyyyMMdd)]
+
+-- 449074  -- 每30分钟刷新车标货量信息   【Hbase】
+	输入： vt_has_arrive_cars  【musql】
+		    rt_container_waybill_relation 【hbase 】
+	输出： vt_has_arrive_cars   [replace  idkey]
+
+question:
+	-、ETL :  【451091 （每天8:30 ） 】  --
+			vt_has_arrive_cars --> dm_heavy_cargo.ky_has_arrive_cargo  [$[time(yyyyMMdd)]]   
+	-、vt_has_arrive_cars改造后，记录分区， inc_day,inc_hour ,精确到半小时。
+改造后：
+	-、872556   （zip包关联hbase，刷新车标信息）
+	   872680  （优先取刷新后的车标（根据表唯一键： `requireId`, `carNo`, `destZoneCode 及`flag），合并之前数据，覆盖写入tmp_ordi_predict.dmpdsp_vt_has_arrive_cars ）
+		合并入任务 839696
+
+/**
+【已弃用】
+	ID:840533	】
+		840511 :   tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf + hbase 
+			新的zip包参数：
+				val incday = args(0) 
+				val incHour = args(1)  
+				val beginTime=args(2)
+				val endTime=args(3)
+			脚本参数：后续动态
+		840532  输出 tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf
+			脚本参数：后续动态
+		
+		脚本参数 ：
+			inc_day = $[time(yyyyMMdd)]
+			incHour = $[time(HHmm)]
+	暂时依赖： 839574,  tmp_ordi_predict.dmpdsp_vt_has_arrive_cars_hf？ 【后续依赖是否要改为： 553293 ，不依赖ETL】
+**/
+			
+-------------------------------------------------------------------  248838 [每天] -----------------------------------------------------------------------
+原参数：
+1	$1	$[time(yyyyMMdd,-24d)]
+2	$2	$[time(yyyyMMdd)]
+3	$3	$[time(yyyyMMdd)]
+
+zip包，执行卡顿。。 
+-- 、reparation 3000
+	-、直接读取hive表，RDD并行度太低，故repartition
+-- 2023-12-05   hbase 表wb_info_data_sf  ，get压力大， 每天06:30 ~ 7:00  , 15w/s
+	-、840711 改造任务 暂时冻结。
+	
+
+-------------------------------------------------------------------  553293 [每小时] -----------------------------------------------------------------------
+
+[555314]
+原参数：
+1	$1	$[time(yyyyMMdd,-2d)]
+2	$2	$[time(yyyyMMdd)]
+
+zip包，执行卡顿。。 -- 同553293
+
+改造代办：
+	1、子任务zip改造 + 原剩下任务
+	2、zip包执行卡顿 。  √  reparation 2500
+
+840945
+	840936
+	840939
+	840929
+
+-- 上游表 
+	select * from (
+		select * ,
+		row_number() over(partition by requireId order by lastUpdateTm desc) rn
+		from dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4 a 
+		where inc_day between '$[time(yyyyMMdd,-2d)]' and '$[time(yyyyMMdd)]'
+		and (secondActualArriveTm >0 or 	thirdActualArriveTm>0 or destActualArriveTm >0)
+	 )aa where aa.rn=1 and aa.carStatus in (3,4,5,6)
+	
+553293改造任务【840945  -- 依赖 872680【839696子任务，每半小时刷新车标】 】 ，	 1、union , insert overwrite 写入  tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 
+
+
+验证数据：
+	1、时点执行diamante。生成写入 dmpdsp_vt_has_arrive_cars 之前数据
+		和 bdp.dm_heavy_cargo.ky_has_arrive_cargo_rb [原任务-553293] 做对比 
+		和 改造任务-840945 中临时表数据作对比  
+	 观察是否因，开始时间导致  改造任务和原任务存在差异。
+结论： 
+	1、改造任务和原任务执行时点不一致，导致记录数据存在差异（车辆拆分时导致）
+解决：
+	1、改造任务和原任务执行时点，保持一致。
+		1-、优先执行 读取上游表[840929]，关联hbase[840939]， （保持和原任务同时读取上游表）
+		2-、后续依赖 小时刷新车标，然后刷新 dmpdsp_vt_has_arrive_cars [840936]
+	
+-------------------------------------------------------------------  460984 [每小时]  -----------------------------------------------------------------------
+原参数：
+1	$1	$[time(yyyyMMdd,-3d)]
+2	$2	$[time(yyyyMMdd)]
+3	$3	$[time(yyyy-MM-dd HH:mm:ss)]
+
+incDay:20230927
+incHour:1800
+last8Day:20230923
+next8Day:20231002
+
+改造后：	
+	1、inc_hour，inc_day 动态传参 
+	2、写入临时表	
+	
+线上代码： 
+	-、841017
+	-、$[time(HH00)]
+-------------------------------------------------------------------  430625 [每20min] -----------------------------------------------------------------------
+原参数：【431213】
+1	$1	$[time(yyyy-MM-dd HH:mm:ss)]
+2	$2	dws_sx_vehicle_sum
+
+
+2-、依赖表tmp_ordi_predict.dmpdsp_vt_has_arrive_cars 【目前小时开始执行，暂不做依赖】
+
+
+ 1、 mysql--> hive  【 dmpdsp.pub_table_sync_version  】
+ 
+CREATE TABLE `pub_table_sync_version` (
+  \ n `table_name` varchar(100) NOT NULL COMMENT '表名',
+  \ n `version_id` bigint(20) DEFAULT NULL COMMENT '最新版本号',
+  \ n `sync_time` varchar(25) DEFAULT NULL COMMENT '更新时间'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '公共最新版本表'
+
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.dmpdsp_pub_table_sync_version_hf`(
+	  `table_name` string COMMENT '表名',
+	  `version_id` string COMMENT '最新版本号',
+	  `sync_time` string COMMENT '更新时间'
+	) COMMENT '版本控制' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+
+dws_sf_dept_sx_vehicle_sum	1	2022-04-28 12:31:00
+test	1651026853	2022-04-27 10:34:13.783
+dws_sx_vehicle_sum	2	2023-09-28 14:03:11
+
+
+dws_sf_dept_sx_vehicle_sum	1	2022-04-28 12:31:00
+test	1651026853	2022-04-27 10:34:13.783
+dws_sx_vehicle_sum	1	2023-09-28 14:21:30
+
+2、dmpdsp.dws_sx_vehicle_sum
+
+  //循环删除老版本数据
+    val sql1 = DELETE FROM dmpdsp.dws_sx_vehicle_sum WHERE version_id = ""
+
+3、dmpdsp.dws_sx_vehicle_sum   --> tmp_ordi_predict.dm_sx_vehicle_his_sum_di
+
+select version_id ,count(*) as num from dmpdsp.dws_sx_vehicle_sum
+group by version_id
+-- 20230928 14:00
+1	24021
+2	24015
+-- 20230928 14:20
+1	24014
+2	24015
+
+
+
+---------------------- 
+
+
+CREATE TABLE `op_tp_wl_handover_count_rt` (
+  \ n `id_key` varchar(64) NOT NULL COMMENT '主键',
+  \ n `event_type` varchar(32) DEFAULT NULL COMMENT '事件类型',
+  \ n `dept_code` varchar(64) DEFAULT NULL COMMENT '场地编码',
+  \ n `event_time` bigint(20) DEFAULT NULL COMMENT '事件时间',
+  \ n `trip_id` varchar(64) DEFAULT NULL COMMENT '行程id',
+  \ n `weight` double DEFAULT NULL COMMENT '计费重量',
+  \ n `ticket` bigint(20) DEFAULT NULL COMMENT '已发总件数',
+  \ n `count_date` varchar(32) DEFAULT NULL COMMENT '统计日期',
+  \ n `count_time` timestamp NULL DEFAULT NULL COMMENT '统计时间',
+) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_bin COMMENT = '物联接驳实时统计表'
+
+
+
+	CREATE EXTERNAL TABLE `tmp_ordi_predict.dmpdsp_op_tp_wl_handover_count_rt_hf`(
+	  `id_key` string COMMENT '表名',
+	  `event_type` string COMMENT '最新版本号',
+	  `dept_code` string COMMENT '更新时间',
+	  `event_time` string COMMENT '更新时间',
+	  `trip_id` string COMMENT '更新时间',
+	  `weight` double COMMENT '更新时间',
+	  `ticket` int COMMENT '更新时间',
+	  `count_date` string COMMENT '更新时间',
+	  `count_time` string COMMENT '更新时间'
+	) COMMENT '物联接驳实时统计表' PARTITIONED BY (`inc_day` string,`inc_hour` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 

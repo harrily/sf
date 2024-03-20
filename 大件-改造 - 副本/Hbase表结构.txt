@@ -1,0 +1,264 @@
+
+
+1、 晓雯场地到件 --  同步到hive
+	分模块 ，脚本 
+	优先级： 排期
+	
+2、hbae  
+	 --、
+		方案1 ：
+			全量抽， 看上游 
+	 --、 方案2 ： 
+			1、解耦 ， zip处理hbase，  hive+mysql --> fspark 
+
+3、晓雯的mysql表暂时不会变更 
+	-、两套同步进行。
+	
+
+Hbase表结构 
+1、rowkey+baseinfo+value   = 行
+
+
+1、表名： rt_container_waybill_relation （运单关系表）
+	rowkey 
+	waybillno
+		createZoneCode
+		waybillType
+		removeZoneCode
+		isDeleted
+		createTm
+		dataStatus
+		jobType
+		inferStatus
+	实例： startRowkey=[749880876349], endRowkey=[774860326743]
+		   SF1509677546944	SF1515427712154	SF1514902411825	SF1616597540139	SF1623615711392
+		{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360136124,"dataStatus":1,"jobType":"31","inferStatus":2}	{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360878930,"dataStatus":1,"jobType":"31","inferStatus":2}	{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690359176354,"dataStatus":1,"jobType":"31","inferStatus":2}	
+		{"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360136124,"dataStatus":1,"jobType":"31","inferStatus":2}
+
+
+rowkey 车标 
+baseinfo 运单
+value  {"createZoneCode":"871W","waybillType":"20","removeZoneCode":"871W","isDeleted":1,"createTm":1690360136124,"dataStatus":1,"jobType":"31","inferStatus":2}
+
+2、表名： wb_info_data_sf （顺丰全网运单基表）
+	rowKey	
+	packageMeterageWeightQty
+	customerAcctCode
+	destCityCode
+	destAreaCode
+	signinTm
+	waybillNo
+	destZoneCode
+	productCode
+	sourceZoneCode
+	orderNo
+	volume
+	realWeightQty
+	quantity
+	unitWeight
+	destHqCode
+	consignedTm
+	createTm
+	meterageWeightQty
+	packageNo
+	meterageWeightQtyAfterProcess
+	routeCode
+			rowKey	
+			packageMeterageWeightQty
+
+3、wb_info_data_sx （顺心运单基表）
+		hewbCalcWeight
+
+	rowKey
+	specialAddressServiceType
+	codCharge
+	xcoord
+	bubbleRatio
+	dispatchSiteName
+	signMessage
+	ewbStatus
+	sendCustomerSms
+	smsModeId
+	receiveCustomerAddress
+	monthlyPaymentCharge
+	hewbVol
+	membrane
+	overWeightPiece
+	piece
+	townId
+	tempInsureAmount
+	lineFlag
+	remark
+	sendCustomerPhone
+	sendSiteScanId
+	deliveryFloor
+	ewbNoFeeFlag
+	overVol
+	transferDate
+	ycoord
+	lineType
+	mattressWeight
+	wood
+	hewbNo
+	rewbTypeName
+	tmallOrdersOr
+	insuredAmount
+	orderFlag
+	receiveProvinceName
+	orderEwbName
+	other
+	waybillSubs
+	codCharge2
+	isOutSend
+	dispsiteCityCode
+	signTime
+	sendSiteId
+	otherCharge
+	pickGoodsModeId
+	sendSiteCityCode
+	ewbDispatchSiteId
+	goodsCateogoryId
+	vehicle
+	sendSiteScan
+	hewbWeight
+	ecEwbFlag
+	documentsGoods
+	goodsCateogoryName
+	sendSiteCode
+	receiveCustomerName
+	inputSiteCode
+	ewbType
+	eroseFlag
+	rdStatus
+	sendSiteName
+	billType
+	ewbSendFlag
+	orderEwbId
+	insuranceRate
+	createdByName
+	countyId
+	sendProvinceName
+	address
+	dispatchSiteScanCode
+	oldNewFlag
+	abroadAuditFlag
+	dispatchSiteCode
+	volWeight
+	spotPaymentCharge
+	sendCustomerCode
+	upstairsCharge
+	upstairsCharge2
+	dispId
+	ewbVersion
+	goodsTypeId
+	overLength
+	orderNo
+	agingLable
+	insuranceTypeName
+	arriveMessage
+	sendCityName
+	receiveCustomerPhone
+	orderPushFlag
+	receiveCountyName
+	sendSiteOneCode
+	calcMaxBig
+	payModeId
+	pickGoodsId
+	receiveTownName
+	productNameId
+	length
+	modifiedByName
+	productSunId
+	orderTypeId
+	specialAddressServiceTypeName
+	discountCount
+	receiveCityName
+	isKC
+	premiumCharge
+	dispatchSiteOneCode
+	prodOperaMode
+	totalAmount
+	ewbNo
+	codCollectingCharge
+	fiber
+	mattressPiece
+	weight
+	bigNumber
+	dispatchMessage
+	mattressVol
+	sendCustomerAddress
+	width
+	elevatorOr
+	overWeight
+	pickGoodsModeName
+	hewbNoList
+	weightRate1
+	eewbsFlag
+	modifiedBy
+	deliveryTypeSf
+	servicesTypeId
+	orderGoodsCharge
+	productSunName
+	storageFlag
+	orderEwbNo
+	printElectronEwb
+	inputSiteName
+	hewbVolWeight
+	source
+	paper
+	receiptOr
+	optionalSiteFlag
+	calcWeight
+	assistProdSunName
+	sendCustomerName
+	sendCountyName
+	arriveCharge
+	dispatchSiteScanId
+	firstSiteSelf
+	payModeName
+	assistProdSunId
+	mattressVolWeight
+	blSign
+	receiveCustomerSms
+	sendSiteOne
+	mattressCalcWeight
+	pickGoodsName
+	ewbSmsFlag
+	fiveChargeSiteId
+	prodTypeName
+	rewbType
+	support
+	weightRate
+	outSendSiteId
+	fiveProductFlag
+	inputSiteId
+	waybillAttributes
+	hewbNewFlag
+	freightCharge
+	createdBy
+	modifiedByCode
+	createdByCode
+	hewbCalcWeight
+	sendCustomerNameAll
+	lineOrderId
+	high
+	vol
+	arrivePaymentCharge
+	dispatchSiteScan
+	abroadModifiedVersion
+	goodsName
+	firstFreightCharge
+	dispatchSiteOne
+	sendSiteScanCode
+	insuranceType
+	dispatchSiteId
+	ewbDate
+	billEwbType
+	fiveCount
+	receiveCustomerNameAll
+	receiveEmployeeNameDetail
+	receiveEmployeeCode
+	receiveEmployeeName
+	settlePattern
+	chargeList
+	kaCustomer

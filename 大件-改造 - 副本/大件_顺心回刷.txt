@@ -1,0 +1,189 @@
+select * from dmpdsp.vt_has_arrive_cars_batch
+order by actualTime desc 
+
+
+
+host='dmpdsp-tilb.db.sfcloud.local'              #数据库信息
+port='3306'                                             #端口
+dbUser='dmpdsp'                           #用户名
+dbPassword='VjFX_HXpA^1y'
+dbName='dmpdsp'                             #数据库名称
+showTable='show create table vt_has_arrive_cars_batch'
+############### 连接mysql执行操作 ###############
+
+mysql -h$host -P$port -u$dbUser -p$dbPassword
+<<EOF
+-e$showTable
+EOF
+
+---------------------------------------------------------------------  【472976】 -- SxVehicleInSfDept 改造   -----------------------------------------------------------
+
+	val countTime = "2023-09-06 14:00:00" //业务时间,也就是每20分钟  统计时间"yyyy-MM-dd HH:mm:ss"
+    val countDate = DateUtil.df2Todf3(countTime) //统计时间"yyyyMMdd"
+    val incDay = DateUtil.df2Todf3(countTime)
+    val incHour = countTime.substring(11, 13).concat(countTime.substring(14, 16))
+    val last14Day = DateUtil.getLastDayStringdf3(countDate, 14)
+    val next4Day = DateUtil.getLastStringTime(countTime,-5).substring(0, 10).concat(" 00:00:00") //统计时间"yyyy-MM-dd HH:mm:ss" 取00:00:00
+    val last3Day = DateUtil.getLastStringTime(countTime,3).substring(0, 10).concat(" 00:00:00") //统计时间"yyyy-MM-dd HH:mm:ss"取00:00:00
+    val last8Day = DateUtil.getLastDayStringdf3(DateUtil.df2Todf3(countTime), 4)
+    val next8Day = DateUtil.getLastDayStringdf3(DateUtil.df2Todf3(countTime), -5)
+	
+	countDate=20230906
+	incDay=20230906
+	incHour=1400
+	last14Day=20230823
+	next4Day=2023-09-11 00:00:00
+	last3Day=2023-09-03 00:00:00
+	last8Day=20230902
+	next8Day=20230911
+
+上游表分区：
+	show partitions ky.dm_freight.dwd_sx_vehicle_dtl_di  -- inc_day=20210918
+	show partitions ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di -- 20201230
+
+1、-- ETL   【807481  每天00:01执行】
+	vt_has_arrive_cars_batch --> dm_ordi_predict.dmpdsp_vt_has_arrive_cars_batch_df
+	备注： 最大actualTime= 2022-09-05 08:58:49  ， 代码中2023年基本上过滤不到。
+ 
+	tidb.cloud {
+	  jdbc.url="jdbc:mysql://dmpdsp-tilb.db.sfcloud.local:3306/dmpdsp?rewriteBatchedStatements=true"
+	  user="dmpdsp"
+	  passwd="VjFX_HXpA^1y"
+	}
+
+	--  20230905 550227
+	
+	CREATE EXTERNAL TABLE `dm_ordi_predict.dmpdsp_vt_has_arrive_cars_batch_df`(
+	  `idKey` string COMMENT '主键',
+	  `requireId` string COMMENT '需求id',
+	  `carNo` string COMMENT '车标号',
+	  `transLevel` string COMMENT '运输等级',
+	  `carStatus` string COMMENT '车辆状态',
+	  `srcZoneCode` string COMMENT '车标起始网点',
+	  `destZoneCode` string COMMENT '车标卸车网点',
+	  `ticket` string COMMENT '票数',
+	  `weight` string COMMENT '计费重量',
+	  `actualTime` string COMMENT '实际到车时间',
+	  `batchCode` string COMMENT '班次编码',
+	  `batchDate` string COMMENT '班次日期',
+	  `startLastArrTm` string COMMENT '上个班次最晚到达时间',
+	  `lastArrTm` string COMMENT '最晚到达时间',
+	  `insertTime` string COMMENT '插入时间'
+	) COMMENT 'sf场地到车统计信息表' PARTITIONED BY (`inc_day` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+2、-- etl   【807593 - 每天00:01执行】
+dim_heavy_transit_info  --> dm_ordi_predict.fmsrms_dim_heavy_transit_info_df
+	备注： 区别于 405031【每天00:01执行】任务， DB库来源不一样。
+tidb.cloud2 {
+  jdbc.url="jdbc:mysql://fmsrms-tilb.db.sfcloud.local:3306/fmsrms?rewriteBatchedStatements=true"
+  user="fmsrms"
+  passwd="CGQMh_Nf^BXS"
+}
+    -- 20230905 140 
+	CREATE EXTERNAL TABLE `dm_ordi_predict.fmsrms_dim_heavy_transit_info_df`(
+	  `dept_code` string COMMENT '中转场编码',
+	  `dept_name` string COMMENT '中转场名称',
+	  `hq_code` string COMMENT '分拨区编码',
+	  `hq_name` string COMMENT '分拨区名称',
+	  `is_mix_ground` string COMMENT '是否融合场站',
+	  `max_process_weight` string COMMENT '最大处理货量',
+	  `longitude` string COMMENT '经度',
+	  `latitude` string COMMENT '纬度',
+	  `area_code` string COMMENT '所属分拨区',
+	  `area_name` string COMMENT '所属分拨区名称'
+	) COMMENT '中转场场地信息表-fmsrms库' PARTITIONED BY (`inc_day` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+3、etl 【重复，405031已有对应ETL，输出表 = ky.dm_heavy_cargo.dim_heavy_transi_info】
+	dim_heavy_transit_info  --> dm_ordi_predict.dmpdsp_dim_heavy_transit_info_df
+	tidb.cloud {
+	  jdbc.url="jdbc:mysql://dmpdsp-tilb.db.sfcloud.local:3306/dmpdsp?rewriteBatchedStatements=true"
+	  user="dmpdsp"
+	  passwd="VjFX_HXpA^1y"
+	}
+	 -- 20230905 145
+	CREATE EXTERNAL TABLE `dm_ordi_predict.dmpdsp_dim_heavy_transit_info_df`(
+	  `dept_code` string COMMENT '中转场编码',
+	  `dept_name` string COMMENT '中转场名称',
+	  `hq_code` string COMMENT '分拨区编码',
+	  `hq_name` string COMMENT '分拨区名称',
+	  `is_mix_ground` string COMMENT '是否融合场站',
+	  `max_process_weight` string COMMENT '最大处理货量'
+	) COMMENT '中转场场地信息表-dmpdsp库' PARTITIONED BY (`inc_day` string) 
+	ROW FORMAT SERDE 'org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe'
+	 STORED AS INPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat' 
+	 OUTPUTFORMAT 'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
+	 
+4、写入  bdp集群 ，dm_ordi_predict.dm_cargo_quantity_sx_vehicle_dtl_rt_hi
+	
+	ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt  -->  dm_ordi_predict.dm_cargo_quantity_sx_vehicle_dtl_rt_hi
+	
+	-- 3365
+	-- 8856
+
+上游表分区：
+	show partitions ky.dm_freight.dwd_sx_vehicle_dtl_di -- 顺心进港信息 -- inc_day=20210918
+	show partitions ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di  -- 班次信息 -- 20201230
+finall - 回刷设置
+
+1、顺心-动态-场地到件：
+	0、按小时同步线上版本：
+		807619 - 同步线上  按小时执行， -- 过滤场地版本
+		-、mysql 相关表，是否按天ETL，  √
+			-- 807593 ，807481 按天执行写入当天分区，每天00:01执行。
+		-、按天同步线上执行  √
+		-、后续回刷20230912数据 。  <-->
+			-、按天补录20230908~20230911   √
+			-、按天补录20230912    √
+	1、按天回刷 版本：
+		1-、按天回刷测试（过滤场地版本）   √
+			808398 【已冻结】-- 过滤场地，测试20230906当天数据 
+		2-、808398 去掉场地过滤-回刷历史， 周聪后续处理 ，（操作日期：2023-09-08 10:30:00）   √
+			1-、去掉场地过滤 
+			2-、任务ID:808398 【已冻结】 （按天，耗时10min）
+			3-、回刷范围： 20210918 ~ 20230907（至今）
+					20230801 ~ 20230907  （20230906 需要更新实例，重跑 √）
+					20230501 ~ 20230731 
+					20210918 ~ 20230430
+				验证文件：D:\user\01431437\Note\需求\大件-顺心数据场地回刷\切换前后数据对比-20230906-1400\输出表-剔除场地前后-20230801~0804各时点对比.xlsx
+			4-、给到周聪， 
+			ky.dm_heavy_cargo.dm_cargo_quantity_sx_vehicle_dtl_rt 线上在用
+				顺心-动态-场地班次到件 
+					-- 未过滤班次表：dm_ordi_predict.dm_cargo_quantity_sx_vehicle_dtl_rt_hi  
+					-- 数据范围：20211001~至今
+
+zip-改造 
+	1、mysql -> hive  ，频次？
+		-、dim_heavy_transit_info  --> dm_ordi_predict.fmsrms_dim_heavy_transit_info_df  -- ETL 【807593 - 每天00:01执行】 
+		-、vt_has_arrive_cars_batch --> dm_ordi_predict.dmpdsp_vt_has_arrive_cars_batch_df  - ETL   【807481  每天00:01执行】
+				备注： 最大actualTime= 2022-09-05 08:58:49  ， 代码中2023年基本上过滤不到。
+		
+	
+---------------------------------------------------------------------  【473836】 -- 顺心-静态-场地到件 --> 回刷历史（不过滤场地）   -----------------------------------------------------------
+2、顺心-动态-场地到件：
+	ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_dtl_di  （20210102最早） --> dm_ordi_predict.dm_sx_has_arrive_cargo_dtl_di
+	
+上游表分区：
+	show partitions ky.dm_freight.dm_sx_vehicle_his_sum_di  -- inc_day=20211223
+	show partitions ky.dm_heavy_cargo.dm_arrive_batch_info_dtl_di -- inc_day=20201230  【中转到达班次信息】
+	ky.dim_freight.dim_heavy_transi_info  [过滤场地 ] 【数据来源 --> etl （dim_heavy_transit_info （tidb ~ mysql ） --> hive ）】
+	
+finall-回刷设置：
+	1-、去掉场地过滤 
+	2-、任务ID: 815115 -- 按天执行
+	3-、回刷范围 以及后续按天执行  ： 20211223 ~ 至今 
+		-、modify_time 2020年数据，格式需要format  （ substring(modify_time,0,19)  ， 最早有'08:20:00' , '08:00:00'  = 20220430 ， 此时日期已正常，无需format）
+		-、modify_time 2021年没有值。
+
+01433967
+01431437
+
+8027 
+
+
+

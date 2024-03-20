@@ -2,7 +2,7 @@
 
 ky集群相关/管理员：
 	bdp.dm_freight.op_tp_wl_handover_detail_info（kafka to hive ）						-- 01388729/范浩
-	ky.dm_freight.dm_wl_handover_forecast_dtl_df（物联接驳货量预测流向明细表）			-- 01388729/范浩
+		ky.dm_freight.dm_wl_handover_forecast_dtl_df（物联接驳货量预测流向明细表）			-- 01388729/范浩
 	bdp.dm_heavy_cargo.rt_vehicle_task_monitor_for_not_send_detail4（kafka to hive ）	-- 01388729/范浩
 	ky.dm_heavy_cargo.dm_sx_has_arrive_cargo_sum_di（顺心场站已到达货量表）				-- 01388729/范浩
 	ky.dm_freight.dm_sx_in_vehicle_detail_info_dtl_di （顺心进港车辆监控明细）			-- 01389148/陈子纯
@@ -32,10 +32,6 @@ Mysql相关：
 	
 
 ----------------------------------------------------------->  接驳  <-------------------------------------------------------------------------
-
-:dm_freight.op_tp_wl_handover_detail_info 事件地址 这个字段 eventaddress
- val detailData = spark.sql("""select * from (select *,row_number() over(partition by eventtype,tripid,packageno order by eventtime) as rn from bdp.dm_freight.op_tp_wl_handover_detail_info where inc_day between '"""+startDay+"""' and '"""+endDay+"""')t where t.rn = 1 """).drop("rn")
-    detailData.createOrReplaceTempView("detail_data")
 
 -- 460984 -- 每小时调度接驳车辆 在途+已到     【 zip】
 	输入：bdp.dm_freight.op_tp_wl_handover_detail_info  【车辆运输详情信息 kafka to hive  -- 上游表根据事件时间写入】  (起始网点，运单，运单计费重量，行程id,)    <上游表>
